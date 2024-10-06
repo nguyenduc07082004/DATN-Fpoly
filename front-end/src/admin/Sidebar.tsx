@@ -1,6 +1,4 @@
-import { Route, Routes } from "react-router-dom";
 import ".././App.scss";
-import QLSP from "./pages/QLSP";
 const Sidebar = () => {
   return (
     <div>
@@ -16,7 +14,7 @@ const Sidebar = () => {
             className="bi me-2"
             width="35"
             height="32"
-            src=".././logo.png"
+            src="https://i.ibb.co/s3PxFtq/logo.png"
             alt=""
           />
 

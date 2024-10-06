@@ -9,7 +9,10 @@
       "discountPercentage": 18.14,
       "rating": 3.82,
       "stock": 59,
-      "tags": ["beauty", "face powder"],
+      "tags": [
+        "beauty",
+        "face powder"
+      ],
       "brand": "Velvet Touch",
       "sku": "9EN8WLT2",
       "weight": 8,
@@ -62,11 +65,14 @@
       "title": "Red Lipstick",
       "description": "The Red Lipstick is a classic and bold choice for adding a pop of color to your lips. With a creamy and pigmented formula, it provides a vibrant and long-lasting finish.",
       "category": "beauty",
-      "price": 12.99,
+      "price": 12,
       "discountPercentage": 19.03,
       "rating": 2.51,
       "stock": 68,
-      "tags": ["beauty", "lipstick"],
+      "tags": [
+        "beauty",
+        "lipstick"
+      ],
       "brand": "Chic Cosmetics",
       "sku": "O5IF1NTA",
       "weight": 5,
@@ -123,7 +129,10 @@
       "discountPercentage": 2.46,
       "rating": 3.91,
       "stock": 71,
-      "tags": ["beauty", "nail polish"],
+      "tags": [
+        "beauty",
+        "nail polish"
+      ],
       "brand": "Nail Couture",
       "sku": "YUIIIP4W",
       "weight": 9,
@@ -180,7 +189,10 @@
       "discountPercentage": 0.32,
       "rating": 4.85,
       "stock": 17,
-      "tags": ["fragrances", "perfumes"],
+      "tags": [
+        "fragrances",
+        "perfumes"
+      ],
       "brand": "Calvin Klein",
       "sku": "DZM2JQZE",
       "weight": 5,
@@ -239,7 +251,10 @@
       "discountPercentage": 18.64,
       "rating": 2.76,
       "stock": 41,
-      "tags": ["fragrances", "perfumes"],
+      "tags": [
+        "fragrances",
+        "perfumes"
+      ],
       "brand": "Chanel",
       "sku": "K71HBCGS",
       "weight": 4,
@@ -298,7 +313,10 @@
       "discountPercentage": 17.44,
       "rating": 3.31,
       "stock": 91,
-      "tags": ["fragrances", "perfumes"],
+      "tags": [
+        "fragrances",
+        "perfumes"
+      ],
       "brand": "Dior",
       "sku": "E70NB03B",
       "weight": 10,
