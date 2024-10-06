@@ -21,7 +21,7 @@ const QLSP = ({ products, onDel }: Props) => {
         </div>
         <div className="search">
           Search
-          <input className="" type="text" />
+          <input className="rounded" type="text" />
         </div>
       </div>
       <hr className="tbl" />
@@ -67,6 +67,10 @@ const QLSP = ({ products, onDel }: Props) => {
           ))}
         </tbody>
       </table>
+      <div className="">
+        <button>Trang trước</button>
+        <button>Trang sau</button>
+      </div>
     </div>
   );
 };

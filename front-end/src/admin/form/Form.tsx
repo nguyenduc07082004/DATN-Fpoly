@@ -11,9 +11,9 @@ type Props = {
 };
 
 const productSchema = z.object({
-  title: z.string().min(6),
-  price: z.number().min(0),
-  stock: z.number().min(0),
+  title: z.string().min(6, { message: "Tên sản phẩm phải lớn hơn 6 ký tự" }),
+  price: z.number().min(0, { message: "Giá sản phẩm phải lớn hơn 0" }),
+  stock: z.number().min(0, { message: "Số lượng sản phẩm phải lớn hơn 0" }),
   description: z.string().optional(),
 });
 
@@ -104,11 +104,16 @@ const Form = ({ onSubmit }: Props) => {
             />
           </div>
           <button
-            className="btn btn-primary"
-            style={{ width: "500px", height: "50px" }}
+            className="btn"
+            style={{
+              width: "500px",
+              height: "50px",
+              backgroundColor: "#FF5151",
+              color: "white",
+            }}
             type="submit"
           >
-            Submit
+            {id ? <h5>Cập nhật sản phẩm</h5> : <h5>Thêm mới sản phẩm</h5>}
           </button>
         </div>
       </form>

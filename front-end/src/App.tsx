@@ -33,7 +33,7 @@ function App() {
     nav("/qlsp");
   };
   const handleRemove = async (id: any) => {
-    if (confirm("are you su")) {
+    if (confirm("Bạn chắc chắn muốn xóa sản phẩm này?")) {
       await ins.delete(`products/${id}`);
       setP(p.filter((item) => item.id !== id));
     }
