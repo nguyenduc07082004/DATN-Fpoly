@@ -16,3 +16,28 @@
   margin: auto;
   width: 100%;
 }
+.action-edit {
+  margin-left: 2px;
+  background-color: #fe5757;
+}
+.action-del {
+  background-color: #755cff;
+  color: #fff;
+}
+.stock,
+.desc,
+.btn {
+  margin-left: 100px;
+}
+.btn {
+  margin-top: 23px;
+}
+textarea {
+  resize: none;
+}
+.price {
+  margin-top: 15px;
+}
+h5 {
+  margin-top: 5px;
+}

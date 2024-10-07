@@ -1,11 +1,11 @@
-import React from "react";
 import { Products } from "../../interfaces/Products";
-
+import "../.././App.scss";
 type Props = {
   products: Products[];
+  onDel: (id: any) => void;
 };
 
-const QLSP = ({ products }: Props) => {
+const QLSP = ({ products, onDel }: Props) => {
   return (
     <div>
       <p className="m-3">
@@ -13,11 +13,15 @@ const QLSP = ({ products }: Props) => {
       </p>
       <div className="d-flex py-4">
         <div className="mx-4">
-          <button className="rounded">Thêm sản phẩm</button>
+          <button className="rounded">
+            <a href="/qlsp/add" className="text-decoration-none text-dark">
+              Thêm sản phẩm
+            </a>
+          </button>
         </div>
         <div className="search">
           Search
-          <input className="" type="text" />
+          <input className="rounded" type="text" />
         </div>
       </div>
       <hr className="tbl" />
@@ -39,18 +43,34 @@ const QLSP = ({ products }: Props) => {
               <td className="col-1">{i.id}</td>
               <td className="col-2">{i.title}</td>
               <td className="col-2">{i.price}</td>
-              <td className="col-1">{i.id}</td>
+              <td className="col-1">{i.stock}</td>
               <td className="col-5 text-truncate" style={{ maxWidth: "800px" }}>
                 {i.description}
               </td>
               <td className="col-1">
-                <button>Del</button>
-                <button>Edit</button>
+                <button
+                  className="action-del rounded"
+                  onClick={() => onDel(i.id)}
+                >
+                  Del
+                </button>
+                <button className="action-edit rounded">
+                  <a
+                    className="text-decoration-none text-white"
+                    href={`/qlsp/edit/${i.id}`}
+                  >
+                    Edit
+                  </a>
+                </button>
               </td>
             </tr>
           ))}
         </tbody>
       </table>
+      <div className="">
+        <button>Trang trước</button>
+        <button>Trang sau</button>
+      </div>
     </div>
   );
 };

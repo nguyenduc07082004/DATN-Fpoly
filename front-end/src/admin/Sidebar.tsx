@@ -1,11 +1,9 @@
-import { Route, Routes } from "react-router-dom";
 import ".././App.scss";
-import QLSP from "./pages/QLSP";
 const Sidebar = () => {
   return (
     <div>
       <div
-        className="d-flex flex-column flex-shrink-0 p-3 text-white bg-dark "
+        className="d-flex flex-column flex-shrink-0 p-3 text-white bg-dark"
         style={{ height: "100vh", width: "280px" }}
       >
         <a
@@ -16,7 +14,7 @@ const Sidebar = () => {
             className="bi me-2"
             width="35"
             height="32"
-            src=".././logo.png"
+            src="https://i.ibb.co/s3PxFtq/logo.png"
             alt=""
           />
 
