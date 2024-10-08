@@ -3,8 +3,9 @@ const Product = require("../models/ProductModels"); // Giả sử bạn đã đ�
 // Lấy danh sách sản phẩm
 exports.getProducts = async (req, res) => {
   try {
+
     const products = await Product.find();
-    res.status(200).json(products);
+    res.status(200).json(products).populate('categories', 'name');
   } catch (error) {
     res.status(500).json({ message: "Lỗi khi lấy danh sách sản phẩm", error });
   }
