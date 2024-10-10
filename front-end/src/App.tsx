@@ -11,6 +11,9 @@ import { useEffect, useState } from "react";
 import ins from "./api";
 import Form from "./admin/form/Form";
 import { Products } from "./interfaces/Products";
+import Client from "./user/Client";
+import Home from "./admin/pages/Home";
+import Dashboard from "./admin/pages/Dashboard";
 
 function App() {
   const [p, setP] = useState<Products[]>([]);
@@ -40,32 +43,25 @@ function App() {
   };
   return (
     <>
-      <div className="d-flex background">
-        <div>
-          <Sidebar />
-        </div>
-        <div
-          className="bg-light mx-3 content "
-          style={{ height: "600px", width: "1000rem" }}
-        >
-          <Routes>
-            <Route
-              path="/qlsp"
-              element={<QLSP onDel={handleRemove} products={p} />}
-            />
-            <Route path="/qlsp/add" element={<Form onSubmit={onSubmit} />} />
-            <Route
-              path="/qlsp/edit/:id"
-              element={<Form onSubmit={onSubmit} />}
-            />
-            <Route path="/qltk" element={<QLTK />} />
-            <Route path="/qlbl" element={<QLBL />} />
-            <Route path="/qldm" element={<QLDM />} />
-            <Route path="/qldh" element={<QLDH />} />
-            <Route path="/tk" element={<TK />} />
-          </Routes>
-        </div>
-      </div>
+      <Routes>
+        <Route path="/" element={<Client />}></Route>
+        <Route path="/admin/*" element={<Home />}>
+          <Route
+            path="admin/qlsp"
+            element={<QLSP onDel={handleRemove} products={p} />}
+          />
+          <Route path="admin/qlsp/add" element={<Form onSubmit={onSubmit} />} />
+          <Route
+            path="admin/qlsp/edit/:id"
+            element={<Form onSubmit={onSubmit} />}
+          />
+          <Route path="admin/qltk" element={<QLTK />} />
+          <Route path="admin/qlbl" element={<QLBL />} />
+          <Route path="admin/qldm" element={<QLDM />} />
+          <Route path="admin/qldh" element={<QLDH />} />
+          <Route path="admin/tk" element={<TK />} />
+        </Route>
+      </Routes>
     </>
   );
 }

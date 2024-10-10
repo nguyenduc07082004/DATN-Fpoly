@@ -14,7 +14,10 @@ const QLSP = ({ products, onDel }: Props) => {
       <div className="d-flex py-4">
         <div className="mx-4">
           <button className="rounded">
-            <a href="/qlsp/add" className="text-decoration-none text-dark">
+            <a
+              href="/admin/qlsp/add"
+              className="text-decoration-none text-dark"
+            >
               Thêm sản phẩm
             </a>
           </button>
