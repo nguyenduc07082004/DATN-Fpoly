@@ -7,10 +7,10 @@ const categoryController = require("../controllers/CategoryControllers");
 router.get("/",categoryController.getCategory);
 
 // Thêm sản phẩm
-router.post("/", categoryController.addCategory);
+router.post("/add", categoryController.addCategory);
 
 // Cập nhật sản phẩm
-router.put("/:id", categoryController.updateCategory);
+router.put("/edit/:id", categoryController.updateCategory);
 
 // Xóa sản phẩm
 router.delete("/:id",categoryController.deleteCategory);

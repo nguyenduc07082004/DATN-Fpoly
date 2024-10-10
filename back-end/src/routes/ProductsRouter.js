@@ -7,10 +7,10 @@ const productController = require("../controllers/ProductControllers");
 router.get("/",productController.getProducts);
 
 // Thêm sản phẩm
-router.post("/", productController.addProduct);
+router.post("/add", productController.addProduct);
 
 // Cập nhật sản phẩm
-router.put("/:id", productController.updateProduct);
+router.put("/edit/:id", productController.updateProduct);
 
 // Xóa sản phẩm
 router.delete("/:id",productController.deleteProduct);
