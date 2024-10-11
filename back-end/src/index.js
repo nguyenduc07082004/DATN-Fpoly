@@ -3,6 +3,7 @@ const dotenv = require("dotenv");
 const mongoose = require("mongoose");
 const productRouter= require("./routes/ProductsRouter");
 const categoryRouter=require("./routes/CategoryRouter")
+const userRouter=require("./routes/UserRouter")
 
 
 dotenv.config();
@@ -22,6 +23,7 @@ mongoose.connect(mongoURI, {
   app.use(express.json());
   app.use('/products',productRouter);
   app.use('/categories',categoryRouter);
+  app.use('/users',userRouter);
 
 // Định nghĩa một route đơn giản
 app.get("/", (req, res) => {
