@@ -3,12 +3,14 @@ import ReactDOM from "react-dom/client";
 import App from "./App.tsx";
 import "./index.scss";
 import { BrowserRouter } from "react-router-dom";
-import Home from "./admin/pages/Home.tsx";
+import { ProdProvider } from "./api/contexts/ProductsContexts.tsx";
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <BrowserRouter>
-      <App />
+      <ProdProvider>
+        <App />
+      </ProdProvider>
     </BrowserRouter>
   </React.StrictMode>
 );

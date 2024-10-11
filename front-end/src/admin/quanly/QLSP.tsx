@@ -1,11 +1,9 @@
-import { Products } from "../../interfaces/Products";
 import "../.././App.scss";
-type Props = {
-  products: Products[];
-  onDel: (id: any) => void;
-};
+import { useContext } from "react";
+import { ProdContext } from "../../api/contexts/ProductsContexts";
 
-const QLSP = ({ products, onDel }: Props) => {
+const QLSP = () => {
+  const { state, onDel } = useContext(ProdContext);
   return (
     <div>
       <p className="m-3">
@@ -41,7 +39,7 @@ const QLSP = ({ products, onDel }: Props) => {
           </tr>
         </thead>
         <tbody className="text-center">
-          {products.map((i) => (
+          {state.products.map((i) => (
             <tr className="d-flex" key={i.id}>
               <td className="col-1">{i.id}</td>
               <td className="col-2">{i.title}</td>
@@ -53,14 +51,14 @@ const QLSP = ({ products, onDel }: Props) => {
               <td className="col-1">
                 <button
                   className="action-del rounded"
-                  onClick={() => onDel(i.id)}
+                  onClick={() => onDel(String(i.id))}
                 >
                   Del
                 </button>
                 <button className="action-edit rounded">
                   <a
                     className="text-decoration-none text-white"
-                    href={`/qlsp/edit/${i.id}`}
+                    href={`/admin/qlsp/edit/${i.id}`}
                   >
                     Edit
                   </a>
