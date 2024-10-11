@@ -1,6 +1,7 @@
 import "../.././App.scss";
 import { useContext } from "react";
 import { ProdContext } from "../../api/contexts/ProductsContexts";
+import { Link } from "react-router-dom";
 
 const QLSP = () => {
   const { state, onDel } = useContext(ProdContext);
@@ -12,12 +13,12 @@ const QLSP = () => {
       <div className="d-flex py-4">
         <div className="mx-4">
           <button className="rounded">
-            <a
-              href="/admin/qlsp/add"
+            <Link
+              to="/admin/qlsp/add"
               className="text-decoration-none text-dark"
             >
               Thêm sản phẩm
-            </a>
+            </Link>
           </button>
         </div>
         <div className="search">
@@ -56,12 +57,12 @@ const QLSP = () => {
                   Del
                 </button>
                 <button className="action-edit rounded">
-                  <a
+                  <Link
                     className="text-decoration-none text-white"
-                    href={`/admin/qlsp/edit/${i.id}`}
+                    to={`/admin/qlsp/edit/${i.id}`}
                   >
                     Edit
-                  </a>
+                  </Link>
                 </button>
               </td>
             </tr>

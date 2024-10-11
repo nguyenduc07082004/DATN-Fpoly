@@ -102,7 +102,7 @@ const Form = () => {
             />
           </div>
           <button
-            className="btn"
+            className="btn1 btn"
             style={{
               width: "500px",
               height: "50px",
