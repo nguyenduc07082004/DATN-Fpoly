@@ -9,6 +9,8 @@ import QLBL from "./QLBL";
 import QLDM from "./QLDM";
 import QLDH from "./QLDH";
 import TK from "./TK";
+import TrangChu from "./TrangChu";
+import CateForm from "../form/CateForm";
 
 function Dashboard() {
   return (
@@ -21,14 +23,20 @@ function Dashboard() {
         style={{ height: "600px", width: "1000rem" }}
       >
         <Routes>
+          {/* QLSP */}
+          <Route path="/" element={<TrangChu />} />
           <Route path="/qlsp" element={<QLSP />} />
           <Route path="qlsp/add" element={<Form />} />
           <Route path="/qlsp/edit/:id" element={<Form />} />
           <Route path="qltk" element={<QLTK />} />
           <Route path="/qlbl" element={<QLBL />} />
-          <Route path="/qldm" element={<QLDM />} />
           <Route path="/qldh" element={<QLDH />} />
           <Route path="/tk" element={<TK />} />
+
+          {/* QLDM */}
+          <Route path="/qldm" element={<QLDM />} />
+          <Route path="qldm/add" element={<CateForm />} />
+          <Route path="/qldm/edit/:id" element={<CateForm />} />
         </Routes>
       </div>
     </div>

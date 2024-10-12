@@ -1,7 +1,7 @@
 import { Route, Routes } from "react-router-dom";
 import "./App.scss";
 import Client from "./user/Client";
-import Dashboard from "./admin/quanly/Dashboard";
+import Dashboard from "./admin/quanly/AdminRouter";
 
 function App() {
   return (
