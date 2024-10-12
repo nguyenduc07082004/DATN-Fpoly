@@ -23,7 +23,7 @@ const QLSP = () => {
         </div>
         <div className="search">
           Search
-          <input className="rounded" type="text" />
+          <input className="rounded" type="text" placeholder="...Tìm kiếm" />
         </div>
       </div>
       <hr className="tbl" />

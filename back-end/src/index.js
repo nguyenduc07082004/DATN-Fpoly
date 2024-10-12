@@ -25,7 +25,7 @@ mongoose.connect(mongoURI, {
   app.use('/products',productRouter);
   app.use('/categories',categoryRouter);
   app.use('/users',userRouter);
-  app.use('/login',loginRouter);
+  app.use('/',loginRouter);
 
 // Định nghĩa một route đơn giản
 app.get("/", (req, res) => {
