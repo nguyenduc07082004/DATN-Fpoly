@@ -30,26 +30,31 @@ router.post('/register', async (req, res) => {
 // Đăng nhập
 router.post('/login', async (req, res) => {
   const { email, password } = req.body;
+
   try {
-    // Kiểm tra user tồn tại
     const user = await User.findOne({ email });
     if (!user) {
       return res.status(400).json({ message: 'Tài khoản không tồn tại' });
     }
-
-    // So sánh mật khẩu
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
       return res.status(400).json({ message: 'Mật khẩu không chính xác' });
     }
 
-    // Tạo token
-    const token = jwt.sign({ id: user.id, username: user.username, role: user.role }, process.env.JWT_SECRET, {
-      expiresIn: '1h',
-    });
-    res.status(200).json({ message: 'Đăng nhập thành công', token });
+    
+    if (!process.env.JWT_SECRET) {
+      return res.status(500).json({ message: 'Chưa cấu hình JWT_SECRET trong môi trường' });
+    }
+
+    const token = jwt.sign(
+      { id: user._id, username: user.username, role: user.role },process.env.JWT_SECRET,{ expiresIn: '1h' }
+    );
+
+    return res.status(200).json({ message: 'Đăng nhập thành công', token });
+
   } catch (error) {
-    res.status(500).json({ message: 'Lỗi server', error });
+    console.error('Lỗi đăng nhập:', error);
+    return res.status(500).json({ message: 'Lỗi server', error });
   }
 });
 
