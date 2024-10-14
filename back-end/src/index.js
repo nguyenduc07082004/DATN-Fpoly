@@ -1,10 +1,7 @@
 const express = require("express");
 const dotenv = require("dotenv");
 const mongoose = require("mongoose");
-const productRouter= require("./routes/ProductsRouter");
-const categoryRouter=require("./routes/CategoryRouter");
-const userRouter=require("./routes/UserRouter");
-const loginRouter=require('./routes/Login');
+const authRouter=require("./routes/auth");
 
 
 dotenv.config();
@@ -21,12 +18,7 @@ mongoose.connect(mongoURI, {
   .then(() => console.log("Kết nối MongoDB thành công!"))
   .catch((err) => console.error("Kết nối MongoDB thất bại:", err));
 
-  app.use(express.json());
-  app.use('/products',productRouter);
-  app.use('/categories',categoryRouter);
-  app.use('/users',userRouter);
-  app.use('/',loginRouter);
-
+  authRouter(app);
 // Định nghĩa một route đơn giản
 app.get("/", (req, res) => {
   res.send("Hello world!!");
