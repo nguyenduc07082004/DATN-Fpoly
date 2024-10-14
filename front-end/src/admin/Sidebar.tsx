@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import ".././App.scss";
-const Sidebar = () => {
+const AdminSidebar = () => {
   return (
     <div>
       <div
@@ -196,4 +196,4 @@ const Sidebar = () => {
   );
 };
 
-export default Sidebar;
+export default AdminSidebar;

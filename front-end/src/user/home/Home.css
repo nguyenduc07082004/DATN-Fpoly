@@ -1,0 +1,38 @@
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between; 
+    padding: 10px 20px; 
+    background-color: #f8f9fa; 
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); 
+    position: fixed; 
+    width: 100%; 
+    top: 0; 
+    z-index: 1000; 
+  }
+  
+  .logo {
+    flex: 1;
+  }
+  
+  .img-fluid {
+    max-width: 100%; 
+    height: auto; 
+  }
+  
+  .header-left {
+    display: flex;
+    align-items: center; 
+  }
+  
+  .MuiTooltip-tooltip {
+    background-color: #333; 
+    color: #fff; 
+    border-radius: 4px; 
+    padding: 5px; 
+  }
+  
+  .MuiAvatar-root {
+    cursor: pointer; 
+  }
+  
