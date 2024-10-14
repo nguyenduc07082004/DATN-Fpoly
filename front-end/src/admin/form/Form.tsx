@@ -1,14 +1,11 @@
-import { useEffect } from "react";
+import { useContext, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { useParams } from "react-router-dom";
 import { Products } from "../../interfaces/Products";
 import ins from "../../api";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-
-type Props = {
-  onSubmit: (data: Products) => void;
-};
+import { ProdContext } from "../../api/contexts/ProductsContexts";
 
 const productSchema = z.object({
   title: z.string().min(6, { message: "Tên sản phẩm phải lớn hơn 6 ký tự" }),
@@ -17,7 +14,8 @@ const productSchema = z.object({
   description: z.string().optional(),
 });
 
-const Form = ({ onSubmit }: Props) => {
+const Form = () => {
+  const { onSubmitProduct } = useContext(ProdContext);
   const { id } = useParams();
   const {
     register,
@@ -40,7 +38,7 @@ const Form = ({ onSubmit }: Props) => {
       <p className="m-3">
         {id ? <h2>Cập nhật sản phẩm</h2> : <h2>Thêm mới sản phẩm</h2>}
       </p>
-      <form onSubmit={handleSubmit((data) => onSubmit({ ...data, id }))}>
+      <form onSubmit={handleSubmit((data) => onSubmitProduct({ ...data, id }))}>
         <div className="d-flex m-5">
           <div className="form-group">
             <label htmlFor="title">Tên sản phẩm</label>
@@ -104,7 +102,7 @@ const Form = ({ onSubmit }: Props) => {
             />
           </div>
           <button
-            className="btn"
+            className="btn1 btn"
             style={{
               width: "500px",
               height: "50px",

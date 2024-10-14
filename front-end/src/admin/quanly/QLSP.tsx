@@ -1,11 +1,10 @@
-import { Products } from "../../interfaces/Products";
 import "../.././App.scss";
-type Props = {
-  products: Products[];
-  onDel: (id: any) => void;
-};
+import { useContext } from "react";
+import { ProdContext } from "../../api/contexts/ProductsContexts";
+import { Link } from "react-router-dom";
 
-const QLSP = ({ products, onDel }: Props) => {
+const QLSP = () => {
+  const { state, onDel } = useContext(ProdContext);
   return (
     <div>
       <p className="m-3">
@@ -14,17 +13,17 @@ const QLSP = ({ products, onDel }: Props) => {
       <div className="d-flex py-4">
         <div className="mx-4">
           <button className="rounded">
-            <a
-              href="/admin/qlsp/add"
+            <Link
+              to="/admin/qlsp/add"
               className="text-decoration-none text-dark"
             >
               Thêm sản phẩm
-            </a>
+            </Link>
           </button>
         </div>
         <div className="search">
           Search
-          <input className="rounded" type="text" />
+          <input className="rounded" type="text" placeholder="...Tìm kiếm" />
         </div>
       </div>
       <hr className="tbl" />
@@ -41,7 +40,7 @@ const QLSP = ({ products, onDel }: Props) => {
           </tr>
         </thead>
         <tbody className="text-center">
-          {products.map((i) => (
+          {state.products.map((i) => (
             <tr className="d-flex" key={i.id}>
               <td className="col-1">{i.id}</td>
               <td className="col-2">{i.title}</td>
@@ -53,17 +52,17 @@ const QLSP = ({ products, onDel }: Props) => {
               <td className="col-1">
                 <button
                   className="action-del rounded"
-                  onClick={() => onDel(i.id)}
+                  onClick={() => onDel(String(i.id))}
                 >
                   Del
                 </button>
                 <button className="action-edit rounded">
-                  <a
+                  <Link
                     className="text-decoration-none text-white"
-                    href={`/qlsp/edit/${i.id}`}
+                    to={`/admin/qlsp/edit/${i.id}`}
                   >
                     Edit
-                  </a>
+                  </Link>
                 </button>
               </td>
             </tr>
