@@ -1,13 +1,13 @@
 const express = require("express");
 const dotenv = require("dotenv");
 const mongoose = require("mongoose");
-const authRouter=require("./routes/auth");
-
+const cors = require("cors");
+const authRouter = require("./routes/auth");
 
 dotenv.config();
 
 const app = express();
-const port = process.env.PORT || 3001;
+const port = process.env.PORT || 3000;
 const mongoURI = process.env.MONGO_URI || "mongodb://localhost:27017/DUAN";
 
 // Kết nối đến MongoDB
@@ -18,7 +18,15 @@ mongoose.connect(mongoURI, {
   .then(() => console.log("Kết nối MongoDB thành công!"))
   .catch((err) => console.error("Kết nối MongoDB thất bại:", err));
 
-  authRouter(app);
+// Thêm middleware CORS
+app.use(cors());
+
+// Định nghĩa middleware để parse JSON
+app.use(express.json());
+
+// Định nghĩa router cho authentication
+app.use("/auth", authRouter);
+
 // Định nghĩa một route đơn giản
 app.get("/", (req, res) => {
   res.send("Hello world!!");
