@@ -1,8 +1,8 @@
 const express = require("express");
 const dotenv = require("dotenv");
 const mongoose = require("mongoose");
-const cors = require("cors");
-const authRouter = require("./routes/auth");
+const authRouter=require("./routes/auth");
+
 
 dotenv.config();
 
@@ -18,15 +18,7 @@ mongoose.connect(mongoURI, {
   .then(() => console.log("Kết nối MongoDB thành công!"))
   .catch((err) => console.error("Kết nối MongoDB thất bại:", err));
 
-// Thêm middleware CORS
-app.use(cors());
-
-// Định nghĩa middleware để parse JSON
-app.use(express.json());
-
-// Định nghĩa router cho authentication
-app.use("/auth", authRouter);
-
+  authRouter(app);
 // Định nghĩa một route đơn giản
 app.get("/", (req, res) => {
   res.send("Hello world!!");
