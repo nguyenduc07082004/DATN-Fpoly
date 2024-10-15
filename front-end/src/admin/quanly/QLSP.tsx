@@ -45,7 +45,7 @@ const QLSP = () => {
               <td className="col-1">{i.id}</td>
               <td className="col-2">{i.title}</td>
               <td className="col-2">{i.price}</td>
-              <td className="col-1">{i.stock}</td>
+              <td className="col-1">{i.quantity}</td>
               <td className="col-5 text-truncate" style={{ maxWidth: "800px" }}>
                 {i.description}
               </td>

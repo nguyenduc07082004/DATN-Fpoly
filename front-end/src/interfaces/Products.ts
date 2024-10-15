@@ -2,6 +2,8 @@ export interface Products {
   id: any;
   title: string;
   price: number;
-  stock: number;
+  imageURL: string;
+  categories: string;
+  quantity: number;
   description: string;
 }

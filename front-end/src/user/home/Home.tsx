@@ -2,7 +2,8 @@ import React, { useState, useEffect } from "react";
 import "./Home.css";
 import { useNavigate } from "react-router-dom";
 import { Avatar, Tooltip } from "@mui/material";
-import Logo from "../../assets/logoshop.jpg"; 
+import Logo from "../../assets/logoshop.jpg";
+import UserSidebar from "./Sidebar";
 
 export const Header: React.FC = () => {
   const [username, setUsername] = useState<string>("Unknown");
@@ -18,9 +19,10 @@ export const Header: React.FC = () => {
 
   return (
     <header className="header">
+      <UserSidebar />
       <div className="logo">
         <img
-          src={Logo} 
+          src={Logo}
           alt="Logo"
           className="img-fluid"
           style={{ width: "100px", cursor: "pointer" }}

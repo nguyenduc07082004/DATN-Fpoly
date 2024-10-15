@@ -10,7 +10,7 @@ import { ProdContext } from "../../api/contexts/ProductsContexts";
 const productSchema = z.object({
   title: z.string().min(6, { message: "Tên sản phẩm phải lớn hơn 6 ký tự" }),
   price: z.number().min(0, { message: "Giá sản phẩm phải lớn hơn 0" }),
-  stock: z.number().min(0, { message: "Số lượng sản phẩm phải lớn hơn 0" }),
+  quantity: z.number().min(0, { message: "Số lượng sản phẩm phải lớn hơn 0" }),
   description: z.string().optional(),
 });
 
@@ -52,16 +52,16 @@ const Form = () => {
             {errors.title && <span>{errors.title.message}</span>}
           </div>
 
-          <div className="form-group stock">
+          <div className="form-group quantity">
             <label htmlFor="price">Số lượng sản phẩm</label>
             <input
               className="form-control"
               type="number"
               placeholder="Số lượng sản phẩm"
               style={{ width: "500px", height: "50px" }}
-              {...register("stock", { required: true, valueAsNumber: true })}
+              {...register("quantity", { required: true, valueAsNumber: true })}
             />
-            {errors.stock && <span>{errors.stock.message}</span>}
+            {errors.quantity && <span>{errors.quantity.message}</span>}
           </div>
         </div>
 
