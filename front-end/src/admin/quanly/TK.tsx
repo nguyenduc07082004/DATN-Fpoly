@@ -1,5 +1,4 @@
-import React, { useContext } from "react";
-import Chart from "react-google-charts";
+import { useContext } from "react";
 import {
   Bar,
   BarChart,
@@ -24,7 +23,7 @@ const TK = (props: Props) => {
         <Tooltip />
         <Legend />
         <Bar dataKey="price" fill="#8884d8" />
-        <Bar dataKey="stock" fill="#82ca9d" />
+        <Bar dataKey="quantity" fill="#82ca9d" />
       </BarChart>
     </div>
   );

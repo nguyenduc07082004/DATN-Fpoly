@@ -9,10 +9,7 @@
       "discountPercentage": 18.14,
       "rating": 3.82,
       "quantity": 59,
-      "tags": [
-        "beauty",
-        "face powder"
-      ],
+      "tags": ["beauty", "face powder"],
       "brand": "Velvet Touch",
       "sku": "9EN8WLT2",
       "weight": 8,
@@ -23,7 +20,7 @@
       },
       "warrantyInformation": "2 year warranty",
       "shippingInformation": "Ships in 1-2 business days",
-      "availabilityStatus": "In Stock",
+      "availabilityStatus": "In quantity",
       "reviews": [
         {
           "rating": 5,
@@ -69,10 +66,7 @@
       "discountPercentage": 19.03,
       "rating": 2.51,
       "quantity": 68,
-      "tags": [
-        "beauty",
-        "lipstick"
-      ],
+      "tags": ["beauty", "lipstick"],
       "brand": "Chic Cosmetics",
       "sku": "O5IF1NTA",
       "weight": 5,
@@ -83,7 +77,7 @@
       },
       "warrantyInformation": "Lifetime warranty",
       "shippingInformation": "Ships in 2 weeks",
-      "availabilityStatus": "In Stock",
+      "availabilityStatus": "In quantity",
       "reviews": [
         {
           "rating": 5,
@@ -129,10 +123,7 @@
       "discountPercentage": 2.46,
       "rating": 3.91,
       "quantity": 71,
-      "tags": [
-        "beauty",
-        "nail polish"
-      ],
+      "tags": ["beauty", "nail polish"],
       "brand": "Nail Couture",
       "sku": "YUIIIP4W",
       "weight": 9,
@@ -143,7 +134,7 @@
       },
       "warrantyInformation": "1 year warranty",
       "shippingInformation": "Ships in 1 week",
-      "availabilityStatus": "In Stock",
+      "availabilityStatus": "In quantity",
       "reviews": [
         {
           "rating": 5,
@@ -188,11 +179,8 @@
       "price": 49.99,
       "discountPercentage": 0.32,
       "rating": 4.85,
-      "stock": 17,
-      "tags": [
-        "fragrances",
-        "perfumes"
-      ],
+      "quantity": 17,
+      "tags": ["fragrances", "perfumes"],
       "brand": "Calvin Klein",
       "sku": "DZM2JQZE",
       "weight": 5,
@@ -203,7 +191,7 @@
       },
       "warrantyInformation": "5 year warranty",
       "shippingInformation": "Ships overnight",
-      "availabilityStatus": "In Stock",
+      "availabilityStatus": "In quantity",
       "reviews": [
         {
           "rating": 5,
@@ -250,11 +238,8 @@
       "price": 129.99,
       "discountPercentage": 18.64,
       "rating": 2.76,
-      "stock": 41,
-      "tags": [
-        "fragrances",
-        "perfumes"
-      ],
+      "quantity": 41,
+      "tags": ["fragrances", "perfumes"],
       "brand": "Chanel",
       "sku": "K71HBCGS",
       "weight": 4,
@@ -265,7 +250,7 @@
       },
       "warrantyInformation": "1 week warranty",
       "shippingInformation": "Ships in 1 month",
-      "availabilityStatus": "In Stock",
+      "availabilityStatus": "In quantity",
       "reviews": [
         {
           "rating": 1,
@@ -312,11 +297,8 @@
       "price": 89.99,
       "discountPercentage": 17.44,
       "rating": 3.31,
-      "stock": 91,
-      "tags": [
-        "fragrances",
-        "perfumes"
-      ],
+      "quantity": 91,
+      "tags": ["fragrances", "perfumes"],
       "brand": "Dior",
       "sku": "E70NB03B",
       "weight": 10,
@@ -327,7 +309,7 @@
       },
       "warrantyInformation": "Lifetime warranty",
       "shippingInformation": "Ships in 2 weeks",
-      "availabilityStatus": "In Stock",
+      "availabilityStatus": "In quantity",
       "reviews": [
         {
           "rating": 5,

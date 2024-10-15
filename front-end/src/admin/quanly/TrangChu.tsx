@@ -1,5 +1,3 @@
-import React from "react";
-
 const TrangChu = () => {
   return <div>TrangChu</div>;
 };

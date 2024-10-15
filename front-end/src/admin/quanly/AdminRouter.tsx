@@ -28,7 +28,7 @@ function Dashboard() {
           <Route path="/qlsp" element={<QLSP />} />
           <Route path="qlsp/add" element={<Form />} />
           <Route path="/qlsp/edit/:id" element={<Form />} />
-          <Route path="qltk" element={<QLTK />} />
+          <Route path="/qltk" element={<QLTK />} />
           <Route path="/qlbl" element={<QLBL />} />
           <Route path="/qldh" element={<QLDH />} />
           <Route path="/tk" element={<TK />} />
