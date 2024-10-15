@@ -1,7 +1,7 @@
 {
-  "products":[
+  "products": [
     {
-      "id":"PR1",
+      "id": "PR1",
       "title": "iphone",
       "price": 200,
       "imageURL": "https://cdn2.cellphones.com.vn/insecure/rs:fill:358:358/q:90/plain/https://cellphones.com.vn/media/catalog/product/i/p/iphone-15-pro-max_3.png",
@@ -10,7 +10,7 @@
       "description": "Điện thoại iphon đẹp v"
     },
     {
-      "id":"pr2",
+      "id": "pr2",
       "title": "iphone 16",
       "price": 200,
       "imageURL": "https://cdn2.cellphones.com.vn/insecure/rs:fill:358:358/q:90/plain/https://cellphones.com.vn/media/catalog/product/i/p/iphone-15-pro-max_3.png",
@@ -19,16 +19,22 @@
       "description": "Điện thoại iphon đẹp v"
     },
     {
-      "id":"pr31",
+      "id": "pr31",
       "title": "iphone 12",
       "price": 300,
       "imageURL": "https://cdn2.cellphones.com.vn/insecure/rs:fill:358:358/q:90/plain/https://cellphones.com.vn/media/catalog/product/i/p/iphone-15-pro-max_3.png",
       "categories": "string",
       "quantity": 15,
       "description": "Điện thoại iphon đẹp v"
+    },
+    {
+      "title": "iphone 12",
+      "price": 2000,
+      "quantity": 13,
+      "description": "không có j để nói cả ",
+      "id": "43BuALv"
     }
   ],
-  "categories":[
-  ],
-  "users":[]
+  "categories": [],
+  "users": []
 }

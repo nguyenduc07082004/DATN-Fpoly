@@ -1,10 +1,36 @@
 import "../.././App.scss";
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { ProdContext } from "../../api/contexts/ProductsContexts";
 import { Link } from "react-router-dom";
 
 const QLSP = () => {
   const { state, onDel } = useContext(ProdContext);
+  const [currentPage, setCurrentPage] = useState(1);
+  const productsPerPage = 3; // Số sản phẩm trên mỗi trang
+
+  // Tính toán số sản phẩm cần hiển thị trên trang hiện tại
+  const indexOfLastProduct = currentPage * productsPerPage;
+  const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
+  const currentProducts = state.products.slice(
+    indexOfFirstProduct,
+    indexOfLastProduct
+  );
+
+  // Tính toán tổng số trang
+  const totalPages = Math.ceil(state.products.length / productsPerPage);
+
+  const handleNextPage = () => {
+    if (currentPage < totalPages) {
+      setCurrentPage(currentPage + 1);
+    }
+  };
+
+  const handlePrevPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage(currentPage - 1);
+    }
+  };
+
   return (
     <div>
       <p className="m-3">
@@ -34,20 +60,26 @@ const QLSP = () => {
             <th className="col-1">STT</th>
             <th className="col-2">Tên sản phẩm</th>
             <th className="col-2">Giá(VND)</th>
+            <th className="col-2">Ảnh</th>
             <th className="col-1">Số lượng</th>
-            <th className="col-5">Mô tả</th>
+            <th className="col-3">Mô tả</th>
             <th className="col-1">Chức năng</th>
           </tr>
         </thead>
         <tbody className="text-center">
-          {state.products.map((i) => (
+          {currentProducts.map((i, index) => (
             <tr className="d-flex" key={i.id}>
-              <td className="col-1">{i.id}</td>
+              <td className="col-1">{indexOfFirstProduct + index + 1}</td>
               <td className="col-2">{i.title}</td>
               <td className="col-2">{i.price}</td>
+              <td className="col-2">
+                <img src={i.imageURL} alt="error" width="50%" />
+              </td>
               <td className="col-1">{i.quantity}</td>
-              <td className="col-5 text-truncate" style={{ maxWidth: "800px" }}>
-                {i.description}
+              <td className="col-3">
+                {i.description.length > 100
+                  ? i.description.substring(0, 100) + "..."
+                  : i.description}
               </td>
               <td className="col-1">
                 <button
@@ -69,9 +101,25 @@ const QLSP = () => {
           ))}
         </tbody>
       </table>
-      <div className="">
-        <button>Trang trước</button>
-        <button>Trang sau</button>
+
+      <div className="d-flex justify-content-center align-items-center my-4">
+        <button
+          disabled={currentPage === 1}
+          onClick={handlePrevPage}
+          className="btn btn-primary mx-2"
+        >
+          Trang trước
+        </button>
+        <p className="m-0 mx-2">
+          Trang {currentPage} / {totalPages}
+        </p>
+        <button
+          disabled={currentPage === totalPages}
+          onClick={handleNextPage}
+          className="btn btn-primary mx-2"
+        >
+          Trang sau
+        </button>
       </div>
     </div>
   );
