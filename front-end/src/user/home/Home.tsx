@@ -1,7 +1,9 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import './Home.css'; 
 import Logo from '../../assets/logoshop.jpg';
 import Banner from '../../assets/banner.jpg';
+import { Products } from '../../interfaces/Products';
 
 // Component Header (Thanh điều hướng)
 const Header = () => {
@@ -33,24 +35,17 @@ const Header = () => {
 const MainBanner = () => {
   return (
     <div className="banner">
-      <img src={Banner} alt="Banner"/>
+      <img src={Banner} alt="Banner" />
     </div>
   );
 };
 
 // Component ProductCard (Khung sản phẩm)
-interface Product {
-  id: number;
-  name: string;
-  price: string;
-  image: string;
-}
-
-const ProductCard = ({ product }: { product: Product }) => {
+const ProductCard = ({ product }: { product: Products }) => {
   return (
     <div className="product-card">
-      <img src={product.image} alt={product.name} />
-      <h3>{product.name}</h3>
+      <img src={product.imageURL} alt={product.title} />
+      <h3>{product.title}</h3>
       <p>{product.price} VNĐ</p>
       <button>Mua ngay</button>
     </div>
@@ -58,7 +53,7 @@ const ProductCard = ({ product }: { product: Product }) => {
 };
 
 // Component ProductList (Danh sách sản phẩm)
-const ProductList = ({ products }: { products: Product[] }) => {
+const ProductList = ({ products }: { products: Products[] }) => {
   return (
     <section className="product-list">
       <h2>Sản phẩm nổi bật</h2>
@@ -73,13 +68,18 @@ const ProductList = ({ products }: { products: Product[] }) => {
 
 // Component Deals (Khuyến mãi nổi bật)
 const Deals = () => {
-  // Dữ liệu mẫu cho sản phẩm (bạn có thể gọi API ở đây)
-  const products = [
-    { id: 1, name: 'Điện thoại A', price: '5.000.000', image: 'path/to/imageA.jpg' },
-    { id: 2, name: 'Điện thoại B', price: '7.000.000', image: 'path/to/imageB.jpg' },
-    { id: 3, name: 'Phụ kiện C', price: '500.000', image: 'path/to/imageC.jpg' },
-    // Thêm các sản phẩm khác
-  ];
+  const [products, setProducts] = useState<Products[]>([]);
+
+  useEffect(() => {
+    // Gọi API lấy dữ liệu từ db.json
+    axios.get('http://localhost:3000/products') // Đường dẫn tới db.json hoặc API backend
+      .then(response => {
+        setProducts(response.data); // Lưu trữ dữ liệu sản phẩm trong state
+      })
+      .catch(error => {
+        console.error("Đã xảy ra lỗi khi lấy dữ liệu sản phẩm: ", error);
+      });
+  }, []);
 
   return (
     <section className="deals">
@@ -89,7 +89,6 @@ const Deals = () => {
   );
 };
 
-
 // Trang chủ chính
 const Home = () => {
   return (
@@ -97,7 +96,6 @@ const Home = () => {
       <Header />
       <MainBanner />
       <Deals />
-
     </div>
   );
 };

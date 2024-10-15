@@ -1,24 +1,17 @@
 import React, { useEffect, useState } from 'react';
 import './ProductList.css'; // Đảm bảo bạn có tệp CSS cho phong cách
+import { Products } from '../../interfaces/Products';
 
-// Định nghĩa kiểu cho sản phẩm
-interface Product {
-  id: number;
-  name: string;
-  price: number;
-  imageUrl: string;
-  // Thêm các thuộc tính khác nếu cần
-}
 
 const ProductList = () => {
-  const [products, setProducts] = useState<Product[]>([]);
+  const [products, setProducts] = useState<Products[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const response = await fetch('https://api.example.com/products'); // Thay đổi URL API cho đúng
+        const response = await fetch('http://localhost:3000/products'); // Thay đổi URL API cho đúng
         if (!response.ok) {
           throw new Error('Failed to fetch products');
         }
@@ -46,8 +39,8 @@ const ProductList = () => {
     <div className="product-list">
       {products.map((product) => (
         <div key={product.id} className="product-item">
-          <img src={product.imageUrl} alt={product.name} />
-          <h3>{product.name}</h3>
+          <img src={product.imageURL} alt={product.title} />
+          <h3>{product.title}</h3>
           <p>{product.price.toLocaleString()} VND</p>
           <button>Thêm vào giỏ hàng</button>
         </div>
