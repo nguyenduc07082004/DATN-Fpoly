@@ -32,6 +32,9 @@ const UserSidebar: React.FC = () => {
           <li>
             <Link to="/profile">My Profile</Link>
           </li>
+          <li>
+            <Link to="/admin">My Profile</Link>
+          </li>
         </ul>
       </nav>
     </div>
