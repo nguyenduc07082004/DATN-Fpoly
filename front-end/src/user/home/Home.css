@@ -1,38 +1,118 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f4f4f4;
+}
+
+/* Header styles */
 .header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between; 
-    padding: 10px 20px; 
-    background-color: #f8f9fa; 
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); 
-    position: fixed; 
-    width: 100%; 
-    top: 0; 
-    z-index: 1000; 
-  }
-  
-  .logo {
-    flex: 1;
-  }
-  
-  .img-fluid {
-    max-width: 100%; 
-    height: auto; 
-  }
-  
-  .header-left {
-    display: flex;
-    align-items: center; 
-  }
-  
-  .MuiTooltip-tooltip {
-    background-color: #333; 
-    color: #fff; 
-    border-radius: 4px; 
-    padding: 5px; 
-  }
-  
-  .MuiAvatar-root {
-    cursor: pointer; 
-  }
-  
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #14759b;
+  padding: 20px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.logo img {
+  height: 50px; /* Adjust logo height as needed */
+}
+
+nav ul {
+  display: flex;
+  list-style: none;
+}
+
+nav ul li {
+  margin: 0 15px;
+  cursor: pointer;
+  font-size: 18px;
+}
+
+.user-options {
+  display: flex;
+  gap: 20px;
+}
+
+/* Main banner styles */
+.banner img {
+  width: 100%;
+  height: auto;
+}
+
+/* Deals section styles */
+.deals {
+  padding: 20px;
+  background-color: #fff;
+}
+
+.deals h2 {
+  margin-bottom: 20px;
+}
+
+/* Product list styles */
+.product-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.product-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 20px; /* Space between product cards */
+}
+
+.product-card {
+  background-color: #f9f9f9;
+  border-radius: 5px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  padding: 15px;
+  text-align: center;
+}
+
+.product-card img {
+  width: 100%;
+  height: auto;
+  border-radius: 5px;
+}
+
+.product-card h3 {
+  margin: 10px 0;
+  font-size: 18px;
+}
+
+.product-card p {
+  font-size: 16px;
+  color: #333;
+}
+
+.product-card button {
+  padding: 10px 15px;
+  background-color: #007bff; /* Bootstrap primary color */
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.product-card button:hover {
+  background-color: #0056b3; /* Darker shade on hover */
+}
+
+/* Footer styles */
+.footer {
+  text-align: center;
+  padding: 20px;
+  background-color: #fff;
+  box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.footer p {
+  margin: 0;
+  color: #666;
+}

@@ -1,0 +1,19 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh; /* Chiều cao tối thiểu là 100% chiều cao của viewport */
+  }
+  
+  .product-section {
+    flex: 1; /* Chiếm toàn bộ không gian có sẵn ở trên footer */
+  }
+  
+  .footer {
+    text-align: center;
+    padding: 20px;
+    background-color: #f1f1f1;
+    position: relative; /* Đảm bảo footer không bị đè lên */
+    bottom: 0;
+    width: 100%;
+  }
+  
