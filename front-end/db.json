@@ -8,7 +8,7 @@
       "price": 123,
       "discountPercentage": 18.14,
       "rating": 3.82,
-      "stock": 59,
+      "quantity": 59,
       "tags": [
         "beauty",
         "face powder"
@@ -68,7 +68,7 @@
       "price": 12,
       "discountPercentage": 19.03,
       "rating": 2.51,
-      "stock": 68,
+      "quantity": 68,
       "tags": [
         "beauty",
         "lipstick"
@@ -128,7 +128,7 @@
       "price": 8.99,
       "discountPercentage": 2.46,
       "rating": 3.91,
-      "stock": 71,
+      "quantity": 71,
       "tags": [
         "beauty",
         "nail polish"

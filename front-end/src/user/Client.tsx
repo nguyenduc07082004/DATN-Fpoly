@@ -1,11 +1,14 @@
 import React from "react";
 import Home from "./home/Home";
-import Sidebar from "./home/Sidebar";
+import { Route, Routes } from "react-router-dom";
+import HomePage from "./page/HomePage";
 
 const Client = () => {
   return <div>
     <Home/>
-    <Sidebar/>
+    <Routes>
+       <Route path="/" element={<HomePage/>} />
+    </Routes>
   </div>;
 };
 
