@@ -20,12 +20,12 @@
     },
     {
       "id": "pr31",
-      "title": "iphone 12",
+      "title": "Xiaomi Redmi Note 13",
       "price": 300,
       "imageURL": "https://cdn2.cellphones.com.vn/insecure/rs:fill:358:358/q:90/plain/https://cellphones.com.vn/media/catalog/product/i/p/iphone-15-pro-max_3.png",
-      "categories": "Phụ kiện máy tính bảng",
-      "quantity": 15,
-      "description": "Điện thoại iphon đẹp v"
+      "categories": "Điện thoại",
+      "quantity": 11,
+      "description": "Android 13\nChip xử lý (CPU):\nSnapdragon 685 8 nhân\nTốc độ CPU:\n2.8 GHz\nChip đồ họa (GPU):\nAdreno 610\nRAM:\n8 GB\nDung lượng lưu trữ:\n128 GB\nDung lượng còn lại (khả dụng) khoảng:\n104 GB\nThẻ nhớ:\nMicroSD, hỗ trợ tối đa 1 TB"
     },
     {
       "title": "iphone 12",
@@ -40,9 +40,18 @@
       "title": "twertwert",
       "price": 523,
       "quantity": 25345,
+      "imageURL": "https://cdn.tgdd.vn/Products/Images/42/309831/xiaomi-redmi-note-13-vang-1-1-750x500.jpg",
       "categories": "Laptop",
       "description": "245334525234afdsssssssssssssssssssssssssssssssssssssssssssssssss",
       "id": "cVkZboH"
+    },
+    {
+      "title": "realme C65s",
+      "price": 3000,
+      "quantity": 10,
+      "categories": "Điện thoại",
+      "description": "Android 14\nChip xử lý (CPU):\nUnisoc Tiger T612\nTốc độ CPU:\n1.8 GHz\nChip đồ họa (GPU):\nMali-G57\nRAM:\n6 GB\nDung lượng lưu trữ:\n128 GB\nDung lượng còn lại (khả dụng) khoảng:\n104 GB\nThẻ nhớ:\nMicroSD, hỗ trợ tối đa 2 TB",
+      "id": "vrphA7M"
     }
   ],
   "categories": [

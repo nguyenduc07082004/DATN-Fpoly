@@ -115,9 +115,10 @@ const Form = () => {
           <div className="form-group img">
             <label htmlFor="price">Ảnh sản phẩm</label>
             <input
+              placeholder="ảnh sản phẩm"
               className="form-control"
               style={{ width: "500px", height: "50px" }}
-              type="text"
+              type="file"
             />
           </div>
           <button
