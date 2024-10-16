@@ -2,21 +2,21 @@
   "products": [
     {
       "id": "PR1",
-      "title": "iphone",
-      "price": 200,
-      "imageURL": "https://cdn2.cellphones.com.vn/insecure/rs:fill:358:358/q:90/plain/https://cellphones.com.vn/media/catalog/product/i/p/iphone-15-pro-max_3.png",
-      "categories": "Điện thoại",
-      "quantity": 12,
-      "description": "Điện thoại iphon đẹp v"
-    },
-    {
-      "id": "pr2",
       "title": "iphone 16",
       "price": 200,
       "imageURL": "https://cdn2.cellphones.com.vn/insecure/rs:fill:358:358/q:90/plain/https://cellphones.com.vn/media/catalog/product/i/p/iphone-15-pro-max_3.png",
-      "categories": "Phụ kiện máy tính",
+      "categories": "Điện thoại",
+      "quantity": 11,
+      "description": "Hệ điều hàng:\niOS 18\nChip xử lý (CPU):\nApple A18 Pro 6 nhân\nTốc độ CPU:\nHãng không công bố\nChip đồ họa (GPU):\nApple GPU 6 nhân\nRAM:\n8 GB\nDung lượng lưu trữ:\n256 GB\nDung lượng còn lại (khả dụng) khoảng:\n241 GB"
+    },
+    {
+      "id": "pr2",
+      "title": "iPhone 15 ",
+      "price": 201,
+      "imageURL": "https://cdn2.cellphones.com.vn/insecure/rs:fill:358:358/q:90/plain/https://cellphones.com.vn/media/catalog/product/i/p/iphone-15-pro-max_3.png",
+      "categories": "Điện thoại",
       "quantity": 13,
-      "description": "Điện thoại iphon đẹp v"
+      "description": "Hệ điều hành:\niOS 17\nChip xử lý (CPU):\nApple A17 Pro 6 nhân\nTốc độ CPU:\n3.78 GHz\nChip đồ họa (GPU):\nApple GPU 6 nhân\nRAM:\n8 GB\nDung lượng lưu trữ:\n256 GB\nDung lượng còn lại (khả dụng) khoảng:\n241 GB"
     },
     {
       "id": "pr31",

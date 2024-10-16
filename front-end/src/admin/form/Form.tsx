@@ -42,7 +42,7 @@ const Form = () => {
         {id ? <h2>Cập nhật sản phẩm</h2> : <h2>Thêm mới sản phẩm</h2>}
       </p>
       <form onSubmit={handleSubmit((data) => onSubmitProduct({ ...data, id }))}>
-        <div className="d-flex m-5">
+        <div className="m-5 d-flex">
           <div className="form-group">
             <label htmlFor="title">Tên sản phẩm</label>
             <input
@@ -84,7 +84,7 @@ const Form = () => {
           </div>
         </div>
 
-        <div className="d-flex m-5">
+        <div className="m-5 d-flex">
           <div className="form-group price">
             <label htmlFor="price">Giá sản phẩm</label>
             <input
@@ -111,17 +111,17 @@ const Form = () => {
           </div>
         </div>
 
-        <div className="d-flex m-5">
+        <div className="m-5 d-flex">
           <div className="form-group img">
             <label htmlFor="price">Ảnh sản phẩm</label>
             <input
               className="form-control"
               style={{ width: "500px", height: "50px" }}
-              type="file"
+              type="text"
             />
           </div>
           <button
-            className="btn1 btn"
+            className="btn btn1"
             style={{
               width: "500px",
               height: "50px",
