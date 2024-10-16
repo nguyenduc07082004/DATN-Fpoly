@@ -5,7 +5,7 @@
       "title": "iphone",
       "price": 200,
       "imageURL": "https://cdn2.cellphones.com.vn/insecure/rs:fill:358:358/q:90/plain/https://cellphones.com.vn/media/catalog/product/i/p/iphone-15-pro-max_3.png",
-      "categories": "string",
+      "categories": "Điện thoại",
       "quantity": 12,
       "description": "Điện thoại iphon đẹp v"
     },
@@ -14,7 +14,7 @@
       "title": "iphone 16",
       "price": 200,
       "imageURL": "https://cdn2.cellphones.com.vn/insecure/rs:fill:358:358/q:90/plain/https://cellphones.com.vn/media/catalog/product/i/p/iphone-15-pro-max_3.png",
-      "categories": "string",
+      "categories": "Phụ kiện máy tính",
       "quantity": 13,
       "description": "Điện thoại iphon đẹp v"
     },
@@ -23,7 +23,7 @@
       "title": "iphone 12",
       "price": 300,
       "imageURL": "https://cdn2.cellphones.com.vn/insecure/rs:fill:358:358/q:90/plain/https://cellphones.com.vn/media/catalog/product/i/p/iphone-15-pro-max_3.png",
-      "categories": "string",
+      "categories": "Phụ kiện máy tính bảng",
       "quantity": 15,
       "description": "Điện thoại iphon đẹp v"
     },
@@ -31,10 +31,49 @@
       "title": "iphone 12",
       "price": 2000,
       "quantity": 13,
+      "imageURL": "https://cdn2.cellphones.com.vn/insecure/rs:fill:358:358/q:90/plain/https://cellphones.com.vn/media/catalog/product/i/p/iphone-15-pro-max_3.png",
+      "categories": "Điện thoại",
       "description": "không có j để nói cả ",
       "id": "43BuALv"
+    },
+    {
+      "title": "twertwert",
+      "price": 523,
+      "quantity": 25345,
+      "categories": "Laptop",
+      "description": "245334525234afdsssssssssssssssssssssssssssssssssssssssssssssssss",
+      "id": "cVkZboH"
     }
   ],
-  "categories": [],
+  "categories": [
+    {
+      "id": "1",
+      "name": "Điện thoại"
+    },
+    {
+      "id": "2",
+      "name": "Máy tính bảng"
+    },
+    {
+      "id": "3",
+      "name": "Laptop"
+    },
+    {
+      "id": "4",
+      "name": "Phụ kiện máy tính"
+    },
+    {
+      "id": "5",
+      "name": "Phụ kiện laptop"
+    },
+    {
+      "id": "6",
+      "name": "Phụ kiện điện thoại"
+    },
+    {
+      "id": "7",
+      "name": "Phụ kiện máy tính bảng"
+    }
+  ],
   "users": []
 }

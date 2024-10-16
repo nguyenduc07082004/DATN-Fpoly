@@ -19,10 +19,12 @@
 .action-edit {
   margin-left: 2px;
   background-color: #fe5757;
+  width: 40%;
 }
 .action-del {
   background-color: #755cff;
   color: #fff;
+  width: 40%;
 }
 .quantity,
 .desc,
@@ -41,4 +43,3 @@ textarea {
 h5 {
   margin-top: 5px;
 }
-

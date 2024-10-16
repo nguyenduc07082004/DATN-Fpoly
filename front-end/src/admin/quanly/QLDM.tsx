@@ -1,11 +1,37 @@
 import "../.././App.scss";
-import { useContext } from "react";
+import { useContext, useState } from "react";
 
 import { Link } from "react-router-dom";
 import { CategoryContext } from "../../api/contexts/CategoryContext";
 
 const QLDM = () => {
-  const { state, onDel } = useContext(CategoryContext);
+  const { data, onDel } = useContext(CategoryContext);
+
+  const [currentPage, setCurrentPage] = useState(1);
+  const catePerPage = 5; // Số sản phẩm trên mỗi trang
+
+  // Tính toán số sản phẩm cần hiển thị trên trang hiện tại
+  const indexOfLastCate = currentPage * catePerPage;
+  const indexOfFirstCate = indexOfLastCate - catePerPage;
+  const currentProducts = data.category.slice(
+    indexOfFirstCate,
+    indexOfLastCate
+  );
+
+  // Tính toán tổng số trang
+  const totalPages = Math.ceil(data.category.length / catePerPage);
+
+  const handleNextPage = () => {
+    if (currentPage < totalPages) {
+      setCurrentPage(currentPage + 1);
+    }
+  };
+
+  const handlePrevPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage(currentPage - 1);
+    }
+  };
   return (
     <div>
       <p className="m-3">
@@ -39,7 +65,7 @@ const QLDM = () => {
           </tr>
         </thead>
         <tbody className="text-center">
-          {state.category.map((i) => (
+          {currentProducts.map((i) => (
             <tr className="d-flex" key={i.id}>
               <td className="col-1">{i.id}</td>
               <td className="col-3">{i.name}</td>
@@ -66,9 +92,24 @@ const QLDM = () => {
           ))}
         </tbody>
       </table>
-      <div className="">
-        <button>Trang trước</button>
-        <button>Trang sau</button>
+      <div className="d-flex justify-content-center align-items-center my-4">
+        <button
+          disabled={currentPage === 1}
+          onClick={handlePrevPage}
+          className="btn btn-primary mx-2"
+        >
+          Trang trước
+        </button>
+        <p className="m-0 mx-2">
+          Trang {currentPage} / {totalPages}
+        </p>
+        <button
+          disabled={currentPage === totalPages}
+          onClick={handleNextPage}
+          className="btn btn-primary mx-2"
+        >
+          Trang sau
+        </button>
       </div>
     </div>
   );

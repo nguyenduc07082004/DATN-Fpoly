@@ -6,16 +6,19 @@ import ins from "../../api";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { ProdContext } from "../../api/contexts/ProductsContexts";
+import { CategoryContext } from "../../api/contexts/CategoryContext";
 
 const productSchema = z.object({
   title: z.string().min(6, { message: "Tên sản phẩm phải lớn hơn 6 ký tự" }),
   price: z.number().min(0, { message: "Giá sản phẩm phải lớn hơn 0" }),
   quantity: z.number().min(0, { message: "Số lượng sản phẩm phải lớn hơn 0" }),
+  categories: z.string(),
   description: z.string().optional(),
 });
 
 const Form = () => {
   const { onSubmitProduct } = useContext(ProdContext);
+  const { data } = useContext(CategoryContext);
   const { id } = useParams();
   const {
     register,
@@ -53,15 +56,31 @@ const Form = () => {
           </div>
 
           <div className="form-group quantity">
-            <label htmlFor="price">Số lượng sản phẩm</label>
+            <label htmlFor="price">Số lượng</label>
             <input
               className="form-control"
               type="number"
               placeholder="Số lượng sản phẩm"
-              style={{ width: "500px", height: "50px" }}
+              style={{ width: "200px", height: "50px" }}
               {...register("quantity", { required: true, valueAsNumber: true })}
             />
             {errors.quantity && <span>{errors.quantity.message}</span>}
+          </div>
+
+          <div className="form-group quantity">
+            <label htmlFor="categories">Danh mục</label>
+            <select
+              className="form-control"
+              style={{ width: "200px", height: "50px" }}
+              {...register("categories", {
+                required: true,
+              })}
+            >
+              {data.category.map((i) => (
+                <option value={i.name}>{i.name}</option>
+              ))}
+            </select>
+            {errors.categories && <span>{errors.categories.message}</span>}
           </div>
         </div>
 

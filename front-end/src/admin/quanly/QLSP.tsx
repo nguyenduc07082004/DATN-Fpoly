@@ -6,7 +6,7 @@ import { Link } from "react-router-dom";
 const QLSP = () => {
   const { state, onDel } = useContext(ProdContext);
   const [currentPage, setCurrentPage] = useState(1);
-  const productsPerPage = 3; // Số sản phẩm trên mỗi trang
+  const productsPerPage = 5; // Số sản phẩm trên mỗi trang
 
   // Tính toán số sản phẩm cần hiển thị trên trang hiện tại
   const indexOfLastProduct = currentPage * productsPerPage;
@@ -49,7 +49,7 @@ const QLSP = () => {
         </div>
         <div className="search">
           Search
-          <input className="rounded" type="text" placeholder="...Tìm kiếm" />
+          <input className="rounded" type="text" />
         </div>
       </div>
       <hr className="tbl" />
@@ -59,11 +59,12 @@ const QLSP = () => {
           <tr className="d-flex">
             <th className="col-1">STT</th>
             <th className="col-2">Tên sản phẩm</th>
-            <th className="col-2">Giá(VND)</th>
-            <th className="col-2">Ảnh</th>
+            <th className="col-1">Giá(VND)</th>
+            <th className="col-1">Ảnh</th>
             <th className="col-1">Số lượng</th>
-            <th className="col-3">Mô tả</th>
-            <th className="col-1">Chức năng</th>
+            <th className="col-2">Loại</th>
+            <th className="col-2">Mô tả</th>
+            <th className="col-2">Chức năng</th>
           </tr>
         </thead>
         <tbody className="text-center">
@@ -71,17 +72,16 @@ const QLSP = () => {
             <tr className="d-flex" key={i.id}>
               <td className="col-1">{indexOfFirstProduct + index + 1}</td>
               <td className="col-2">{i.title}</td>
-              <td className="col-2">{i.price}</td>
-              <td className="col-2">
+              <td className="col-1">{i.price}</td>
+              <td className="col-1">
                 <img src={i.imageURL} alt="error" width="50%" />
               </td>
               <td className="col-1">{i.quantity}</td>
-              <td className="col-3">
-                {i.description.length > 100
-                  ? i.description.substring(0, 100) + "..."
-                  : i.description}
+              <td className="col-2">{i.categories}</td>
+              <td className="col-2 text-truncate" style={{ maxWidth: "400px" }}>
+                {i.description}
               </td>
-              <td className="col-1">
+              <td className="col-2">
                 <button
                   className="action-del rounded"
                   onClick={() => onDel(String(i.id))}

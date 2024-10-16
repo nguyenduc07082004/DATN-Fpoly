@@ -5,7 +5,7 @@ import { Category } from "../../interfaces/Category";
 import categoryReducer from "../reducers/CategoryReducers";
 
 export type CateContextType = {
-  state: { category: Category[] };
+  data: { category: Category[] };
   onDel: (id: string) => void;
   onSubmitCategory: (data: Category) => void;
   dispatch: React.Dispatch<any>;
@@ -14,7 +14,7 @@ export type CateContextType = {
 export const CategoryContext = createContext({} as CateContextType);
 
 export const CateProvider = ({ children }: { children: React.ReactNode }) => {
-  const [state, dispatch] = useReducer(categoryReducer, { category: [] });
+  const [data, dispatch] = useReducer(categoryReducer, { category: [] });
   const fetchProducts = async () => {
     const { data } = await ins.get("/categories");
     dispatch({ type: "LIST_CATEGORY", payload: data });
@@ -55,7 +55,7 @@ export const CateProvider = ({ children }: { children: React.ReactNode }) => {
   };
   return (
     <CategoryContext.Provider
-      value={{ state, dispatch, onDel, onSubmitCategory }}
+      value={{ data, dispatch, onDel, onSubmitCategory }}
     >
       {children}
     </CategoryContext.Provider>
