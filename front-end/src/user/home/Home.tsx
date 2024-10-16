@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import './Home.css'; 
-import Logo from '../../assets/logoshop.jpg';
-import Banner from '../../assets/banner.jpg';
-import { Products } from '../../interfaces/Products';
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+import "./Home.css";
+import Logo from "../../assets/logoshop.jpg";
+import Banner from "../../assets/banner.jpg";
+import { Products } from "../../interfaces/Products";
+import { Link } from "react-router-dom";
 
 // Component Header (Thanh điều hướng)
 const Header = () => {
@@ -47,7 +48,14 @@ const ProductCard = ({ product }: { product: Products }) => {
       <img src={product.imageURL} alt={product.title} />
       <h3>{product.title}</h3>
       <p>{product.price} VNĐ</p>
-      <button>Mua ngay</button>
+      <button>
+        <Link
+          className="text-decoration-none text-white"
+          to={`/products/${product.id}`}
+        >
+          Mua ngay
+        </Link>{" "}
+      </button>
     </div>
   );
 };
@@ -58,7 +66,7 @@ const ProductList = ({ products }: { products: Products[] }) => {
     <section className="product-list">
       <h2>Sản phẩm nổi bật</h2>
       <div className="product-grid">
-        {products.map(product => (
+        {products.map((product) => (
           <ProductCard key={product.id} product={product} />
         ))}
       </div>
@@ -72,11 +80,12 @@ const Deals = () => {
 
   useEffect(() => {
     // Gọi API lấy dữ liệu từ db.json
-    axios.get('http://localhost:3000/products') // Đường dẫn tới db.json hoặc API backend
-      .then(response => {
+    axios
+      .get("http://localhost:3000/products") // Đường dẫn tới db.json hoặc API backend
+      .then((response) => {
         setProducts(response.data); // Lưu trữ dữ liệu sản phẩm trong state
       })
-      .catch(error => {
+      .catch((error) => {
         console.error("Đã xảy ra lỗi khi lấy dữ liệu sản phẩm: ", error);
       });
   }, []);
