@@ -4,41 +4,17 @@ import { ProdContext } from "../../api/contexts/ProductsContexts";
 import { Link } from "react-router-dom";
 
 const QLSP = () => {
-  const { state, onDel } = useContext(ProdContext);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [searchQuery, setSearchQuery] = useState("");
-  const productsPerPage = 5; // Số sản phẩm trên mỗi trang
-
-  const handleSearch = (event: any) => {
-    setSearchQuery(event.target.value);
-    setCurrentPage(1); // Reset to first page on new search
-  };
-  const filteredProducts = state.products.filter((product) =>
-    product.title.toLowerCase().includes(searchQuery.toLowerCase())
-  );
-
-  // Tính toán số sản phẩm cần hiển thị trên trang hiện tại
-  const indexOfLastProduct = currentPage * productsPerPage;
-  const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
-  const currentProducts = filteredProducts.slice(
+  const {
+    onDel,
+    handleNextPage,
+    handlePrevPage,
+    handleSearch,
+    currentProducts,
+    currentPage,
+    totalPages,
     indexOfFirstProduct,
-    indexOfLastProduct
-  );
-
-  // Tính toán tổng số trang
-  const totalPages = Math.ceil(filteredProducts.length / productsPerPage);
-
-  const handleNextPage = () => {
-    if (currentPage < totalPages) {
-      setCurrentPage(currentPage + 1);
-    }
-  };
-
-  const handlePrevPage = () => {
-    if (currentPage > 1) {
-      setCurrentPage(currentPage - 1);
-    }
-  };
+    searchQuery,
+  } = useContext(ProdContext);
 
   return (
     <div>
