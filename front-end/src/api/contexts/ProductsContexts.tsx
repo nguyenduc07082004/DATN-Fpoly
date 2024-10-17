@@ -1,4 +1,4 @@
-import { createContext, useEffect, useReducer } from "react";
+import { createContext, useEffect, useReducer, useState } from "react";
 
 import productsReducer from "../reducers/ProductsReducers";
 import ins from "..";
@@ -22,6 +22,7 @@ export const ProdProvider = ({ children }: { children: React.ReactNode }) => {
   useEffect(() => {
     fetchProducts();
   }, []);
+
   const onDel = (id: string) => {
     (async () => {
       if (confirm("SURE?")) {

@@ -1,23 +1,32 @@
 import "../.././App.scss";
-import { useContext, useState } from "react";
+import { useContext, useEffect, useMemo, useState } from "react";
 import { ProdContext } from "../../api/contexts/ProductsContexts";
 import { Link } from "react-router-dom";
 
 const QLSP = () => {
   const { state, onDel } = useContext(ProdContext);
   const [currentPage, setCurrentPage] = useState(1);
+  const [searchQuery, setSearchQuery] = useState("");
   const productsPerPage = 5; // Số sản phẩm trên mỗi trang
+
+  const handleSearch = (event: any) => {
+    setSearchQuery(event.target.value);
+    setCurrentPage(1); // Reset to first page on new search
+  };
+  const filteredProducts = state.products.filter((product) =>
+    product.title.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   // Tính toán số sản phẩm cần hiển thị trên trang hiện tại
   const indexOfLastProduct = currentPage * productsPerPage;
   const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
-  const currentProducts = state.products.slice(
+  const currentProducts = filteredProducts.slice(
     indexOfFirstProduct,
     indexOfLastProduct
   );
 
   // Tính toán tổng số trang
-  const totalPages = Math.ceil(state.products.length / productsPerPage);
+  const totalPages = Math.ceil(filteredProducts.length / productsPerPage);
 
   const handleNextPage = () => {
     if (currentPage < totalPages) {
@@ -49,7 +58,12 @@ const QLSP = () => {
         </div>
         <div className="search">
           Search
-          <input className="rounded" type="text" />
+          <input
+            className="rounded"
+            type="text"
+            value={searchQuery}
+            onChange={handleSearch}
+          />
         </div>
       </div>
       <hr className="tbl" />
