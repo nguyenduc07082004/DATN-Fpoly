@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import "./Home.css";
+import "../css/Home.css";
 import Logo from "../../assets/logoshop.jpg";
 import Banner from "../../assets/banner.jpg";
 import { Products } from "../../interfaces/Products";

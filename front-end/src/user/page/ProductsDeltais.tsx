@@ -83,7 +83,7 @@ const ProductDetails = () => {
             {/* Main Image */}
             <Box
               component="img"
-              src={mainImage}
+              src={mainImage || ""}
               alt={product.title}
               sx={{
                 width: "100%",
