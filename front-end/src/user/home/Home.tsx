@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import { Link } from "react-router-dom";
 import "./Home.css";
 import Logo from "../../assets/logoshop.jpg";
 import Banner from "../../assets/banner.jpg";
 import { Products } from "../../interfaces/Products";
-import { Link } from "react-router-dom";
 
 // Component Header (Thanh điều hướng)
 const Header = () => {
@@ -25,8 +25,13 @@ const Header = () => {
         </ul>
       </nav>
       <div className="user-options">
-        <span>Đăng nhập</span>
-        <span>Giỏ hàng</span>
+        {/* Sử dụng Link để chuyển đến trang đăng nhập và giỏ hàng */}
+        <Link to="/login" className="nav-link">
+          Đăng nhập
+        </Link>
+        <Link to="/cart" className="nav-link">
+          Giỏ hàng
+        </Link>
       </div>
     </header>
   );
@@ -98,6 +103,15 @@ const Deals = () => {
   );
 };
 
+// Component Footer (Phần chân trang)
+const Footer = () => {
+  return (
+    <footer className="footer">
+      <p>&copy; 2024 Cửa hàng của tôi. Đã đăng ký bản quyền.</p>
+    </footer>
+  );
+};
+
 // Trang chủ chính
 const Home = () => {
   return (
@@ -105,6 +119,7 @@ const Home = () => {
       <Header />
       <MainBanner />
       <Deals />
+      <Footer />
     </div>
   );
 };
