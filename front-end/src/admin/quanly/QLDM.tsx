@@ -5,33 +5,18 @@ import { Link } from "react-router-dom";
 import { CategoryContext } from "../../api/contexts/CategoryContext";
 
 const QLDM = () => {
-  const { data, onDel } = useContext(CategoryContext);
+  const {
+    onDel,
+    handleNextPage,
+    handlePrevPage,
+    handleSearch,
+    currentProducts,
+    currentPage,
+    totalPages,
+    indexOfFirstProduct,
+    searchQuery,
+  } = useContext(CategoryContext);
 
-  const [currentPage, setCurrentPage] = useState(1);
-  const catePerPage = 5; // Số sản phẩm trên mỗi trang
-
-  // Tính toán số sản phẩm cần hiển thị trên trang hiện tại
-  const indexOfLastCate = currentPage * catePerPage;
-  const indexOfFirstCate = indexOfLastCate - catePerPage;
-  const currentProducts = data.category.slice(
-    indexOfFirstCate,
-    indexOfLastCate
-  );
-
-  // Tính toán tổng số trang
-  const totalPages = Math.ceil(data.category.length / catePerPage);
-
-  const handleNextPage = () => {
-    if (currentPage < totalPages) {
-      setCurrentPage(currentPage + 1);
-    }
-  };
-
-  const handlePrevPage = () => {
-    if (currentPage > 1) {
-      setCurrentPage(currentPage - 1);
-    }
-  };
   return (
     <div>
       <p className="m-3">
@@ -50,7 +35,12 @@ const QLDM = () => {
         </div>
         <div className="search">
           Search
-          <input className="rounded" type="text" />
+          <input
+            className="rounded"
+            type="text"
+            value={searchQuery}
+            onChange={handleSearch}
+          />
         </div>
       </div>
       <hr className="tbl" />

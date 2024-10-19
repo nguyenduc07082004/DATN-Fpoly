@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import './ProductList.css'; // Đảm bảo bạn có tệp CSS cho phong cách
+import '../css/ProductList.css'; // Đảm bảo bạn có tệp CSS cho phong cách
 import { Products } from '../../interfaces/Products';
 
 
