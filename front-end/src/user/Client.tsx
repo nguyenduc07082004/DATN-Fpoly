@@ -1,8 +1,8 @@
-import Home from "./home/Home";
+import Home from "./home/Layout";
 import { Route, Routes } from "react-router-dom";
 import ProductPage from "./page/ProductPage";
 import ProdfuctList from "./ProductList/ProductList";
-import ProductsDeltais from "./page/ProductsDeltais";
+import ProductsDeltais from "./page/ProductsDetails";
 
 const Client = () => {
   return <div>

@@ -2,8 +2,8 @@ import { Route, Routes } from "react-router-dom";
 import "./App.scss";
 import Client from "./user/Client";
 import Dashboard from "./admin/quanly/AdminRouter";
-import Home from "./user/home/Home";
-import ProductsDeltais from "./user/page/ProductsDeltais"; // Thêm import cho trang chi tiết sản phẩm
+import Home from "./user/home/Home"; // Ensure the correct path or filename is used
+import ProductsDetails from "./user/page/ProductsDetails"; // Sửa tên cho đúng chính tả
 
 function App() {
   return (
@@ -19,7 +19,7 @@ function App() {
         <Route path="/admin/*" element={<Dashboard />} />
 
         {/* Route cho chi tiết sản phẩm */}
-        <Route path="/products/:productId" element={<ProductsDeltais />} />
+        <Route path="/products/:productId" element={<ProductsDetails />} />
       </Routes>
     </>
   );
