@@ -88,8 +88,8 @@ const ProductDetails = () => {
 
   const additionalImages = [
     product.imageURL,
-    "/path/to/other-image1.jpg",
-    "/path/to/other-image2.jpg",
+    "https://cdn2.cellphones.com.vn/insecure/rs:fill:358:358/q:90/plain/https://cellphones.com.vn/media/catalog/product/i/p/iphone-15-pro-max_3.png",
+    "https://cdn2.cellphones.com.vn/insecure/rs:fill:358:358/q:90/plain/https://cellphones.com.vn/media/catalog/product/i/p/iphone-15-pro-max_3.png",
   ];
 
   return (
