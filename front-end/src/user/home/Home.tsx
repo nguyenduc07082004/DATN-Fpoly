@@ -1,13 +1,17 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import axios from "axios";
 
 import { Link } from "react-router-dom";
 import "./Home.css";
 import "../css/Home.css";
 
+
 import Logo from "../../assets/logoshop.jpg";
+
+
 import Banner from "../../assets/banner.jpg";
 import { Products } from "../../interfaces/Products";
+
 
 // Component Header (Thanh điều hướng)
 const Header = () => {
@@ -40,6 +44,8 @@ const Header = () => {
   );
 };
 
+
+
 // Component Banner (Phần banner chính)
 const MainBanner = () => {
   return (
@@ -62,7 +68,7 @@ const ProductCard = ({ product }: { product: Products }) => {
           to={`/products/${product.id}`}
         >
           Mua ngay
-        </Link>{" "}
+        </Link>
       </button>
     </div>
   );
@@ -87,11 +93,10 @@ const Deals = () => {
   const [products, setProducts] = useState<Products[]>([]);
 
   useEffect(() => {
-    // Gọi API lấy dữ liệu từ db.json
     axios
-      .get("http://localhost:3000/products") // Đường dẫn tới db.json hoặc API backend
+      .get("http://localhost:3000/products")
       .then((response) => {
-        setProducts(response.data); // Lưu trữ dữ liệu sản phẩm trong state
+        setProducts(response.data);
       })
       .catch((error) => {
         console.error("Đã xảy ra lỗi khi lấy dữ liệu sản phẩm: ", error);
@@ -119,7 +124,6 @@ const Footer = () => {
 const Home = () => {
   return (
     <div>
-      <Header />
       <MainBanner />
       <Deals />
       <Footer />
