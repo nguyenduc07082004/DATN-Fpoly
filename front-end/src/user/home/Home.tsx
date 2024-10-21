@@ -1,11 +1,9 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import axios from "axios";
 import "../css/Home.css";
 import Banner from "../../assets/banner.jpg";
 import { Products } from "../../interfaces/Products";
 import { Link } from "react-router-dom";
-import Header from "./Header"; // Import Header
-import Footer from "./Footer"; // Import Footer
 
 // Component Banner (Phần banner chính)
 const MainBanner = () => {
@@ -76,10 +74,8 @@ const Deals = () => {
 const Home = () => {
   return (
     <div>
-      <Header />
       <MainBanner />
       <Deals />
-      <Footer />
     </div>
   );
 };
