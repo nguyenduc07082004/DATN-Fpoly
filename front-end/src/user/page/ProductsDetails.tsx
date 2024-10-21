@@ -32,24 +32,6 @@ const Header = () => {
   );
 };
 
-// Component Footer
-const Footer = () => {
-  return (
-    <footer className="footer">
-      <div className="footer-content">
-        <p>© 2024 Your Shop. All rights reserved.</p>
-        <nav>
-          <ul>
-            <li>About Us</li>
-            <li>Contact</li>
-            <li>Privacy Policy</li>
-          </ul>
-        </nav>
-      </div>
-    </footer>
-  );
-};
-
 // Main ProductDetails Component
 const ProductDetails = () => {
   const { productId } = useParams<{ productId: string }>();
@@ -57,19 +39,34 @@ const ProductDetails = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [mainImage, setMainImage] = useState<string | null>(null);
+  const [suggestedProducts, setSuggestedProducts] = useState<Products[]>([]);
 
   useEffect(() => {
+    // Fetch the current product
     axios
       .get(`http://localhost:3000/products/${productId}`)
       .then((response) => {
         setProduct(response.data);
-        setMainImage(response.data.imageURL); // Set the main image as the default product image
+        setMainImage(response.data.imageURL);
         setLoading(false);
+
+        // Scroll to the top of the page when product details change
+        window.scrollTo(0, 0);
       })
       .catch((error) => {
         console.error("Error fetching product details: ", error);
         setError("Lỗi khi tải dữ liệu sản phẩm!");
         setLoading(false);
+      });
+
+    // Fetch suggested products
+    axios
+      .get(`http://localhost:3000/products`)
+      .then((response) => {
+        setSuggestedProducts(response.data.filter((prod: Products) => prod.id !== productId));
+      })
+      .catch((error) => {
+        console.error("Error fetching suggested products: ", error);
       });
   }, [productId]);
 
@@ -90,7 +87,7 @@ const ProductDetails = () => {
   }
 
   const additionalImages = [
-    product.imageURL, // Main image
+    product.imageURL,
     "/path/to/other-image1.jpg",
     "/path/to/other-image2.jpg",
   ];
@@ -225,9 +222,52 @@ const ProductDetails = () => {
               </Button>
             </Grid>
           </Grid>
+
+          {/* Suggested Products Section */}
+          <Box sx={{ mt: 5 }}>
+            <Typography variant="h5" sx={{ fontWeight: "bold", mb: 3 }}>
+              Sản phẩm gợi ý
+            </Typography>
+            <Grid container spacing={4}>
+              {suggestedProducts.map((suggestedProduct) => (
+                <Grid item xs={12} sm={6} md={3} key={suggestedProduct.id}>
+                  <Box
+                    component={Link}
+                    to={`/products/${suggestedProduct.id}`}
+                    sx={{
+                      textDecoration: "none",
+                      color: "inherit",
+                      display: "block",
+                      borderRadius: 2,
+                      boxShadow: 3,
+                      p: 2,
+                    }}
+                  >
+                    <Box
+                      component="img"
+                      src={suggestedProduct.imageURL}
+                      alt={suggestedProduct.title}
+                      sx={{
+                        width: "100%",
+                        height: "auto",
+                        mb: 2,
+                        borderRadius: 2,
+                        boxShadow: 1,
+                      }}
+                    />
+                    <Typography variant="body1" sx={{ fontWeight: "bold" }}>
+                      {suggestedProduct.title}
+                    </Typography>
+                    <Typography variant="body2" color="text.secondary">
+                      {suggestedProduct.price.toLocaleString("vi-VN")} VNĐ
+                    </Typography>
+                  </Box>
+                </Grid>
+              ))}
+            </Grid>
+          </Box>
         </Box>
       </Container>
-    
     </>
   );
 };
