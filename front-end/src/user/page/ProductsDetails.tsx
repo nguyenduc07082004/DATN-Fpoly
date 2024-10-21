@@ -97,7 +97,7 @@ const ProductDetails = () => {
 
   return (
     <>
-      <Header /> {/* Include Header */}
+      {/* Include Header */}
       <Container maxWidth="lg" sx={{ mt: 4 }}>
         <Box sx={{ mb: 2 }}>
           <Button
@@ -227,7 +227,7 @@ const ProductDetails = () => {
           </Grid>
         </Box>
       </Container>
-      <Footer /> {/* Include Footer */}
+    
     </>
   );
 };

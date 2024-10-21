@@ -1,50 +1,9 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
-
-import { Link } from "react-router-dom";
-import "./Home.css";
 import "../css/Home.css";
-
-
-import Logo from "../../assets/logoshop.jpg";
-
-
 import Banner from "../../assets/banner.jpg";
 import { Products } from "../../interfaces/Products";
-
-
-// Component Header (Thanh điều hướng)
-const Header = () => {
-  return (
-    <header className="header">
-      <div className="logo">
-        <img src={Logo} alt="logo" />
-      </div>
-      <nav>
-        <ul>
-          <li>Điện thoại</li>
-          <li>Laptop</li>
-          <li>Phụ kiện</li>
-          <li>Smartwatch</li>
-          <li>Đồng hồ</li>
-          <li>Máy cũ</li>
-          <li>Dịch vụ</li>
-        </ul>
-      </nav>
-      <div className="user-options">
-        {/* Sử dụng Link để chuyển đến trang đăng nhập và giỏ hàng */}
-        <Link to="/login" className="nav-link">
-          Đăng nhập
-        </Link>
-        <Link to="/cart" className="nav-link">
-          Giỏ hàng
-        </Link>
-      </div>
-    </header>
-  );
-};
-
-
+import { Link } from "react-router-dom";
 
 // Component Banner (Phần banner chính)
 const MainBanner = () => {
@@ -111,22 +70,12 @@ const Deals = () => {
   );
 };
 
-// Component Footer (Phần chân trang)
-const Footer = () => {
-  return (
-    <footer className="footer">
-      <p>&copy; 2024 Cửa hàng của tôi. Đã đăng ký bản quyền.</p>
-    </footer>
-  );
-};
-
 // Trang chủ chính
 const Home = () => {
   return (
     <div>
       <MainBanner />
       <Deals />
-      <Footer />
     </div>
   );
 };
