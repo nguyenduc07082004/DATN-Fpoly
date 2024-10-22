@@ -1,8 +1,8 @@
 const express = require("express");
-const productsRouter= require("./ProductsRouter.js");
-const categoryRouter=require("./CategoryRouter.js");
-const userRouter=require("./UserRouter");
-const loginRouter=require("./Login");
+const productsRouter= require("../routes/ProductsRouter.js");
+const categoryRouter=require("../routes/CategoryRouter.js");
+const userRouter=require("../routes/UserRouter.js");
+const loginRouter=require("../routes/Login.js");
 
 
 const authRouter=(app)=>{
