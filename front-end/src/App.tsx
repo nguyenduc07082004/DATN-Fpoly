@@ -3,15 +3,14 @@ import "./App.scss";
 import Client from "./user/Client";
 import Dashboard from "./admin/quanly/AdminRouter";
 
-
 function App() {
   return (
     <>
-      
       <Routes>
-        {/* Route cho phần admin */}
+        {/* Route tổng */}
+        <Route path="/" element={<Client />} />
         <Route path="/admin/*" element={<Dashboard />} />
-        <Route path="/*" element={<Client/>}/>
+        <Route path="/*" element={<Client />} />
       </Routes>
     </>
   );

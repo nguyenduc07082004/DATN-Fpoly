@@ -1,28 +1,27 @@
 import { createContext, useEffect, useReducer, useState } from "react";
 
-import productsReducer from "../reducers/ProductsReducers";
 import ins from "..";
-import { Products } from "../../interfaces/Products";
+import UserReducer from "../reducers/UserReducer";
+import { User } from "../../interfaces/User";
 
 export type ProdContextType = {
   onDel: (id: string) => void;
-  onSubmitProduct: (data: Products) => void;
   dispatch: React.Dispatch<any>;
   handleNextPage: () => void;
   handlePrevPage: () => void;
   handleSearch: (event: any) => void;
-  state: { products: Products[] };
-  currentProducts: Products[];
+  state: { user: User[] };
+  currentProducts: User[];
   currentPage: number;
   totalPages: number;
   indexOfFirstProduct: number;
   searchQuery: string;
 };
 
-export const ProdContext = createContext({} as ProdContextType);
+export const UserContext = createContext({} as ProdContextType);
 
-export const ProdProvider = ({ children }: { children: React.ReactNode }) => {
-  const [state, dispatch] = useReducer(productsReducer, { products: [] });
+export const UserProvider = ({ children }: { children: React.ReactNode }) => {
+  const [state, dispatch] = useReducer(UserReducer, { user: [] });
   const [currentPage, setCurrentPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState("");
   const productsPerPage = 5; // Số sản phẩm trên mỗi trang
@@ -32,8 +31,8 @@ export const ProdProvider = ({ children }: { children: React.ReactNode }) => {
     setSearchQuery(event.target.value);
     setCurrentPage(1); // Reset to first page on new search
   };
-  const filteredProducts = state.products.filter((product) =>
-    product.title.toLowerCase().includes(searchQuery.toLowerCase())
+  const filteredProducts = state.user.filter((user) =>
+    user.fullName.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   //Phân trang
@@ -59,8 +58,8 @@ export const ProdProvider = ({ children }: { children: React.ReactNode }) => {
 
   // Lấy dữ liệu từ server
   const fetchProducts = async () => {
-    const { data } = await ins.get("/products");
-    dispatch({ type: "LIST_PRODUCTS", payload: data });
+    const { data } = await ins.get("/users");
+    dispatch({ type: "LIST_USER", payload: data });
   };
   useEffect(() => {
     fetchProducts();
@@ -70,35 +69,18 @@ export const ProdProvider = ({ children }: { children: React.ReactNode }) => {
   const onDel = (id: string) => {
     (async () => {
       if (confirm("SURE?")) {
-        await ins.delete(`/products/${id}`);
-        dispatch({ type: "DELETE_PRODUCT", payload: id });
+        await ins.delete(`/users/${id}`);
+        dispatch({ type: "DELETE_USER", payload: id });
       }
     })();
     fetchProducts();
   };
 
-  //Logic thêm/sửa sản phẩm
-  const onSubmitProduct = async (product: Products) => {
-    try {
-      if (product.id) {
-        const { data } = await ins.patch(`/products/${product.id}`, product);
-        dispatch({ type: "EDIT_PRODUCT", payload: data });
-      } else {
-        const { data } = await ins.post(`/products`, product);
-        dispatch({ type: "ADD_PRODUCT", payload: data });
-      }
-      window.location.href = "/admin/qlsp";
-      fetchProducts();
-    } catch (error) {
-      console.error(error);
-    }
-  };
   return (
-    <ProdContext.Provider
+    <UserContext.Provider
       value={{
         dispatch,
         onDel,
-        onSubmitProduct,
         handlePrevPage,
         handleNextPage,
         handleSearch,
@@ -111,6 +93,6 @@ export const ProdProvider = ({ children }: { children: React.ReactNode }) => {
       }}
     >
       {children}
-    </ProdContext.Provider>
+    </UserContext.Provider>
   );
 };

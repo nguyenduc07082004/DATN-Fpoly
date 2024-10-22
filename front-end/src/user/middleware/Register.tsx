@@ -39,6 +39,7 @@ const ErrorText = styled(Typography)({
 
 const Register: React.FC = () => {
   const [fullName, setFullName] = useState(""); // Thêm trạng thái cho Họ và tên
+  const [address, setAddress] = useState(""); // Thêm trạng thái cho Họ và tên
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState(""); // Thêm trạng thái cho Số điện thoại
   const [password, setPassword] = useState("");
@@ -65,6 +66,7 @@ const Register: React.FC = () => {
         email,
         phone,
         password,
+        address,
       });
 
       if (response.status === 201) {
@@ -116,6 +118,14 @@ const Register: React.FC = () => {
             required
           />
           <TextField
+            label="Địa chỉ"
+            fullWidth
+            variant="outlined"
+            sx={{ mb: 2 }}
+            value={address}
+            onChange={(e) => setAddress(e.target.value)}
+          />
+          <TextField
             label="Mật khẩu"
             type={showPassword ? "text" : "password"}
             fullWidth
@@ -146,14 +156,21 @@ const Register: React.FC = () => {
             sx={{ py: 1.5, mt: 2, fontSize: "1rem" }}
             disabled={loading}
           >
-            {loading ? <CircularProgress size={24} color="inherit" /> : "Đăng ký"}
+            {loading ? (
+              <CircularProgress size={24} color="inherit" />
+            ) : (
+              "Đăng ký"
+            )}
           </RegisterButton>
         </form>
 
         <Box sx={{ mt: 3 }}>
           <Typography variant="body2">
             Bạn đã có tài khoản?{" "}
-            <Link to="/login" style={{ color: "#ff5722", textDecoration: "none" }}>
+            <Link
+              to="/login"
+              style={{ color: "#ff5722", textDecoration: "none" }}
+            >
               Đăng nhập ngay
             </Link>
           </Typography>

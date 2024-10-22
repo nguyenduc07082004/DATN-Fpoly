@@ -70,8 +70,7 @@ const Login: React.FC = () => {
         password,
       });
 
-      const { token } = response.data;
-      localStorage.setItem("authToken", token);
+      localStorage.setItem("accessToken", response.data.accessToken);
       navigate("/"); // Navigate to homepage after successful login
     } catch (error) {
       setError("Email hoặc mật khẩu không chính xác. Vui lòng thử lại.");
@@ -132,7 +131,11 @@ const Login: React.FC = () => {
             sx={{ py: 1.5, mt: 2, fontSize: "1rem" }}
             disabled={loading}
           >
-            {loading ? <CircularProgress size={24} color="inherit" /> : "Đăng nhập"}
+            {loading ? (
+              <CircularProgress size={24} color="inherit" />
+            ) : (
+              "Đăng nhập"
+            )}
           </LoginButton>
         </form>
 
@@ -143,7 +146,10 @@ const Login: React.FC = () => {
         <Box sx={{ mt: 3 }}>
           <Typography variant="body2">
             Bạn chưa có tài khoản?{" "}
-            <Link to="/register" style={{ color: "#ff5722", textDecoration: "none" }}>
+            <Link
+              to="/register"
+              style={{ color: "#ff5722", textDecoration: "none" }}
+            >
               Đăng ký ngay
             </Link>
           </Typography>

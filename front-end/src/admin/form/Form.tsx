@@ -1,4 +1,4 @@
-import { useContext, useEffect } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useParams } from "react-router-dom";
 import { Products } from "../../interfaces/Products";
@@ -12,6 +12,7 @@ const productSchema = z.object({
   title: z.string().min(6, { message: "Tên sản phẩm phải lớn hơn 6 ký tự" }),
   price: z.number().min(0, { message: "Giá sản phẩm phải lớn hơn 0" }),
   quantity: z.number().min(0, { message: "Số lượng sản phẩm phải lớn hơn 0" }),
+  imageURL: z.string().optional(),
   categories: z.string(),
   description: z.string().optional(),
 });
@@ -20,6 +21,7 @@ const Form = () => {
   const { onSubmitProduct } = useContext(ProdContext);
   const { data } = useContext(CategoryContext);
   const { id } = useParams();
+
   const {
     register,
     handleSubmit,
@@ -34,7 +36,7 @@ const Form = () => {
         const data = await ins.get(`/products/${id}`);
         reset(data.data);
       })();
-    }, [id]);
+    }, [id, reset]);
   }
   return (
     <div>

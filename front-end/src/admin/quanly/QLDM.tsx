@@ -55,9 +55,9 @@ const QLDM = () => {
           </tr>
         </thead>
         <tbody className="text-center">
-          {currentProducts.map((i) => (
+          {currentProducts.map((i, index) => (
             <tr className="d-flex" key={i.id}>
-              <td className="col-1">{i.id}</td>
+              <td className="col-1">{indexOfFirstProduct + index + 1}</td>
               <td className="col-3">{i.name}</td>
               <td className="col-6 text-truncate" style={{ maxWidth: "800px" }}>
                 {i.note}

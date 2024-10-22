@@ -37,7 +37,7 @@
       "id": "43BuALv"
     },
     {
-      "title": "twertwert",
+      "title": "Xiaomi",
       "price": 523,
       "quantity": 25345,
       "imageURL": "https://cdn.tgdd.vn/Products/Images/42/309831/xiaomi-redmi-note-13-vang-1-1-750x500.jpg",
@@ -91,6 +91,14 @@
       "fullName": "duc",
       "phone": "123456789",
       "id": 1
+    },
+    {
+      "email": "sucvat3344@gmail.com",
+      "password": "$2a$10$sYDWQ8MPSeZo6jIHverap.la0Ii4/pgajpv/4/NMQEyABBZciNNq2",
+      "fullName": "thang",
+      "phone": "0975858169",
+      "address": "ha noi",
+      "id": 2
     }
   ]
 }
