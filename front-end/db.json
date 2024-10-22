@@ -84,5 +84,13 @@
       "name": "Phụ kiện máy tính bảng"
     }
   ],
-  "users": []
+  "users": [
+    {
+      "email": "nguyenduc07082004@gmail.com",
+      "password": "$2a$10$.qytCPi5bnmbsQ61UlG1q.no8l0XZMlWWn9zWxUt.B6smvQlOwL.6",
+      "fullName": "duc",
+      "phone": "123456789",
+      "id": 1
+    }
+  ]
 }
