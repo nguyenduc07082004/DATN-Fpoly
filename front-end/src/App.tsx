@@ -7,10 +7,11 @@ import Dashboard from "./admin/quanly/AdminRouter";
 function App() {
   return (
     <>
-      <Client/>
+      
       <Routes>
         {/* Route cho phần admin */}
         <Route path="/admin/*" element={<Dashboard />} />
+        <Route path="/*" element={<Client/>}/>
       </Routes>
     </>
   );
