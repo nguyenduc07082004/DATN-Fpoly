@@ -44,7 +44,7 @@ const ProductDetails = () => {
   useEffect(() => {
     // Fetch the current product
     axios
-      .get(`http://localhost:3000/products/${productId}`)
+      .get(`http://localhost:8000/products/${productId}`)
       .then((response) => {
         setProduct(response.data);
         setMainImage(response.data.imageURL);
@@ -61,9 +61,9 @@ const ProductDetails = () => {
 
     // Fetch suggested products
     axios
-      .get(`http://localhost:3000/products`)
+      .get(`http://localhost:8000/products`)
       .then((response) => {
-        setSuggestedProducts(response.data.filter((prod: Products) => prod.id !== productId));
+        setSuggestedProducts(response.data.filter((prod: Products) => prod._id !== productId));
       })
       .catch((error) => {
         console.error("Error fetching suggested products: ", error);
@@ -120,18 +120,6 @@ const ProductDetails = () => {
         <Box sx={{ mt: 2 }}>
           <Grid container spacing={4}>
             <Grid item xs={12} md={6}>
-              <Box
-                component="img"
-                src={mainImage}
-                alt={product.title}
-                sx={{
-                  width: "100%",
-                  height: "auto",
-                  borderRadius: 2,
-                  boxShadow: 3,
-                  mb: 2,
-                }}
-              />
               <Grid container spacing={2}>
                 {additionalImages.map((img, index) => (
                   <Grid item xs={4} key={index}>
@@ -230,10 +218,10 @@ const ProductDetails = () => {
             </Typography>
             <Grid container spacing={4}>
               {suggestedProducts.map((suggestedProduct) => (
-                <Grid item xs={12} sm={6} md={3} key={suggestedProduct.id}>
+                <Grid item xs={12} sm={6} md={3} key={suggestedProduct._id}>
                   <Box
                     component={Link}
-                    to={`/products/${suggestedProduct.id}`}
+                    to={`/products/${suggestedProduct._id}`}
                     sx={{
                       textDecoration: "none",
                       color: "inherit",
