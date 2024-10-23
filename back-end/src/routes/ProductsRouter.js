@@ -5,6 +5,9 @@ const authMiddleware = require("../middleware/authmiddleware");
 // Lấy danh sách sản phẩm (không cần xác thực)
 router.get("/", productController.getProducts);
 
+router.get("/:id", //authMiddleware,
+ productController.getProductById);
+
 // Thêm sản phẩm (yêu cầu xác thực)
 router.post("/add", //authMiddleware, 
 productController.addProduct);
