@@ -1,7 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import axios from "axios";
-import { Container, Grid, Typography, Button, CircularProgress } from "@mui/material";
+import {
+  Container,
+  Grid,
+  Typography,
+  Button,
+  CircularProgress,
+} from "@mui/material";
 import { Box } from "@mui/system";
 import { Products } from "../../interfaces/Products";
 import Logo from "../../assets/logoshop.jpg";
@@ -44,7 +50,7 @@ const ProductDetails = () => {
   useEffect(() => {
     // Fetch the current product
     axios
-      .get(`http://localhost:3000/products/${productId}`)
+      .get(`http://localhost:8000/products/${productId}`)
       .then((response) => {
         setProduct(response.data);
         setMainImage(response.data.imageURL);
@@ -61,9 +67,11 @@ const ProductDetails = () => {
 
     // Fetch suggested products
     axios
-      .get(`http://localhost:3000/products`)
+      .get(`http://localhost:8000/products`)
       .then((response) => {
-        setSuggestedProducts(response.data.filter((prod: Products) => prod.id !== productId));
+        setSuggestedProducts(
+          response.data.filter((prod: Products) => prod._id !== productId)
+        );
       })
       .catch((error) => {
         console.error("Error fetching suggested products: ", error);
@@ -72,18 +80,31 @@ const ProductDetails = () => {
 
   if (loading) {
     return (
-      <Box display="flex" justifyContent="center" alignItems="center" height="100vh">
+      <Box
+        display="flex"
+        justifyContent="center"
+        alignItems="center"
+        height="100vh"
+      >
         <CircularProgress />
       </Box>
     );
   }
 
   if (error) {
-    return <Typography variant="h6" color="error">{error}</Typography>;
+    return (
+      <Typography variant="h6" color="error">
+        {error}
+      </Typography>
+    );
   }
 
   if (!product) {
-    return <Typography variant="h6" color="error">Không tìm thấy sản phẩm!</Typography>;
+    return (
+      <Typography variant="h6" color="error">
+        Không tìm thấy sản phẩm!
+      </Typography>
+    );
   }
 
   const additionalImages = [
@@ -122,7 +143,7 @@ const ProductDetails = () => {
             <Grid item xs={12} md={6}>
               <Box
                 component="img"
-                src={mainImage}
+                src={mainImage || ""}
                 alt={product.title}
                 sx={{
                   width: "100%",
@@ -145,7 +166,10 @@ const ProductDetails = () => {
                         borderRadius: 2,
                         boxShadow: 3,
                         cursor: "pointer",
-                        border: mainImage === img ? "2px solid #2e7d32" : "1px solid #ccc",
+                        border:
+                          mainImage === img
+                            ? "2px solid #2e7d32"
+                            : "1px solid #ccc",
                         transition: "border 0.3s ease",
                         "&:hover": {
                           border: "2px solid #2e7d32",
@@ -158,14 +182,22 @@ const ProductDetails = () => {
               </Grid>
             </Grid>
 
-            <Grid item xs={12} md={6} display="flex" flexDirection="column" justifyContent="flex-start">
+            <Grid
+              item
+              xs={12}
+              md={6}
+              display="flex"
+              flexDirection="column"
+              justifyContent="flex-start"
+            >
               <Typography
                 variant="h4"
                 gutterBottom
                 sx={{
                   fontWeight: "bold",
                   color: "#2e7d32",
-                  background: "-webkit-linear-gradient(45deg, #32cd32, #6b8e23)",
+                  background:
+                    "-webkit-linear-gradient(45deg, #32cd32, #6b8e23)",
                   WebkitBackgroundClip: "text",
                   WebkitTextFillColor: "transparent",
                   mb: 2,
@@ -181,7 +213,8 @@ const ProductDetails = () => {
                 sx={{
                   fontSize: "1.5rem",
                   color: "#d32f2f",
-                  background: "-webkit-linear-gradient(45deg, #ff8a80, #ff5252)",
+                  background:
+                    "-webkit-linear-gradient(45deg, #ff8a80, #ff5252)",
                   WebkitBackgroundClip: "text",
                   WebkitTextFillColor: "transparent",
                   mb: 2,
@@ -230,10 +263,10 @@ const ProductDetails = () => {
             </Typography>
             <Grid container spacing={4}>
               {suggestedProducts.map((suggestedProduct) => (
-                <Grid item xs={12} sm={6} md={3} key={suggestedProduct.id}>
+                <Grid item xs={12} sm={6} md={3} key={suggestedProduct._id}>
                   <Box
                     component={Link}
-                    to={`/products/${suggestedProduct.id}`}
+                    to={`/products/${suggestedProduct._id}`}
                     sx={{
                       textDecoration: "none",
                       color: "inherit",
