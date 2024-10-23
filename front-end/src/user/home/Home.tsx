@@ -53,7 +53,7 @@ const Deals = () => {
 
   useEffect(() => {
     axios
-      .get("http://localhost:3000/products")
+      .get("http://localhost:8000/products")
       .then((response) => {
         setProducts(response.data);
       })
