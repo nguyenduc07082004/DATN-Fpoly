@@ -37,7 +37,9 @@ const CateForm = () => {
         {id ? <h2>Cập nhật danh mục</h2> : <h2>Thêm mới danh mục</h2>}
       </p>
       <form
-        onSubmit={handleSubmit((data) => onSubmitCategory({ ...data, id }))}
+        onSubmit={handleSubmit((data) =>
+          onSubmitCategory({ ...data, _id: id })
+        )}
       >
         <div className=" m-5">
           <div className="form-group">

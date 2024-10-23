@@ -20,13 +20,13 @@ const categoryReducer = (state: State, action: Action) => {
       return {
         ...state,
         category: state.category.map((i) =>
-          i.id === action.payload.id ? action.payload : i
+          i._id === action.payload._id ? action.payload : i
         ),
       };
     case "DELETE_CATEGORY":
       return {
         ...state,
-        category: state.category.filter((i) => i.id !== action.payload),
+        category: state.category.filter((i) => i._id !== action.payload),
       };
   }
 };

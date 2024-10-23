@@ -31,7 +31,7 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
     setSearchQuery(event.target.value);
     setCurrentPage(1); // Reset to first page on new search
   };
-  const filteredProducts = state.user.filter((user) =>
+  const filteredProducts = state.user?.filter((user) =>
     user.fullName.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
@@ -39,12 +39,12 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
   // Tính toán số sản phẩm cần hiển thị trên trang hiện tại
   const indexOfLastProduct = currentPage * productsPerPage;
   const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
-  const currentProducts = filteredProducts.slice(
+  const currentProducts = filteredProducts?.slice(
     indexOfFirstProduct,
     indexOfLastProduct
   );
   // Tính toán tổng số trang
-  const totalPages = Math.ceil(filteredProducts.length / productsPerPage);
+  const totalPages = Math.ceil(filteredProducts?.length / productsPerPage);
   const handleNextPage = () => {
     if (currentPage < totalPages) {
       setCurrentPage(currentPage + 1);

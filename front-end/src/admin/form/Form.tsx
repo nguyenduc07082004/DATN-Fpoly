@@ -43,7 +43,9 @@ const Form = () => {
       <p className="m-3">
         {id ? <h2>Cập nhật sản phẩm</h2> : <h2>Thêm mới sản phẩm</h2>}
       </p>
-      <form onSubmit={handleSubmit((data) => onSubmitProduct({ ...data, id }))}>
+      <form
+        onSubmit={handleSubmit((data) => onSubmitProduct({ ...data, _id: id }))}
+      >
         <div className="m-5 d-flex">
           <div className="form-group">
             <label htmlFor="title">Tên sản phẩm</label>

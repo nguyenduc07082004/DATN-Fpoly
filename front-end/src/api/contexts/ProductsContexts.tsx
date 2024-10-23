@@ -1,11 +1,11 @@
 import { createContext, useEffect, useReducer, useState } from "react";
 
-import productsReducer from "../reducers/ProductsReducers";
+import productsReducer, { initialState } from "../reducers/ProductsReducers";
 import ins from "..";
 import { Products } from "../../interfaces/Products";
 
 export type ProdContextType = {
-  onDel: (id: string) => void;
+  onDel: (_id: string) => void;
   onSubmitProduct: (data: Products) => void;
   dispatch: React.Dispatch<any>;
   handleNextPage: () => void;
@@ -17,12 +17,13 @@ export type ProdContextType = {
   totalPages: number;
   indexOfFirstProduct: number;
   searchQuery: string;
+  productsPerPage: number;
 };
 
 export const ProdContext = createContext({} as ProdContextType);
 
 export const ProdProvider = ({ children }: { children: React.ReactNode }) => {
-  const [state, dispatch] = useReducer(productsReducer, { products: [] });
+  const [state, dispatch] = useReducer(productsReducer, initialState);
   const [currentPage, setCurrentPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState("");
   const productsPerPage = 5; // Số sản phẩm trên mỗi trang
@@ -32,7 +33,7 @@ export const ProdProvider = ({ children }: { children: React.ReactNode }) => {
     setSearchQuery(event.target.value);
     setCurrentPage(1); // Reset to first page on new search
   };
-  const filteredProducts = state.products.filter((product) =>
+  const filteredProducts = state.products?.filter((product) =>
     product.title.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
@@ -40,12 +41,12 @@ export const ProdProvider = ({ children }: { children: React.ReactNode }) => {
   // Tính toán số sản phẩm cần hiển thị trên trang hiện tại
   const indexOfLastProduct = currentPage * productsPerPage;
   const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
-  const currentProducts = filteredProducts.slice(
+  const currentProducts = filteredProducts?.slice(
     indexOfFirstProduct,
     indexOfLastProduct
   );
   // Tính toán tổng số trang
-  const totalPages = Math.ceil(filteredProducts.length / productsPerPage);
+  const totalPages = Math.ceil(filteredProducts?.length / productsPerPage);
   const handleNextPage = () => {
     if (currentPage < totalPages) {
       setCurrentPage(currentPage + 1);
@@ -61,17 +62,19 @@ export const ProdProvider = ({ children }: { children: React.ReactNode }) => {
   const fetchProducts = async () => {
     const { data } = await ins.get("/products");
     dispatch({ type: "LIST_PRODUCTS", payload: data });
+    console.log(data);
   };
+
   useEffect(() => {
     fetchProducts();
   }, []);
 
   //Logic xóa sản phẩm
-  const onDel = (id: string) => {
+  const onDel = (_id: string) => {
     (async () => {
       if (confirm("SURE?")) {
-        await ins.delete(`/products/${id}`);
-        dispatch({ type: "DELETE_PRODUCT", payload: id });
+        await ins.delete(`/products/${_id}`);
+        dispatch({ type: "DELETE_PRODUCT", payload: _id });
       }
     })();
     fetchProducts();
@@ -80,17 +83,20 @@ export const ProdProvider = ({ children }: { children: React.ReactNode }) => {
   //Logic thêm/sửa sản phẩm
   const onSubmitProduct = async (product: Products) => {
     try {
-      if (product.id) {
-        const { data } = await ins.patch(`/products/${product.id}`, product);
-        dispatch({ type: "EDIT_PRODUCT", payload: data });
+      let response;
+      if (product._id) {
+        response = await ins.put(`/products/edit/${product._id}`, product);
+        dispatch({ type: "EDIT_PRODUCT", payload: response.data });
       } else {
-        const { data } = await ins.post(`/products`, product);
-        dispatch({ type: "ADD_PRODUCT", payload: data });
+        response = await ins.post(`/products/add`, product);
+        dispatch({ type: "ADD_PRODUCT", payload: response.data });
       }
       window.location.href = "/admin/qlsp";
       fetchProducts();
     } catch (error) {
-      console.error(error);
+      console.error("Error submitting product:", error);
+      // Optionally, display an error message to the user
+      alert("There was an error submitting the product. Please try again.");
     }
   };
   return (
@@ -108,6 +114,7 @@ export const ProdProvider = ({ children }: { children: React.ReactNode }) => {
         totalPages,
         indexOfFirstProduct,
         searchQuery,
+        productsPerPage,
       }}
     >
       {children}

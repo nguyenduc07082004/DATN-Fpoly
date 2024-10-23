@@ -1,5 +1,5 @@
 import "../.././App.scss";
-import { useContext, useEffect, useMemo, useState } from "react";
+import { useContext } from "react";
 import { ProdContext } from "../../api/contexts/ProductsContexts";
 import { Link } from "react-router-dom";
 
@@ -9,7 +9,7 @@ const QLSP = () => {
     handleNextPage,
     handlePrevPage,
     handleSearch,
-    currentProducts,
+    currentProducts = [],
     currentPage,
     totalPages,
     indexOfFirstProduct,
@@ -59,7 +59,7 @@ const QLSP = () => {
         </thead>
         <tbody className="text-center">
           {currentProducts.map((i, index) => (
-            <tr className="d-flex" key={i.id}>
+            <tr className="d-flex" key={i._id}>
               <td className="col-1">{indexOfFirstProduct + index + 1}</td>
               <td className="col-2">{i.title}</td>
               <td className="col-1">{i.price}</td>
@@ -74,14 +74,14 @@ const QLSP = () => {
               <td className="col-2">
                 <button
                   className="action-del rounded"
-                  onClick={() => onDel(String(i.id))}
+                  onClick={() => onDel(String(i._id))}
                 >
                   Del
                 </button>
                 <button className="action-edit rounded">
                   <Link
                     className="text-decoration-none text-white"
-                    to={`/admin/qlsp/edit/${i.id}`}
+                    to={`/admin/qlsp/edit/${i._id}`}
                   >
                     Edit
                   </Link>

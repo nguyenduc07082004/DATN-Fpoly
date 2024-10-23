@@ -33,7 +33,7 @@ export const CateProvider = ({ children }: { children: React.ReactNode }) => {
     setSearchQuery(event.target.value);
     setCurrentPage(1); // Reset to first page on new search
   };
-  const filteredProducts = data.category.filter((category) =>
+  const filteredProducts = data.category?.filter((category) =>
     category.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
@@ -41,12 +41,12 @@ export const CateProvider = ({ children }: { children: React.ReactNode }) => {
   // Tính toán số sản phẩm cần hiển thị trên trang hiện tại
   const indexOfLastProduct = currentPage * productsPerPage;
   const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
-  const currentProducts = filteredProducts.slice(
+  const currentProducts = filteredProducts?.slice(
     indexOfFirstProduct,
     indexOfLastProduct
   );
   // Tính toán tổng số trang
-  const totalPages = Math.ceil(filteredProducts.length / productsPerPage);
+  const totalPages = Math.ceil(filteredProducts?.length / productsPerPage);
   const handleNextPage = () => {
     if (currentPage < totalPages) {
       setCurrentPage(currentPage + 1);
@@ -64,11 +64,11 @@ export const CateProvider = ({ children }: { children: React.ReactNode }) => {
   useEffect(() => {
     fetchProducts();
   }, []);
-  const onDel = (id: string) => {
+  const onDel = (_id: string) => {
     (async () => {
       if (confirm("SURE?")) {
-        await ins.delete(`/categories/${id}`);
-        dispatch({ type: "DELETE_CATEGORY", payload: id });
+        await ins.delete(`/categories/${_id}`);
+        dispatch({ type: "DELETE_CATEGORY", payload: _id });
       }
     })();
     fetchProducts();
@@ -76,17 +76,17 @@ export const CateProvider = ({ children }: { children: React.ReactNode }) => {
 
   const onSubmitCategory = async (category: Category) => {
     try {
-      if (category.id) {
+      if (category._id) {
         // logic edit
 
-        const { data } = await ins.patch(
-          `/categories/${category.id}`,
+        const { data } = await ins.put(
+          `/categories/edit/${category._id}`,
           category
         );
         dispatch({ type: "EDIT_CATEGORY", payload: data });
       } else {
         // logic add
-        const { data } = await ins.post(`/categories`, category);
+        const { data } = await ins.post(`/categories/add`, category);
         dispatch({ type: "ADD_CATEGORY", payload: data });
       }
       window.location.href = "/admin/qldm";

@@ -10,7 +10,7 @@ const QLDM = () => {
     handleNextPage,
     handlePrevPage,
     handleSearch,
-    currentProducts,
+    currentProducts = [],
     currentPage,
     totalPages,
     indexOfFirstProduct,
@@ -56,7 +56,7 @@ const QLDM = () => {
         </thead>
         <tbody className="text-center">
           {currentProducts.map((i, index) => (
-            <tr className="d-flex" key={i.id}>
+            <tr className="d-flex" key={i._id}>
               <td className="col-1">{indexOfFirstProduct + index + 1}</td>
               <td className="col-3">{i.name}</td>
               <td className="col-6 text-truncate" style={{ maxWidth: "800px" }}>
@@ -65,14 +65,14 @@ const QLDM = () => {
               <td className="col-2">
                 <button
                   className="action-del rounded"
-                  onClick={() => onDel(String(i.id))}
+                  onClick={() => onDel(String(i._id))}
                 >
                   Del
                 </button>
                 <button className="action-edit rounded">
                   <Link
                     className="text-decoration-none text-white"
-                    to={`/admin/qldm/edit/${i.id}`}
+                    to={`/admin/qldm/edit/${i._id}`}
                   >
                     Edit
                   </Link>

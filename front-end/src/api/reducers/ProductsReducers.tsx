@@ -8,6 +8,13 @@ type Action =
   | { type: "ADD_PRODUCT"; payload: Products }
   | { type: "EDIT_PRODUCT"; payload: Products }
   | { type: "DELETE_PRODUCT"; payload: string };
+export const initialState = {
+  products: [],
+  currentPage: 1,
+  totalPages: 0,
+  indexOfFirstProduct: 0,
+  searchQuery: "",
+};
 
 const productsReducer = (state: State, action: Action) => {
   switch (action.type) {
@@ -19,14 +26,16 @@ const productsReducer = (state: State, action: Action) => {
       return {
         ...state,
         products: state.products.map((i) =>
-          i.id === action.payload.id ? action.payload : i
+          i._id === action.payload._id ? action.payload : i
         ),
       };
     case "DELETE_PRODUCT":
       return {
         ...state,
-        products: state.products.filter((i) => i.id !== action.payload),
+        products: state.products.filter((i) => i._id !== action.payload),
       };
+    default:
+      return state;
   }
 };
 export default productsReducer;

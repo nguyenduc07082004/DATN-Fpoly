@@ -8,7 +8,7 @@ function App() {
     <>
       <Routes>
         {/* Route tổng */}
-        <Route path="/" element={<Client />} />
+
         <Route path="/admin/*" element={<Dashboard />} />
         <Route path="/*" element={<Client />} />
       </Routes>
