@@ -81,10 +81,9 @@ const Form = () => {
               })}
             >
               {data.category.map((i) => (
-                <option value={i.name}>{i.name}</option>
+                <option value={i._id}>{i.name}</option>
               ))}
             </select>
-            {errors.categories && <span>{errors.categories.message}</span>}
           </div>
         </div>
 

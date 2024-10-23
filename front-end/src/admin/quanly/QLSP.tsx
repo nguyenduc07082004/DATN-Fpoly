@@ -67,7 +67,13 @@ const QLSP = () => {
                 <img src={i.imageURL} alt="error" width="50%" />
               </td>
               <td className="col-1">{i.quantity}</td>
-              <td className="col-2">{i.categories}</td>
+              <td className="col-2">
+                {i.categories
+                  ? Array.isArray(i.categories)
+                    ? i.categories.map((category) => category.name).join(", ")
+                    : i.categories.name
+                  : "Không có danh mục"}
+              </td>
               <td className="col-2 text-truncate" style={{ maxWidth: "400px" }}>
                 {i.description}
               </td>
