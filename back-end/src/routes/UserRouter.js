@@ -2,17 +2,14 @@
 const express = require("express");
 const router = express.Router();
 const UserController = require("../controllers/UserControllers");
-const authMiddleware = require("../middleware/authmiddleware");
+// const authMiddleware = require("../middleware/authmiddleware");
 
 router.get(
   "/", //authMiddleware,
   UserController.getUser
 );
 
-router.post(
-  "/add", //authMiddleware,
-  UserController.addUser
-);
+// router goi link login and register
 
 router.put(
   "/edit/:id", //authMiddleware,
