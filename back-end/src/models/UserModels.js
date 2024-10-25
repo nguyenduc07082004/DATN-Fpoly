@@ -7,7 +7,7 @@ const userSchema = new mongoose.Schema({
   fullname:{ type: String, require: true },
   age: { type: Number, require: true },
   address: { type: String, require: true },
-  sdt: { type: Number, require: true },
+  phone: { type: Number, require: true },
   role:{type:String,default:"user"},
 });
 
