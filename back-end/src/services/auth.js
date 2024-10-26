@@ -7,6 +7,6 @@ const authRouter = (app) => {
   app.use(express.json());
   app.use("/products", productsRouter);
   app.use("/categories", categoryRouter);
-  app.use("/users", userRouter);
+  app.use("/", userRouter);
 };
 module.exports = authRouter;
