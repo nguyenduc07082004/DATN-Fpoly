@@ -32,7 +32,7 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
     setCurrentPage(1); // Reset to first page on new search
   };
   const filteredProducts = state.user?.filter((user) =>
-    user.fullName.toLowerCase().includes(searchQuery.toLowerCase())
+    user.fullName?.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   //Phân trang

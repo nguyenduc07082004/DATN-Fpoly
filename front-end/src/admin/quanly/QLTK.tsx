@@ -1,7 +1,8 @@
 import "../.././App.scss";
 import { useContext } from "react";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { UserContext } from "../../api/contexts/UserContext";
+import ins from "../../api";
 
 const QLTK = () => {
   const {
@@ -15,6 +16,8 @@ const QLTK = () => {
     indexOfFirstProduct,
     searchQuery,
   } = useContext(UserContext);
+  const { id } = useParams();
+  console.log(id);
 
   return (
     <div>
@@ -55,20 +58,7 @@ const QLTK = () => {
               <td className="col-3">{i.address}</td>
 
               <td className="col-2">
-                <button
-                  className="action-del rounded"
-                  onClick={() => onDel(String(i.id))}
-                >
-                  Del
-                </button>
-                <button className="action-edit rounded">
-                  <Link
-                    className="text-decoration-none text-white"
-                    to={`/admin/qltk`}
-                  >
-                    Edit
-                  </Link>
-                </button>
+                <button className="action-del rounded">Disable</button>
               </td>
             </tr>
           ))}

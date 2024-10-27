@@ -75,18 +75,18 @@ const seedDatabase = async () => {
 
     // Thêm categories vào database
     const categories = await Category.insertMany(fakeCategories);
-    
+
     // Gán categories cho products
     for (let product of fakeProducts) {
       // Lấy ngẫu nhiên một category từ danh sách đã tạo
-      const randomCategory = categories[Math.floor(Math.random() * categories.length)];
+      const randomCategory =
+        categories[Math.floor(Math.random() * categories.length)];
       product.categories = randomCategory._id; // Gán ID của category vào sản phẩm
     }
 
     // Thêm sản phẩm vào database
     await Product.insertMany(fakeProducts);
     console.log("Dữ liệu giả đã được thêm vào database!");
-
   } catch (error) {
     console.error("Có lỗi xảy ra khi thêm dữ liệu:", error);
   }

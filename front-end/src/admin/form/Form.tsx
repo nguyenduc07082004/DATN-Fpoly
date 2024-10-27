@@ -35,9 +35,11 @@ const Form = () => {
       (async () => {
         const data = await ins.get(`/products/${id}`);
         reset(data.data);
+        console.log(data.data);
       })();
     }, [id, reset]);
   }
+
   return (
     <div>
       <p className="m-3">
@@ -80,8 +82,11 @@ const Form = () => {
                 required: true,
               })}
             >
+              <option value="0">-----</option>
               {data.category.map((i) => (
-                <option value={i._id}>{i.name}</option>
+                <option key={i._id} value={i._id}>
+                  {i.name}
+                </option>
               ))}
             </select>
           </div>

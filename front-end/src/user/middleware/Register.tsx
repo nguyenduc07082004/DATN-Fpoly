@@ -61,13 +61,14 @@ const Register: React.FC = () => {
     }
 
     try {
-      const response = await axios.post("http://localhost:3000/register", {
+      const response = await axios.post("http://localhost:8000/register", {
         fullName,
         email,
         phone,
         password,
         address,
       });
+      console.log(response);
 
       if (response.status === 201) {
         navigate("/login"); // Redirect to login page after successful registration
@@ -90,6 +91,7 @@ const Register: React.FC = () => {
         <form onSubmit={handleRegister}>
           <TextField
             label="Họ và tên"
+            type="text"
             fullWidth
             variant="outlined"
             sx={{ mb: 2 }}

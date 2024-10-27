@@ -20,11 +20,11 @@ const TK = (props: Props) => {
     <div>
       <BarChart width={1200} height={250} data={state.products}>
         <CartesianGrid strokeDasharray="3 3" />
-        <XAxis dataKey="name" />
+        <XAxis dataKey="title" />
         <YAxis />
         <Tooltip />
         <Legend />
-        <Bar dataKey="categories" fill="#8884d8" />
+        <Bar dataKey="title" fill="#8884d8" />
         <Bar dataKey="price" fill="#82ca9d" />
       </BarChart>
     </div>

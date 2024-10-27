@@ -65,12 +65,14 @@ const Login: React.FC = () => {
     }
 
     try {
-      const response = await axios.post("http://localhost:3000/login", {
+      const response = await axios.post("http://localhost:8000/login", {
         email,
         password,
       });
 
-      localStorage.setItem("accessToken", response.data.accessToken);
+      localStorage.setItem("token", response.data.token);
+      console.log(response);
+
       navigate("/"); // Navigate to homepage after successful login
     } catch (error) {
       setError("Email hoặc mật khẩu không chính xác. Vui lòng thử lại.");

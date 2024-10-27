@@ -3,12 +3,13 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
 const register = async (req, res) => {
-  const { username, email, password, fullname, age, address, phone } = req.body;
+  const { username, email, password, fullName, address, phone } = req.body;
 
   try {
     // Kiểm tra nếu email đã tồn tại
     const existingUser = await User.findOne({ email });
-    if (existingUser) return res.status(400).json({ message: "Email đã tồn tại." });
+    if (existingUser)
+      return res.status(400).json({ message: "Email đã tồn tại." });
 
     // Mã hóa mật khẩu
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -17,9 +18,8 @@ const register = async (req, res) => {
     const newUser = new User({
       username,
       email,
+      fullName,
       password: hashedPassword,
-      fullname,
-      age,
       address,
       phone,
     });
@@ -37,14 +37,22 @@ const login = async (req, res) => {
   try {
     // Kiểm tra email
     const user = await User.findOne({ email });
-    if (!user) return res.status(400).json({ message: "Email hoặc mật khẩu không đúng." });
+    if (!user)
+      return res
+        .status(400)
+        .json({ message: "Email hoặc mật khẩu không đúng." });
 
     // Kiểm tra mật khẩu
     const isPasswordValid = await bcrypt.compare(password, user.password);
-    if (!isPasswordValid) return res.status(400).json({ message: "Email hoặc mật khẩu không đúng." });
+    if (!isPasswordValid)
+      return res
+        .status(400)
+        .json({ message: "Email hoặc mật khẩu không đúng." });
 
     // Tạo token
-    const token = jwt.sign({ id: user._id, role: user.role }, "secretKey", { expiresIn: "1h" });
+    const token = jwt.sign({ id: user._id, role: user.role }, "secretKey", {
+      expiresIn: "1h",
+    });
 
     res.json({ message: "Đăng nhập thành công.", token });
   } catch (error) {
@@ -52,4 +60,13 @@ const login = async (req, res) => {
   }
 };
 
-module.exports = { register, login };
+const getUser = async (req, res) => {
+  try {
+    const user = await User.find();
+    res.status(200).json(user);
+  } catch (error) {
+    res.status(500).json({ message: "Lỗi khi lấy danh sách ", error });
+  }
+};
+
+module.exports = { register, login, getUser, disableUser };
