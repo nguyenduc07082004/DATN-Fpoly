@@ -1,7 +1,6 @@
 const express = require("express");
 const router = express.Router();
 const categoryController = require("../controllers/CategoryControllers");
-const authMiddleware = require("../middleware/authmiddleware");
 
 // Lấy danh sách sản phẩm
 router.get("/", categoryController.getCategory);

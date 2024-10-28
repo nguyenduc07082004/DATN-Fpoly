@@ -15,6 +15,8 @@ import {
 } from "@mui/material";
 import { styled } from "@mui/system";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
+import ins from "../../api";
+import { useAuth } from "../../api/contexts/AuthContext";
 
 // Styled components
 const LoginContainer = styled(Box)({
@@ -51,6 +53,7 @@ const Login: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
+  const { login: contextLogin } = useAuth();
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -65,13 +68,13 @@ const Login: React.FC = () => {
     }
 
     try {
-      const response = await axios.post("http://localhost:8000/login", {
+      const { data } = await ins.post("/login", {
         email,
         password,
       });
-
-      localStorage.setItem("token", response.data.token);
-      console.log(response);
+      console.log(data);
+      contextLogin(data.token, data.user);
+      navigate(data.user.role === "admin" ? "/admin" : "/");
 
       navigate("/"); // Navigate to homepage after successful login
     } catch (error) {

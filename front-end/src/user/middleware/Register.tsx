@@ -59,7 +59,13 @@ const Register: React.FC = () => {
       setLoading(false);
       return;
     }
-
+    console.log({
+      fullName,
+      email,
+      phone,
+      password,
+      address,
+    });
     try {
       const response = await axios.post("http://localhost:8000/register", {
         fullName,

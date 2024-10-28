@@ -11,13 +11,21 @@ import QLDH from "./QLDH";
 import TK from "./TK";
 import TrangChu from "./TrangChu";
 import CateForm from "../form/CateForm";
+import { useContext } from "react";
+import { AuthContext, AuthContextType } from "../../api/contexts/AuthContext";
 
 function Dashboard() {
+  const { user } = useContext(AuthContext) as AuthContextType;
+
+  if (user?.role !== "admin") {
+    return <h1>Access denied. You are not an admin.</h1>;
+  }
   return (
     <div className="d-flex background">
       <div>
         <Sidebar />
       </div>
+
       <div
         className="bg-light mx-3 content "
         style={{ height: "600px", width: "1000rem" }}

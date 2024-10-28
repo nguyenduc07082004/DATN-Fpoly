@@ -16,9 +16,8 @@ const register = async (req, res) => {
 
     // Tạo người dùng mới
     const newUser = new User({
-      username,
-      email,
       fullName,
+      email,
       password: hashedPassword,
       address,
       phone,
@@ -54,7 +53,7 @@ const login = async (req, res) => {
       expiresIn: "1h",
     });
 
-    res.json({ message: "Đăng nhập thành công.", token });
+    res.json({ message: "Đăng nhập thành công.", token, user: user });
   } catch (error) {
     res.status(500).json({ message: "Lỗi server." });
   }
@@ -69,4 +68,4 @@ const getUser = async (req, res) => {
   }
 };
 
-module.exports = { register, login, getUser, disableUser };
+module.exports = { register, login, getUser };
