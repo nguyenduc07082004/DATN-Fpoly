@@ -99,6 +99,14 @@
       "phone": "0975858169",
       "address": "ha noi",
       "id": 2
+    },
+    {
+      "email": "quangtvph39380@fpt.edu.vn",
+      "password": "$2a$10$DyLYL.KkBPKMumqi.rj7euSTQnJdM5kMGz20hmf8Y4Rgxvd/BfXPq",
+      "fullName": "tran vinh quang",
+      "phone": "0397598324",
+      "address": "yên thường",
+      "id": 3
     }
   ]
 }
