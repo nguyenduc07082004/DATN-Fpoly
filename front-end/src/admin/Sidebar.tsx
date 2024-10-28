@@ -1,6 +1,8 @@
 import { Link } from "react-router-dom";
 import ".././App.scss";
+import { useAuth } from "../api/contexts/AuthContext";
 const AdminSidebar = () => {
+  const { logout } = useAuth();
   return (
     <div>
       <div
@@ -185,7 +187,7 @@ const AdminSidebar = () => {
               <hr className="dropdown-divider" />
             </li>
             <li>
-              <Link className="dropdown-item" to="#">
+              <Link onClick={() => logout()} className="dropdown-item" to="#">
                 Đăng xuất
               </Link>
             </li>

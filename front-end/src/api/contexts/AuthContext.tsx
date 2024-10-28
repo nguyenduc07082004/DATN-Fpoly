@@ -41,10 +41,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   const logout = () => {
-    localStorage.removeItem("accessToken");
+    localStorage.removeItem("token");
     localStorage.removeItem("user");
     setUser(null);
-    nav("/login");
+    nav("http://localhost:5173/");
   };
 
   return (
