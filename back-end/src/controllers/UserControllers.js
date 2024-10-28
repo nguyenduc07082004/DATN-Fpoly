@@ -69,4 +69,4 @@ const getUser = async (req, res) => {
   }
 };
 
-module.exports = { register, login, getUser, disableUser };
+module.exports = { register, login, getUser };
