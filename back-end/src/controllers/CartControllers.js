@@ -1,4 +1,4 @@
-const Cart = require("../models/Cart"); // Thay đổi đường dẫn nếu cần
+const Cart = require("../models/CartModels"); // Thay đổi đường dẫn nếu cần
 
 // Lấy danh sách sản phẩm trong giỏ hàng
 exports.getCartItems = async (req, res) => {
