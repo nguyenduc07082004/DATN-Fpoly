@@ -41,7 +41,21 @@ const fakeCategories = [
   { name: "Điện thoại", note: "Các sản phẩm điện thoại" },
   { name: "Phụ kiện", note: "Phụ kiện cho điện thoại" },
 ];
-
+const fakeCarts = [
+  {
+    userId: "60c72b2f9b1d4f2b5c0b50a1", // Thay bằng ID người dùng thực tế
+    items: [
+      { productId: "60c72b3f9b1d4f2b5c0b50a2", quantity: 2 }, // Thay bằng ID sản phẩm thực tế
+      { productId: "60c72b4f9b1d4f2b5c0b50a3", quantity: 1 },
+    ],
+  },
+  {
+    userId: "60c72b2f9b1d4f2b5c0b50a4", // Thay bằng ID người dùng thực tế
+    items: [
+      { productId: "60c72b5f9b1d4f2b5c0b50a5", quantity: 3 },
+    ],
+  },
+];
 const fakeProducts = [
   {
     title: "Điện thoại A",

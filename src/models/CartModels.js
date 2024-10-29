@@ -1,29 +1,24 @@
 const mongoose = require("mongoose");
 
-const cartSchema = new mongoose.Schema({
+const CartSchema = new mongoose.Schema({
   userId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "User", // Tham chiếu đến người dùng
     required: true,
+    ref: 'User' // Nếu bạn có mô hình người dùng
   },
-  items: [
-    {
-      productId: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Product", // Tham chiếu đến sản phẩm
-        required: true,
-      },
-      quantity: {
-        type: Number,
-        required: true,
-        default: 1, // Số lượng mặc định là 1
-      },
-     
+  items: [{
+    productId: {
+      type: mongoose.Schema.Types.ObjectId,
+      required: true,
+      ref: 'Product' // Nếu bạn có mô hình sản phẩm
     },
-  ],
+    quantity: {
+      type: Number,
+      required: true,
+      min: 1
+    }
+  }]
+});
 
-}, { timestamps: true }); // timestamps: tự động thêm createdAt và updatedAt
-
-const Cart = mongoose.model("Cart", cartSchema);
-
+const Cart = mongoose.model("Cart", CartSchema);
 module.exports = Cart;
