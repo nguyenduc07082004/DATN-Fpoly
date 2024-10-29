@@ -13,7 +13,7 @@ const productSchema = z.object({
   price: z.number().min(0, { message: "Giá sản phẩm phải lớn hơn 0" }),
   quantity: z.number().min(0, { message: "Số lượng sản phẩm phải lớn hơn 0" }),
   imageURL: z.string().optional(),
-  categories: z.string(),
+  categories: z.string().min(1, { message: "Danh mục không được để trống" }),
   description: z.string().optional(),
 });
 

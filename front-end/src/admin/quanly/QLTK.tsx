@@ -2,11 +2,9 @@ import "../.././App.scss";
 import { useContext } from "react";
 import { Link, useParams } from "react-router-dom";
 import { UserContext } from "../../api/contexts/UserContext";
-import ins from "../../api";
 
 const QLTK = () => {
   const {
-    onDel,
     handleNextPage,
     handlePrevPage,
     handleSearch,
@@ -56,7 +54,6 @@ const QLTK = () => {
               <td className="col-3">{i.email}</td>
               <td className="col-1">{i.phone}</td>
               <td className="col-3">{i.address}</td>
-
               <td className="col-2">
                 <button className="action-del rounded">Disable</button>
               </td>
