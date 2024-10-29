@@ -167,7 +167,9 @@ const AdminSidebar = () => {
               height="32"
               className="rounded-circle me-2"
             />
-            <strong>admin</strong>
+            <strong>
+              {JSON.parse(localStorage.getItem("user") || "{}").fullName}
+            </strong>
           </Link>
           <ul
             className="dropdown-menu dropdown-menu-dark text-small shadow"
@@ -187,7 +189,11 @@ const AdminSidebar = () => {
               <hr className="dropdown-divider" />
             </li>
             <li>
-              <Link onClick={() => logout()} className="dropdown-item" to="#">
+              <Link
+                onClick={() => logout()}
+                className="dropdown-item"
+                to="/login"
+              >
                 Đăng xuất
               </Link>
             </li>
