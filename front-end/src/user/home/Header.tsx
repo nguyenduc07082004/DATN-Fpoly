@@ -53,13 +53,6 @@ const Header = () => {
               data-bs-toggle="dropdown"
               aria-expanded="false"
             >
-              <img
-                src="https://t4.ftcdn.net/jpg/02/74/20/69/360_F_274206901_Jt1PHZTbtwne17anw5eD9oABxStNJhYT.jpg"
-                alt=""
-                width="32"
-                height="32"
-                className="rounded-circle me-2"
-              />
               <strong>
                 {JSON.parse(localStorage.getItem("user") || "{}").fullName}
               </strong>
