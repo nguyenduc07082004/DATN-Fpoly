@@ -6,21 +6,19 @@ const cartSchema = new mongoose.Schema({
     ref: "User", // Tham chiếu đến người dùng
     required: true,
   },
-  items: [
-    {
-      productId: {
+
+  productId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Product", // Tham chiếu đến sản phẩm
         required: true,
-      },
-      quantity: {
+  },
+  quantity: {
         type: Number,
         required: true,
         default: 1, // Số lượng mặc định là 1
-      },
+  },
      
-    },
-  ],
+
 
 }, { timestamps: true }); // timestamps: tự động thêm createdAt và updatedAt
 
