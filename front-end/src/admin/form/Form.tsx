@@ -1,4 +1,4 @@
-import { useContext, useEffect } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useParams } from "react-router-dom";
 import { Products } from "../../interfaces/Products";
@@ -15,12 +15,33 @@ const productSchema = z.object({
   imageURL: z.string().optional(),
   categories: z.string().min(1, { message: "Danh mục không được để trống" }),
   description: z.string().optional(),
+  storage: z.string(),
+  color: z.string(),
 });
+
+const storage = [
+  { _id: "1", options: "128GB" },
+  { _id: "2", options: "256GB" },
+  { _id: "3", options: "512GB" },
+  { _id: "4", options: "1TB" },
+];
+const color = [
+  { _id: "1", options: "Đen" },
+  { _id: "2", options: "Trắng" },
+  { _id: "3", options: "Hồng" },
+  { _id: "4", options: "Xanh" },
+];
 
 const Form = () => {
   const { onSubmitProduct } = useContext(ProdContext);
   const { data } = useContext(CategoryContext);
   const { id } = useParams();
+  const [selectedCategory, setSelectedCategory] = useState("");
+
+  const handleCategoryChange = (event: any) => {
+    setSelectedCategory(event.target.options[event.target.selectedIndex].text);
+    console.log(event.target.options[event.target.selectedIndex].text);
+  };
 
   const {
     register,
@@ -61,6 +82,55 @@ const Form = () => {
             {errors.title && <span>{errors.title.message}</span>}
           </div>
 
+          <div className="form-group category">
+            <label htmlFor="categories">Danh mục</label>
+            <select
+              className="form-control"
+              style={{ width: "200px", height: "50px" }}
+              {...register("categories", {
+                required: true,
+              })}
+              onChange={handleCategoryChange}
+            >
+              <option value="0">-----</option>
+              {data.category.map((i) => (
+                <option key={i._id} value={i._id}>
+                  {i.name}
+                </option>
+              ))}
+            </select>
+          </div>
+          {selectedCategory === "Điện thoại" && ( // Replace "specific_value" with the actual value
+            <div className="form-group category">
+              <label htmlFor="storage">Dung lượng</label>
+              <select
+                className="form-control"
+                style={{ width: "200px", height: "50px" }}
+                {...register("storage", {
+                  required: true,
+                })}
+              >
+                {storage.map((i) => (
+                  <option value={i.options}>{i.options}</option>
+                ))}
+              </select>
+            </div>
+          )}
+        </div>
+
+        <div className="m-5 d-flex">
+          <div className="form-group price">
+            <label htmlFor="price">Giá sản phẩm</label>
+            <input
+              className="form-control"
+              style={{ width: "200px", height: "50px" }}
+              type="number"
+              placeholder="Giá sản phẩm"
+              {...register("price", { required: true, valueAsNumber: true })}
+            />
+            {errors.price && <span>{errors.price.message}</span>}
+          </div>
+
           <div className="form-group quantity">
             <label htmlFor="price">Số lượng</label>
             <input
@@ -72,39 +142,34 @@ const Form = () => {
             />
             {errors.quantity && <span>{errors.quantity.message}</span>}
           </div>
-
-          <div className="form-group quantity">
-            <label htmlFor="categories">Danh mục</label>
-            <select
+          <div className="form-group category">
+            <label htmlFor="price">Ảnh sản phẩm</label>
+            <input
+              placeholder="ảnh sản phẩm"
               className="form-control"
               style={{ width: "200px", height: "50px" }}
-              {...register("categories", {
-                required: true,
-              })}
-            >
-              <option value="0">-----</option>
-              {data.category.map((i) => (
-                <option key={i._id} value={i._id}>
-                  {i.name}
-                </option>
-              ))}
-            </select>
+              type="file"
+            />
           </div>
+          {selectedCategory === "Điện thoại" && ( // Replace "specific_value" with the actual value
+            <div className="form-group category">
+              <label htmlFor="specialFeature">Màu</label>
+              <select
+                className="form-control"
+                style={{ width: "200px", height: "50px" }}
+                {...register("color", {
+                  required: true,
+                })}
+              >
+                {color.map((i) => (
+                  <option value={i.options}>{i.options}</option>
+                ))}
+              </select>
+            </div>
+          )}
         </div>
 
         <div className="m-5 d-flex">
-          <div className="form-group price">
-            <label htmlFor="price">Giá sản phẩm</label>
-            <input
-              className="form-control"
-              style={{ width: "500px", height: "50px" }}
-              type="number"
-              placeholder="Giá sản phẩm"
-              {...register("price", { required: true, valueAsNumber: true })}
-            />
-            {errors.price && <span>{errors.price.message}</span>}
-          </div>
-
           <div className="form-group desc">
             <label htmlFor="description">Mô tả sản phẩm</label>
             <textarea
@@ -116,18 +181,6 @@ const Form = () => {
               {...register("description", { required: true })}
             />
             {errors.description && <span>{errors.description.message}</span>}
-          </div>
-        </div>
-
-        <div className="m-5 d-flex">
-          <div className="form-group img">
-            <label htmlFor="price">Ảnh sản phẩm</label>
-            <input
-              placeholder="ảnh sản phẩm"
-              className="form-control"
-              style={{ width: "500px", height: "50px" }}
-              type="file"
-            />
           </div>
           <button
             className="btn btn1"

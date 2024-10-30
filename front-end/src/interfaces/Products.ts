@@ -8,4 +8,6 @@ export interface Products {
   categories: any | string;
   quantity: number;
   description: string;
+  storage: string;
+  color: string;
 }

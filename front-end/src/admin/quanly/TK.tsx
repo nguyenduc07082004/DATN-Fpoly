@@ -1,32 +1,70 @@
-import { useContext } from "react";
+import React, { useContext } from "react";
+import { Bar } from "react-chartjs-2";
 import {
-  Bar,
-  BarChart,
-  CartesianGrid,
-  Legend,
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Title,
   Tooltip,
-  XAxis,
-  YAxis,
-} from "recharts";
+  Legend,
+} from "chart.js";
 import { ProdContext } from "../../api/contexts/ProductsContexts";
 import { CategoryContext } from "../../api/contexts/CategoryContext";
+// Import the CSS file
 
-type Props = {};
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend
+);
 
-const TK = (props: Props) => {
+const TK = () => {
+  // const data = {
+  //   labels: ["January", "February", "March", "April", "May", "June", "July"],
+  //   datasets: [
+  //     {
+  //       label: "Sales",
+  //       data: [65, 59, 80, 81, 56, 55, 40],
+  //       backgroundColor: "rgba(75, 192, 192, 0.2)",
+  //       borderColor: "rgba(75, 192, 192, 1)",
+  //       borderWidth: 1,
+  //     },
+  //   ],
+  // };
   const { state } = useContext(ProdContext);
-  const { data } = useContext(CategoryContext);
+
+  const data = {
+    labels: state.products.map((product) => product.title),
+    datasets: [
+      {
+        label: "Category Data",
+        data: state.products.map((product) => product.price), // Adjust this line based on your actual data structure
+        backgroundColor: "rgba(75, 192, 192, 0.2)",
+        borderColor: "rgba(75, 192, 192, 1)",
+        borderWidth: 1,
+      },
+    ],
+  };
+
+  const options = {
+    responsive: true,
+    plugins: {
+      legend: {
+        position: "top" as const,
+      },
+      title: {
+        display: true,
+        text: "Monthly Sales Data",
+      },
+    },
+  };
   return (
-    <div>
-      <BarChart width={1200} height={250} data={state.products}>
-        <CartesianGrid strokeDasharray="3 3" />
-        <XAxis dataKey="title" />
-        <YAxis />
-        <Tooltip />
-        <Legend />
-        <Bar dataKey="title" fill="#8884d8" />
-        <Bar dataKey="price" fill="#82ca9d" />
-      </BarChart>
+    <div className="chart-container">
+      <Bar data={data} options={options} />
     </div>
   );
 };

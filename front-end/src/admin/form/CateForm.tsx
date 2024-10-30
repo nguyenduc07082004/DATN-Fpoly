@@ -51,7 +51,7 @@ const CateForm = () => {
               placeholder="Tên danh mục"
               {...register("name", { required: true })}
             />
-            {errors.name && <span>{errors.name.message}</span>}
+            {errors.name && <span>{errors.name.message?.toString()}</span>}
           </div>
         </div>
 

@@ -18,7 +18,9 @@ const MainBanner = () => {
 const ProductCard = ({ product }: { product: Products }) => {
   return (
     <div className="product-card">
-      <img src={product.imageURL} alt={product.title} />
+      <div>
+        <img src={product.imageURL} alt={product.title} />
+      </div>
       <h3>{product.title}</h3>
       <p>{product.price} VNĐ</p>
       <button>

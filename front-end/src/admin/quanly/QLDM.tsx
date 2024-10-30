@@ -63,19 +63,19 @@ const QLDM = () => {
                 {i.note}
               </td>
               <td className="col-2">
-                <button
-                  className="action-del rounded"
-                  onClick={() => onDel(String(i._id))}
-                >
-                  Del
-                </button>
                 <button className="action-edit rounded">
                   <Link
                     className="text-decoration-none text-white"
                     to={`/admin/qldm/edit/${i._id}`}
                   >
-                    Edit
+                    Sửa
                   </Link>
+                </button>
+                <button
+                  className="action-del rounded"
+                  onClick={() => onDel(String(i._id))}
+                >
+                  Xóa
                 </button>
               </td>
             </tr>

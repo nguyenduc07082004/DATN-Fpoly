@@ -13,6 +13,7 @@ import TrangChu from "./TrangChu";
 import CateForm from "../form/CateForm";
 import { useContext } from "react";
 import { AuthContext, AuthContextType } from "../../api/contexts/AuthContext";
+import Details from "./Details";
 
 function Dashboard() {
   const { user } = useContext(AuthContext) as AuthContextType;
@@ -27,7 +28,7 @@ function Dashboard() {
       </div>
 
       <div
-        className="bg-light mx-3 content "
+        className="bg-light mx-3 content rounded-3"
         style={{ height: "600px", width: "1000rem" }}
       >
         <Routes>
@@ -40,6 +41,7 @@ function Dashboard() {
           <Route path="/qlbl" element={<QLBL />} />
           <Route path="/qldh" element={<QLDH />} />
           <Route path="/tk" element={<TK />} />
+          <Route path="/details/:id" element={<Details />} />
 
           {/* QLDM */}
           <Route path="/qldm" element={<QLDM />} />

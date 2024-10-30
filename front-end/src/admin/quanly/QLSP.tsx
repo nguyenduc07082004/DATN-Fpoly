@@ -53,8 +53,7 @@ const QLSP = () => {
             <th className="col-1">Ảnh</th>
             <th className="col-1">Số lượng</th>
             <th className="col-2">Loại</th>
-            <th className="col-2">Mô tả</th>
-            <th className="col-2">Chức năng</th>
+            <th className="col-4">Chức năng</th>
           </tr>
         </thead>
         <tbody className="text-center">
@@ -74,22 +73,28 @@ const QLSP = () => {
                     : i.categories.name
                   : "Không có danh mục"}
               </td>
-              <td className="col-2 text-truncate" style={{ maxWidth: "400px" }}>
-                {i.description}
-              </td>
-              <td className="col-2">
-                <button
-                  className="action-del rounded"
-                  onClick={() => onDel(String(i._id))}
-                >
-                  Del
-                </button>
+
+              <td className="col-4 d-flex">
                 <button className="action-edit rounded">
                   <Link
                     className="text-decoration-none text-white"
                     to={`/admin/qlsp/edit/${i._id}`}
                   >
-                    Edit
+                    Sửa
+                  </Link>
+                </button>
+                <button
+                  className="action-del rounded"
+                  onClick={() => onDel(String(i._id))}
+                >
+                  Xóa
+                </button>
+                <button className="action-details rounded">
+                  <Link
+                    className="text-decoration-none text-white"
+                    to={`/admin/details/${i._id}`}
+                  >
+                    Chi tiết
                   </Link>
                 </button>
               </td>

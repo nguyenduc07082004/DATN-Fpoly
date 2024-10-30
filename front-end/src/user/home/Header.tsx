@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom"; // Import Link for navigation
-import Logo from "../../assets/logoshop.jpg";
+import Logo from "../../../logo.png";
 import "../css/Home.css";
 import {
   AuthContext,
@@ -14,7 +14,9 @@ const Header = () => {
   return (
     <header className="header">
       <div className="logo">
-        <img src={Logo} alt="logo" />
+        <Link to="/">
+          <img src={Logo} alt="Logo" />
+        </Link>
       </div>
       <nav>
         <ul>
@@ -91,7 +93,9 @@ const Header = () => {
           </div>
         )}
 
-        <span>Giỏ hàng</span>
+        <Link to="/cart" className="text-decoration-none">
+          <span>Giỏ hàng</span>
+        </Link>
       </div>
     </header>
   );

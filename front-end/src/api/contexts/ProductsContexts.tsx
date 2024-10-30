@@ -26,7 +26,7 @@ export const ProdProvider = ({ children }: { children: React.ReactNode }) => {
   const [state, dispatch] = useReducer(productsReducer, initialState);
   const [currentPage, setCurrentPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState("");
-  const productsPerPage = 5; // Số sản phẩm trên mỗi trang
+  const productsPerPage = 6; // Số sản phẩm trên mỗi trang
 
   //Tìm kiếm sản phẩm
   const handleSearch = (event: any) => {
