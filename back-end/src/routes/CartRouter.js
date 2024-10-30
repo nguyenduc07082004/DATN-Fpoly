@@ -1,17 +1,21 @@
 const express = require("express");
 const router = express.Router();
-const cartController = require("../controllers/CartControllers"); // Thay đổi đường dẫn nếu cần // Sử dụng middleware xác thực nếu cần
-
+const {
+    addToCart,
+    getAllCartItems,
+    updateCartItem,
+    deleteCartItem,
+  } = require("../controllers/CartControllers");
 // Lấy danh sách sản phẩm trong giỏ hàng
-router.get("/", cartController.getCartItems);
+router.get("/", getAllCartItems);
 
 // Thêm sản phẩm vào giỏ hàng
-router.post("/add", cartController.addCartItem);
+router.post("/add", addToCart);
 
 // Cập nhật sản phẩm trong giỏ hàng
-router.put("/:id", cartController.updateCartItem);
+router.put("/:id", updateCartItem);
 
 // Xóa sản phẩm khỏi giỏ hàng
-router.delete("/:id", cartController.deleteCartItem);
+router.delete("/:id", deleteCartItem);
 
 module.exports = router;
