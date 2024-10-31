@@ -1,8 +1,6 @@
 import React from "react";
 
-type Props = {};
-
-const QLBL = (props: Props) => {
+const QLBL = () => {
   return <div>QLBL</div>;
 };
 
