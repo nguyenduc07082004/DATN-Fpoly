@@ -17,7 +17,7 @@ const FromUser = () => {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const response = await fetch(`/api/user/${id}`);
+        const response = await fetch(`/users/${id}`);
         const data = await response.json();
         setUserInfo(data);
       } catch (error) {

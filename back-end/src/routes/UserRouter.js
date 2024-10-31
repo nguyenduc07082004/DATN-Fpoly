@@ -10,5 +10,6 @@ router.post("/login", login);
 
 // router.use(checkAuth, checkIsAdmin);
 router.get("/users", getUser);
+router.get("/users/:id", getUserById);
 
 module.exports = router;

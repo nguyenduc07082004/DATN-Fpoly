@@ -67,5 +67,18 @@ const getUser = async (req, res) => {
     res.status(500).json({ message: "Lỗi khi lấy danh sách ", error });
   }
 };
+const getUserById = async (req, res) => {
+  const { id } = req.params;
 
-module.exports = { register, login, getUser };
+  try {
+    // Tìm người dùng dựa trên id
+    const user = await User.findById(id);
+    if (!user) return res.status(404).json({ message: "Người dùng không tồn tại." });
+
+    res.status(200).json(user);
+  } catch (error) {
+    res.status(500).json({ message: "Lỗi khi lấy thông tin người dùng.", error });
+  }
+};
+
+module.exports = { register, login, getUser , getUserById };
