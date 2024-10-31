@@ -176,7 +176,7 @@ const AdminSidebar = () => {
             aria-labelledby="dropdownUser1"
           >
             <li>
-              <Link className="dropdown-item" to="#">
+              <Link className="dropdown-item" to="/FromUser">
                 Tài khoản
               </Link>
             </li>

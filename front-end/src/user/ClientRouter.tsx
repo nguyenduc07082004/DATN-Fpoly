@@ -8,6 +8,7 @@ import Login from "./middleware/Login";
 import Register from "./middleware/Register";
 import ProductsDetails from "./page/ProductsDetails";
 import Cart from "./Cart/Cart";
+import FromUser from "./middleware/authUser/FromUser";
 const Client = () => {
   return (
     <div>
@@ -21,6 +22,7 @@ const Client = () => {
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/cart" element={<Cart />} />
+        <Route path="/FromUser" element={<FromUser />} />
       </Routes>
       <Footer />
     </div>
