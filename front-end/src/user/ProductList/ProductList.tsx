@@ -38,7 +38,7 @@ const ProductList = () => {
     <div className="product-list">
       {products.map((product) => (
         <div key={product._id} className="product-item">
-          <img src={product.imageURL} alt={product.title} />
+          <img src={product.image} alt={product.title} />
           <h3>{product.title}</h3>
           <p>{product.price.toLocaleString()} VND</p>
           <button>Thêm vào giỏ hàng</button>

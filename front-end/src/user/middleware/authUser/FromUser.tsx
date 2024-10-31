@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 
-const FromUser = () => {
+const UserForm = () => {
   const { id } = useParams();
   const [userInfo, setUserInfo] = useState({
     username: "",
@@ -36,7 +36,6 @@ const FromUser = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     console.log("Updated User Info:", userInfo);
-    // Here you'd typically send a request to update the user data
     setIsEditing(false);
   };
 
@@ -45,7 +44,6 @@ const FromUser = () => {
       <h2 style={styles.header}>User Profile</h2>
       <div style={styles.profileBox}>
         {!isEditing ? (
-          // Display user info in tables
           <div style={styles.infoContainer}>
             <table style={styles.table}>
               <caption style={styles.caption}>User Information</caption>
@@ -91,7 +89,6 @@ const FromUser = () => {
             </button>
           </div>
         ) : (
-          // Editing form
           <form onSubmit={handleSubmit} style={styles.form}>
             <div style={styles.editContainer}>
               <table style={styles.table}>
@@ -175,7 +172,7 @@ const FromUser = () => {
                         value={userInfo.role}
                         onChange={handleChange}
                         style={styles.input}
-                        disabled // assuming the role shouldn't be changed
+                        disabled
                       />
                     </td>
                   </tr>
@@ -203,7 +200,7 @@ const FromUser = () => {
 
 const styles = {
   container: {
-    maxWidth: "800px", // Increased width
+    maxWidth: "800px",
     margin: "20px auto",
     padding: "20px",
     borderRadius: "12px",
@@ -232,7 +229,7 @@ const styles = {
     flexDirection: "column",
   },
   table: {
-    width: "100%", // Full width for tables
+    width: "100%",
     borderCollapse: "collapse",
     border: "1px solid #ddd",
     marginBottom: "20px",
@@ -295,4 +292,4 @@ const styles = {
   },
 };
 
-export default FromUser;
+export default UserForm;

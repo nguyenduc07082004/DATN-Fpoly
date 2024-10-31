@@ -1,7 +1,7 @@
 // routes/productRoutes.js
 const express = require("express");
 const router = express.Router();
-const { register, login, getUser } = require("../controllers/UserControllers");
+const { register, login, getUser ,getUserById} = require("../controllers/UserControllers");
 const { checkAuth } = require("../middleware/checkAuth");
 const { checkIsAdmin } = require("../middleware/adminChecking");
 // const authMiddleware = require("../middleware/authmiddleware");
