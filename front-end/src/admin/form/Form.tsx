@@ -33,7 +33,8 @@ const color = [
 ];
 
 const Form = () => {
-  const { onSubmitProduct } = useContext(ProdContext);
+  const { onSubmitProduct, onChangeHandler, setImage, data1 } =
+    useContext(ProdContext);
   const { data } = useContext(CategoryContext);
   // const [image, setImage] = useState<File | null>(null);
   const { id } = useParams();
@@ -43,24 +44,6 @@ const Form = () => {
     setSelectedCategory(event.target.options[event.target.selectedIndex].text);
     console.log(event.target.options[event.target.selectedIndex].text);
   };
-  // const imageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-  //   const file = e.target.files ? e.target.files[0] : null;
-  //   if (file) {
-  //     setImage(file);
-  //     const formData = new FormData();
-  //     formData.append("image", file);
-  //     try {
-  //       const res = await ins.post(`/products/add`, formData, {
-  //         headers: {
-  //           "Content-Type": "multipart/form-data",
-  //         },
-  //       });
-  //       console.log(res);
-  //     } catch (error) {
-  //       console.error("Error uploading image:", error);
-  //     }
-  //   }
-  // };
 
   const {
     register,
@@ -86,8 +69,8 @@ const Form = () => {
         {id ? <h2>Cập nhật sản phẩm</h2> : <h2>Thêm mới sản phẩm</h2>}
       </p>
       <form
-        onSubmit={handleSubmit((data) => {
-          onSubmitProduct({ ...data, _id: id });
+        onSubmit={handleSubmit((data, e) => {
+          onSubmitProduct({ ...data, _id: id }, e);
         })}
       >
         <div className="m-5 d-flex">
@@ -98,7 +81,14 @@ const Form = () => {
               style={{ width: "500px", height: "50px" }}
               type="text"
               placeholder="Tên sản phẩm"
-              {...register("title", { required: true })}
+              // onChange={onChangeHandler}
+              // name="title"
+              // value={data1.title}
+              // required
+              {...register("title", {
+                required: true,
+                onChange: onChangeHandler,
+              })}
             />
             {errors.title && <span>{errors.title.message}</span>}
           </div>
@@ -108,10 +98,10 @@ const Form = () => {
             <select
               className="form-control"
               style={{ width: "200px", height: "50px" }}
-              {...register("categories", {
-                required: true,
-              })}
-              onChange={handleCategoryChange}
+              onChange={(event) => {
+                handleCategoryChange(event);
+                onChangeHandler(event);
+              }}
             >
               <option value="0">-----</option>
               {data.category.map((i) => (
@@ -127,7 +117,8 @@ const Form = () => {
             <select
               className="form-control"
               style={{ width: "200px", height: "50px" }}
-              {...register("storage")}
+              onChange={onChangeHandler}
+              name="storage"
             >
               {selectedCategory === "Phụ kiện" &&
                 storage.map((i) => (
@@ -151,7 +142,15 @@ const Form = () => {
               style={{ width: "200px", height: "50px" }}
               type="number"
               placeholder="Giá sản phẩm"
-              {...register("price", { required: true, valueAsNumber: true })}
+              // onChange={onChangeHandler}
+              // name="price"
+              // required
+              // value={data1.price}
+              {...register("price", {
+                required: true,
+                onChange: onChangeHandler,
+                valueAsNumber: true,
+              })}
             />
             {errors.price && <span>{errors.price.message}</span>}
           </div>
@@ -162,7 +161,15 @@ const Form = () => {
               type="number"
               placeholder="Số lượng sản phẩm"
               style={{ width: "200px", height: "50px" }}
-              {...register("quantity", { required: true, valueAsNumber: true })}
+              // onChange={onChangeHandler}
+              // name="quantity"
+              // required
+              // value={data1.quantity}
+              {...register("quantity", {
+                required: true,
+                onChange: onChangeHandler,
+                valueAsNumber: true,
+              })}
             />
             {errors.quantity && <span>{errors.quantity.message}</span>}
           </div>
@@ -173,7 +180,10 @@ const Form = () => {
               style={{ width: "200px", height: "50px" }}
               type="file"
               name="image"
-              // {...register("image", { required: true, onChange: imageUpload })}
+              onChange={(e: BaseSyntheticEvent) => {
+                onChangeHandler(e);
+                setImage(true);
+              }}
             />
           </div>
           <div className="form-group category">
@@ -181,7 +191,8 @@ const Form = () => {
             <select
               className="form-control"
               style={{ width: "200px", height: "50px" }}
-              {...register("color")}
+              onChange={onChangeHandler}
+              name="color"
             >
               {selectedCategory === "Phụ kiện" &&
                 color.map((i) => (
@@ -206,7 +217,9 @@ const Form = () => {
               rows={3}
               style={{ width: "500px" }}
               placeholder="Mô tả sản phẩm"
-              {...register("description", { required: true })}
+              onChange={onChangeHandler}
+              name="description"
+              value={data1.description}
             />
             {errors.description && <span>{errors.description.message}</span>}
           </div>

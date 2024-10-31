@@ -28,12 +28,12 @@ const UserForm = () => {
     fetchUserData();
   }, [id]);
 
-  const handleChange = (e) => {
+  const handleChange = (e: any) => {
     const { name, value } = e.target;
     setUserInfo((prevInfo) => ({ ...prevInfo, [name]: value }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = (e: any) => {
     e.preventDefault();
     console.log("Updated User Info:", userInfo);
     setIsEditing(false);
@@ -198,7 +198,9 @@ const UserForm = () => {
   );
 };
 
-const styles = {
+import { CSSProperties } from "react";
+
+const styles: { [key: string]: CSSProperties } = {
   container: {
     maxWidth: "800px",
     margin: "20px auto",

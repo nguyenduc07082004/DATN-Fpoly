@@ -6,7 +6,7 @@ import { Products } from "../../interfaces/Products";
 
 export type ProdContextType = {
   onDel: (_id: string) => void;
-  onSubmitProduct: (data: Products) => void;
+  onSubmitProduct: (product: Products, e: any) => Promise<void>;
   dispatch: React.Dispatch<any>;
   handleNextPage: () => void;
   handlePrevPage: () => void;
@@ -18,6 +18,9 @@ export type ProdContextType = {
   indexOfFirstProduct: number;
   searchQuery: string;
   productsPerPage: number;
+  onChangeHandler: (event: any) => void;
+  setImage: React.Dispatch<React.SetStateAction<boolean>>;
+  data1: any;
 };
 
 export const ProdContext = createContext({} as ProdContextType);
@@ -27,7 +30,22 @@ export const ProdProvider = ({ children }: { children: React.ReactNode }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState("");
   const productsPerPage = 6; // Số sản phẩm trên mỗi trang
-
+  const [image, setImage] = useState<any>(null);
+  const [data1, setData] = useState({
+    title: "",
+    price: "",
+    storage: "",
+    color: "",
+    categories: "Điện thoại",
+    quantity: "",
+    description: "",
+  });
+  const onChangeHandler = (event: any) => {
+    const name = event.target.name;
+    const value = event.target.value;
+    setData((data) => ({ ...data, [name]: value }));
+    console.log(name, value);
+  };
   //Tìm kiếm sản phẩm
   const handleSearch = (event: any) => {
     setSearchQuery(event.target.value);
@@ -81,15 +99,48 @@ export const ProdProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   //Logic thêm/sửa sản phẩm
-  const onSubmitProduct = async (product: Products) => {
+  const onSubmitProduct = async (product: Products, e: any) => {
+    e.preventDefault();
     try {
       let response;
       if (product._id) {
         response = await ins.put(`/products/edit/${product._id}`, product);
         dispatch({ type: "EDIT_PRODUCT", payload: response.data });
       } else {
-        response = await ins.post(`/products/add`, product);
+        // response = await ins.post(`/products/add`, product);
+        // dispatch({ type: "ADD_PRODUCT", payload: response.data });
+
+        const formData = new FormData();
+        formData.append("title", product.title);
+        formData.append("price", String(product.price));
+        formData.append("storage", product.storage);
+        formData.append("color", product.color);
+        if (image) {
+          formData.append("image", image);
+        }
+        formData.append("categories", product.categories);
+        formData.append("quantity", String(product.quantity));
+        formData.append("description", product.description);
+
+        response = await ins.post(`/products/add`, formData, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        });
+        console.log(response.data);
         dispatch({ type: "ADD_PRODUCT", payload: response.data });
+        if (response.data.success) {
+          setData({
+            title: "",
+            price: "",
+            storage: "",
+            categories: "Điện thoại",
+            quantity: "",
+            color: "",
+            description: "",
+          });
+          setImage(null);
+        }
       }
       window.location.href = "/admin/qlsp";
       fetchProducts();
@@ -102,12 +153,15 @@ export const ProdProvider = ({ children }: { children: React.ReactNode }) => {
   return (
     <ProdContext.Provider
       value={{
+        data1,
         dispatch,
         onDel,
         onSubmitProduct,
         handlePrevPage,
         handleNextPage,
         handleSearch,
+        onChangeHandler,
+        setImage,
         state,
         currentProducts,
         currentPage,
