@@ -1,7 +1,30 @@
 const express = require("express");
 const router = express.Router();
 const productController = require("../controllers/ProductControllers");
+const multer = require("multer");
+
 // Lấy danh sách sản phẩm (không cần xác thực)
+
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, "uploads/");
+  },
+  filename: function (req, file, cb) {
+    cb(null, Date.now() + "-" + file.originalname);
+  },
+});
+
+const upload = multer({ storage: storage });
+router.post("/uploads", upload.single("image"), (req, res) => {
+  if (!req.file) {
+    return res
+      .status(400)
+      .json({ success: false, message: "No file uploaded" });
+  }
+  res.status(200).json({ success: true, file: req.file });
+});
+router.post("/add", upload.single("image"), productController.addProduct);
+
 router.get("/", productController.getProducts);
 
 router.get(
@@ -10,10 +33,6 @@ router.get(
 );
 
 // Thêm sản phẩm (yêu cầu xác thực)
-router.post(
-  "/add", //authMiddleware,
-  productController.addProduct
-);
 
 router.get(
   "/:id", //authMiddleware,

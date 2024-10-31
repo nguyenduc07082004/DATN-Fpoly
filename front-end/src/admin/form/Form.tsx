@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from "react";
+import { BaseSyntheticEvent, useContext, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useParams } from "react-router-dom";
 import { Products } from "../../interfaces/Products";
@@ -12,7 +12,7 @@ const productSchema = z.object({
   title: z.string().min(6, { message: "Tên sản phẩm phải lớn hơn 6 ký tự" }),
   price: z.number().min(0, { message: "Giá sản phẩm phải lớn hơn 0" }),
   quantity: z.number().min(0, { message: "Số lượng sản phẩm phải lớn hơn 0" }),
-  imageURL: z.string().optional(),
+  image: z.string().optional(),
   categories: z.string().min(1, { message: "Danh mục không được để trống" }),
   description: z.string().optional(),
   storage: z.string(),
@@ -35,6 +35,7 @@ const color = [
 const Form = () => {
   const { onSubmitProduct } = useContext(ProdContext);
   const { data } = useContext(CategoryContext);
+  // const [image, setImage] = useState<File | null>(null);
   const { id } = useParams();
   const [selectedCategory, setSelectedCategory] = useState("");
 
@@ -42,6 +43,24 @@ const Form = () => {
     setSelectedCategory(event.target.options[event.target.selectedIndex].text);
     console.log(event.target.options[event.target.selectedIndex].text);
   };
+  // const imageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  //   const file = e.target.files ? e.target.files[0] : null;
+  //   if (file) {
+  //     setImage(file);
+  //     const formData = new FormData();
+  //     formData.append("image", file);
+  //     try {
+  //       const res = await ins.post(`/products/add`, formData, {
+  //         headers: {
+  //           "Content-Type": "multipart/form-data",
+  //         },
+  //       });
+  //       console.log(res);
+  //     } catch (error) {
+  //       console.error("Error uploading image:", error);
+  //     }
+  //   }
+  // };
 
   const {
     register,
@@ -67,7 +86,9 @@ const Form = () => {
         {id ? <h2>Cập nhật sản phẩm</h2> : <h2>Thêm mới sản phẩm</h2>}
       </p>
       <form
-        onSubmit={handleSubmit((data) => onSubmitProduct({ ...data, _id: id }))}
+        onSubmit={handleSubmit((data) => {
+          onSubmitProduct({ ...data, _id: id });
+        })}
       >
         <div className="m-5 d-flex">
           <div className="form-group">
@@ -100,22 +121,26 @@ const Form = () => {
               ))}
             </select>
           </div>
-          {selectedCategory === "Điện thoại" && ( // Replace "specific_value" with the actual value
-            <div className="form-group category">
-              <label htmlFor="storage">Dung lượng</label>
-              <select
-                className="form-control"
-                style={{ width: "200px", height: "50px" }}
-                {...register("storage", {
-                  required: true,
-                })}
-              >
-                {storage.map((i) => (
+
+          <div className="form-group category">
+            <label htmlFor="storage">Dung lượng</label>
+            <select
+              className="form-control"
+              style={{ width: "200px", height: "50px" }}
+              {...register("storage")}
+            >
+              {selectedCategory === "Phụ kiện" &&
+                storage.map((i) => (
+                  <option disabled value={i.options}>
+                    {i.options}
+                  </option>
+                ))}
+              {selectedCategory === "Điện thoại" &&
+                storage.map((i) => (
                   <option value={i.options}>{i.options}</option>
                 ))}
-              </select>
-            </div>
-          )}
+            </select>
+          </div>
         </div>
 
         <div className="m-5 d-flex">
@@ -130,7 +155,6 @@ const Form = () => {
             />
             {errors.price && <span>{errors.price.message}</span>}
           </div>
-
           <div className="form-group quantity">
             <label htmlFor="price">Số lượng</label>
             <input
@@ -143,30 +167,34 @@ const Form = () => {
             {errors.quantity && <span>{errors.quantity.message}</span>}
           </div>
           <div className="form-group category">
-            <label htmlFor="price">Ảnh sản phẩm</label>
+            <label htmlFor="image">Ảnh sản phẩm</label>
             <input
-              placeholder="ảnh sản phẩm"
               className="form-control"
               style={{ width: "200px", height: "50px" }}
               type="file"
+              name="image"
+              // {...register("image", { required: true, onChange: imageUpload })}
             />
           </div>
-          {selectedCategory === "Điện thoại" && ( // Replace "specific_value" with the actual value
-            <div className="form-group category">
-              <label htmlFor="specialFeature">Màu</label>
-              <select
-                className="form-control"
-                style={{ width: "200px", height: "50px" }}
-                {...register("color", {
-                  required: true,
-                })}
-              >
-                {color.map((i) => (
+          <div className="form-group category">
+            <label htmlFor="specialFeature">Màu</label>
+            <select
+              className="form-control"
+              style={{ width: "200px", height: "50px" }}
+              {...register("color")}
+            >
+              {selectedCategory === "Phụ kiện" &&
+                color.map((i) => (
+                  <option disabled value={i.options}>
+                    {i.options}
+                  </option>
+                ))}
+              {selectedCategory === "Điện thoại" &&
+                color.map((i) => (
                   <option value={i.options}>{i.options}</option>
                 ))}
-              </select>
-            </div>
-          )}
+            </select>
+          </div>
         </div>
 
         <div className="m-5 d-flex">

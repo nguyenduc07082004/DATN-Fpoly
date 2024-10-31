@@ -4,7 +4,7 @@ export interface Products {
   _id: any;
   title: string;
   price: number;
-  imageURL: string;
+  image: string;
   categories: any | string;
   quantity: number;
   description: string;
