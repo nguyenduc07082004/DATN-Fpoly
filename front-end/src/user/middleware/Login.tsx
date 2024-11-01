@@ -13,38 +13,10 @@ import {
   InputAdornment,
   IconButton,
 } from "@mui/material";
-import { styled } from "@mui/system";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import ins from "../../api";
 import { useAuth } from "../../api/contexts/AuthContext";
-
-// Styled components
-const LoginContainer = styled(Box)({
-  backgroundColor: "#fff",
-  padding: "40px",
-  borderRadius: "8px",
-  boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
-  textAlign: "center",
-});
-
-const LoginButton = styled(Button)({
-  backgroundColor: "#ff5722",
-  color: "#fff",
-  "&:hover": {
-    backgroundColor: "#ff3d00",
-  },
-});
-
-const ErrorText = styled(Typography)({
-  color: "red",
-});
-
-const ForgotPasswordLink = styled(Link)({
-  display: "block",
-  marginTop: "16px",
-  color: "#ff5722",
-  textDecoration: "none",
-});
+import "../css/Login.css";
 
 const Login: React.FC = () => {
   const [email, setEmail] = useState("");
@@ -60,7 +32,6 @@ const Login: React.FC = () => {
     setLoading(true);
     setError(null);
 
-    // Validate input fields
     if (!email || !password) {
       setError("Vui lòng nhập email và mật khẩu.");
       setLoading(false);
@@ -68,15 +39,9 @@ const Login: React.FC = () => {
     }
 
     try {
-      const { data } = await ins.post("/login", {
-        email,
-        password,
-      });
-      console.log(data);
+      const { data } = await ins.post("/login", { email, password });
       contextLogin(data.token, data.user);
       navigate(data.user.role === "admin" ? "/admin" : "/");
-
-      navigate("/"); // Navigate to homepage after successful login
     } catch (error) {
       setError("Email hoặc mật khẩu không chính xác. Vui lòng thử lại.");
       setLoading(false);
@@ -85,12 +50,12 @@ const Login: React.FC = () => {
 
   return (
     <Container maxWidth="sm" sx={{ mt: 8 }}>
-      <LoginContainer>
+      <Box className="login-container">
         <Typography variant="h4" sx={{ fontWeight: "bold", mb: 2 }}>
           Đăng nhập
         </Typography>
 
-        {error && <ErrorText>{error}</ErrorText>}
+        {error && <Typography className="error-text">{error}</Typography>}
 
         <form onSubmit={handleLogin}>
           <TextField
@@ -129,10 +94,11 @@ const Login: React.FC = () => {
             }}
           />
 
-          <LoginButton
+          <Button
             type="submit"
             variant="contained"
             fullWidth
+            className="login-button"
             sx={{ py: 1.5, mt: 2, fontSize: "1rem" }}
             disabled={loading}
           >
@@ -141,12 +107,12 @@ const Login: React.FC = () => {
             ) : (
               "Đăng nhập"
             )}
-          </LoginButton>
+          </Button>
         </form>
 
-        <ForgotPasswordLink to="/forgot-password">
+        <Link to="/forgot-password" className="forgot-password-link">
           Quên mật khẩu?
-        </ForgotPasswordLink>
+        </Link>
 
         <Box sx={{ mt: 3 }}>
           <Typography variant="body2">
@@ -159,7 +125,7 @@ const Login: React.FC = () => {
             </Link>
           </Typography>
         </Box>
-      </LoginContainer>
+      </Box>
     </Container>
   );
 };

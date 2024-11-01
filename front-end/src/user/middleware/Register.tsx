@@ -13,35 +13,14 @@ import {
   InputAdornment,
   IconButton,
 } from "@mui/material";
-import { styled } from "@mui/system";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
-
-// Styled components
-const RegisterContainer = styled(Box)({
-  backgroundColor: "#fff",
-  padding: "40px",
-  borderRadius: "8px",
-  boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
-  textAlign: "center",
-});
-
-const RegisterButton = styled(Button)({
-  backgroundColor: "#ff5722",
-  color: "#fff",
-  "&:hover": {
-    backgroundColor: "#ff3d00",
-  },
-});
-
-const ErrorText = styled(Typography)({
-  color: "red",
-});
+import "../css/Register.css";
 
 const Register: React.FC = () => {
-  const [fullName, setFullName] = useState(""); // Thêm trạng thái cho Họ và tên
-  const [address, setAddress] = useState(""); // Thêm trạng thái cho Họ và tên
+  const [fullName, setFullName] = useState("");
+  const [address, setAddress] = useState("");
   const [email, setEmail] = useState("");
-  const [phone, setPhone] = useState(""); // Thêm trạng thái cho Số điện thoại
+  const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -53,19 +32,12 @@ const Register: React.FC = () => {
     setLoading(true);
     setError(null);
 
-    // Validate input fields
     if (!fullName || !email || !phone || !password) {
-      setError("Vui lòng điền đầy đủ thông tin."); // Thông báo lỗi nếu không điền đủ
+      setError("Vui lòng điền đầy đủ thông tin.");
       setLoading(false);
       return;
     }
-    console.log({
-      fullName,
-      email,
-      phone,
-      password,
-      address,
-    });
+
     try {
       const response = await axios.post("http://localhost:8000/register", {
         fullName,
@@ -74,10 +46,9 @@ const Register: React.FC = () => {
         password,
         address,
       });
-      console.log(response);
 
       if (response.status === 201) {
-        navigate("/login"); // Redirect to login page after successful registration
+        navigate("/login");
       }
     } catch (error) {
       setError("Đã xảy ra lỗi. Vui lòng thử lại.");
@@ -87,12 +58,12 @@ const Register: React.FC = () => {
 
   return (
     <Container maxWidth="sm" sx={{ mt: 8 }}>
-      <RegisterContainer>
+      <Box className="register-container">
         <Typography variant="h4" sx={{ fontWeight: "bold", mb: 2 }}>
           Đăng ký tài khoản
         </Typography>
 
-        {error && <ErrorText>{error}</ErrorText>}
+        {error && <Typography className="error-text">{error}</Typography>}
 
         <form onSubmit={handleRegister}>
           <TextField
@@ -157,10 +128,11 @@ const Register: React.FC = () => {
             }}
           />
 
-          <RegisterButton
+          <Button
             type="submit"
             variant="contained"
             fullWidth
+            className="register-button"
             sx={{ py: 1.5, mt: 2, fontSize: "1rem" }}
             disabled={loading}
           >
@@ -169,7 +141,7 @@ const Register: React.FC = () => {
             ) : (
               "Đăng ký"
             )}
-          </RegisterButton>
+          </Button>
         </form>
 
         <Box sx={{ mt: 3 }}>
@@ -183,7 +155,7 @@ const Register: React.FC = () => {
             </Link>
           </Typography>
         </Box>
-      </RegisterContainer>
+      </Box>
     </Container>
   );
 };

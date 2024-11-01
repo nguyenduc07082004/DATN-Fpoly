@@ -1,0 +1,23 @@
+/* src/components/Register.css */
+
+.register-container {
+    background-color: #fff;
+    padding: 40px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    text-align: center;
+  }
+  
+  .register-button {
+    background-color: #ff5722;
+    color: #fff;
+  }
+  
+  .register-button:hover {
+    background-color: #ff3d00;
+  }
+  
+  .error-text {
+    color: red;
+  }
+  

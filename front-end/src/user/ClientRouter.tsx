@@ -22,7 +22,7 @@ const Client = () => {
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/cart" element={<Cart />} />
-        <Route path="/FromUser" element={<FromUser />} />
+        <Route path="/user/:id" element={<FromUser />} />
       </Routes>
       <Footer />
     </div>
