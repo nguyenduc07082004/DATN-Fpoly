@@ -5,7 +5,7 @@ const Product = require("../models/ProductModels");
 exports.addToCart = async (req, res) => {
   try {
     const { productId, quantity } = req.body;
-    const userId = req.user._id; // Giả sử bạn có userId từ middleware xác thực
+    const userId = req.user.id; // Lấy userId từ token đã giải mã trong middleware
 
     // Kiểm tra nếu giỏ hàng của người dùng đã tồn tại
     let cart = await Cart.findOne({ userId });
@@ -39,7 +39,7 @@ exports.addToCart = async (req, res) => {
 // Lấy giỏ hàng của người dùng
 exports.getUserCart = async (req, res) => {
   try {
-    const userId = req.user._id;
+    const userId = req.user.id; // Lấy userId từ token
     const cart = await Cart.findOne({ userId }).populate("items.productId");
 
     if (!cart) {
@@ -56,7 +56,7 @@ exports.getUserCart = async (req, res) => {
 exports.updateCartItem = async (req, res) => {
   try {
     const { productId, quantity } = req.body;
-    const userId = req.user._id;
+    const userId = req.user.id; // Lấy userId từ token
 
     const cart = await Cart.findOne({ userId });
     if (!cart) return res.status(404).json({ success: false, message: "Giỏ hàng không tồn tại" });
@@ -66,7 +66,7 @@ exports.updateCartItem = async (req, res) => {
       return res.status(404).json({ success: false, message: "Sản phẩm không có trong giỏ hàng" });
     }
 
-    cart.items[itemIndex].quantity = quantity;
+    cart.items[itemIndex].quantity = quantity; // Cập nhật số lượng
     await cart.save();
 
     res.status(200).json({ success: true, data: cart });
@@ -79,11 +79,12 @@ exports.updateCartItem = async (req, res) => {
 exports.removeCartItem = async (req, res) => {
   try {
     const { productId } = req.body;
-    const userId = req.user._id;
+    const userId = req.user.id; // Lấy userId từ token
 
     let cart = await Cart.findOne({ userId });
     if (!cart) return res.status(404).json({ success: false, message: "Giỏ hàng không tồn tại" });
 
+    // Xóa sản phẩm khỏi giỏ hàng
     cart.items = cart.items.filter((item) => item.productId.toString() !== productId);
 
     await cart.save();

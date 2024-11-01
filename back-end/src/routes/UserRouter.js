@@ -1,9 +1,10 @@
 // routes/productRoutes.js
 const express = require("express");
 const router = express.Router();
-const { register, login, getUser ,getUserById} = require("../controllers/UserControllers");
+const { register, login, getUser ,getUserById, getCurrentUser} = require("../controllers/UserControllers");
 const { checkAuth } = require("../middleware/checkAuth");
 const { checkIsAdmin } = require("../middleware/adminChecking");
+const { verifyToken } = require("../middleware/authMiddleware");
 // const authMiddleware = require("../middleware/authmiddleware");
 router.post("/register", register);
 router.post("/login", login);
@@ -11,5 +12,7 @@ router.post("/login", login);
 // router.use(checkAuth, checkIsAdmin);
 router.get("/users", getUser);
 router.get("/users/:id", getUserById);
+
+router.get("/me", verifyToken, getCurrentUser);
 
 module.exports = router;

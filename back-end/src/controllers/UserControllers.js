@@ -16,6 +16,7 @@ const register = async (req, res) => {
 
     // Tạo người dùng mới
     const newUser = new User({
+      username, // Thêm trường username
       fullName,
       email,
       password: hashedPassword,
@@ -24,11 +25,18 @@ const register = async (req, res) => {
     });
 
     await newUser.save();
-    res.status(201).json({ message: "Đăng ký thành công." });
+
+    // Tạo token sau khi đăng ký
+    const token = jwt.sign({ id: newUser._id, role: newUser.role }, "secretKey", {
+      expiresIn: "1h",
+    });
+
+    res.status(201).json({ message: "Đăng ký thành công.", token, user: newUser });
   } catch (error) {
     res.status(500).json({ message: "Lỗi server." });
   }
 };
+
 
 const login = async (req, res) => {
   const { email, password } = req.body;
@@ -80,5 +88,18 @@ const getUserById = async (req, res) => {
     res.status(500).json({ message: "Lỗi khi lấy thông tin người dùng.", error });
   }
 };
+const getCurrentUser = async (req, res) => {
+  try {
+    const userId = req.user.id; // Lấy userId từ token đã giải mã
+    const user = await User.findById(userId).select("-password"); // Không trả về mật khẩu
 
-module.exports = { register, login, getUser , getUserById };
+    if (!user) {
+      return res.status(404).json({ message: "Người dùng không tồn tại." });
+    }
+
+    res.status(200).json(user);
+  } catch (error) {
+    res.status(500).json({ message: "Lỗi khi lấy thông tin người dùng.", error });
+  }
+};
+module.exports = { register, login, getUser , getUserById ,getCurrentUser};
