@@ -3,10 +3,10 @@ import { createContext, useEffect, useReducer, useState } from "react";
 import productsReducer, { initialState } from "../reducers/ProductsReducers";
 import ins from "..";
 import { Products } from "../../interfaces/Products";
+import axios from "axios";
 
 export type ProdContextType = {
   onDel: (_id: string) => void;
-  onSubmitProduct: (product: Products, e: any) => Promise<void>;
   dispatch: React.Dispatch<any>;
   handleNextPage: () => void;
   handlePrevPage: () => void;
@@ -43,7 +43,7 @@ export const ProdProvider = ({ children }: { children: React.ReactNode }) => {
   const onChangeHandler = (event: any) => {
     const name = event.target.name;
     const value = event.target.value;
-    setData((data) => ({ ...data, [name]: value }));
+    setData((data1) => ({ ...data1, [name]: value }));
     console.log(name, value);
   };
   //Tìm kiếm sản phẩm
@@ -98,65 +98,12 @@ export const ProdProvider = ({ children }: { children: React.ReactNode }) => {
     fetchProducts();
   };
 
-  //Logic thêm/sửa sản phẩm
-  const onSubmitProduct = async (product: Products, e: any) => {
-    e.preventDefault();
-    try {
-      let response;
-      if (product._id) {
-        response = await ins.put(`/products/edit/${product._id}`, product);
-        dispatch({ type: "EDIT_PRODUCT", payload: response.data });
-      } else {
-        // response = await ins.post(`/products/add`, product);
-        // dispatch({ type: "ADD_PRODUCT", payload: response.data });
-
-        const formData = new FormData();
-        formData.append("title", product.title);
-        formData.append("price", String(product.price));
-        formData.append("storage", product.storage);
-        formData.append("color", product.color);
-        if (image) {
-          formData.append("image", image);
-        }
-        formData.append("categories", product.categories);
-        formData.append("quantity", String(product.quantity));
-        formData.append("description", product.description);
-
-        response = await ins.post(`/products/add`, formData, {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        });
-        console.log(response.data);
-        dispatch({ type: "ADD_PRODUCT", payload: response.data });
-        if (response.data.success) {
-          setData({
-            title: "",
-            price: "",
-            storage: "",
-            categories: "Điện thoại",
-            quantity: "",
-            color: "",
-            description: "",
-          });
-          setImage(null);
-        }
-      }
-      window.location.href = "/admin/qlsp";
-      fetchProducts();
-    } catch (error) {
-      console.error("Error submitting product:", error);
-      // Optionally, display an error message to the user
-      alert("There was an error submitting the product. Please try again.");
-    }
-  };
   return (
     <ProdContext.Provider
       value={{
         data1,
         dispatch,
         onDel,
-        onSubmitProduct,
         handlePrevPage,
         handleNextPage,
         handleSearch,

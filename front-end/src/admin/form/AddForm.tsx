@@ -1,78 +1,80 @@
-import { BaseSyntheticEvent, useContext, useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
-import { useParams } from "react-router-dom";
-import { Products } from "../../interfaces/Products";
-import ins from "../../api";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
-import { ProdContext } from "../../api/contexts/ProductsContexts";
+import axios from "axios";
+import { useContext, useState } from "react";
 import { CategoryContext } from "../../api/contexts/CategoryContext";
 
-const productSchema = z.object({
-  title: z.string().min(6, { message: "Tên sản phẩm phải lớn hơn 6 ký tự" }),
-  price: z.number().min(0, { message: "Giá sản phẩm phải lớn hơn 0" }),
-  quantity: z.number().min(0, { message: "Số lượng sản phẩm phải lớn hơn 0" }),
-  image: z.string().optional(),
-  categories: z.string().min(1, { message: "Danh mục không được để trống" }),
-  description: z.string().optional(),
-  storage: z.string(),
-  color: z.string(),
-});
-
-const storage = [
-  { _id: "1", options: "128GB" },
-  { _id: "2", options: "256GB" },
-  { _id: "3", options: "512GB" },
-  { _id: "4", options: "1TB" },
-];
-const color = [
-  { _id: "1", options: "Đen" },
-  { _id: "2", options: "Trắng" },
-  { _id: "3", options: "Hồng" },
-  { _id: "4", options: "Xanh" },
-];
-
-const Form = () => {
-  const { onSubmitProduct, onChangeHandler, setImage, data1 } =
-    useContext(ProdContext);
-  const { data } = useContext(CategoryContext);
-  // const [image, setImage] = useState<File | null>(null);
-  const { id } = useParams();
+const AddForm = () => {
+  const storage1 = [
+    { _id: "1", options: "128GB" },
+    { _id: "2", options: "256GB" },
+    { _id: "3", options: "512GB" },
+    { _id: "4", options: "1TB" },
+  ];
+  const color1 = [
+    { _id: "1", options: "Đen" },
+    { _id: "2", options: "Trắng" },
+    { _id: "3", options: "Hồng" },
+    { _id: "4", options: "Xanh" },
+  ];
+  const [title, setTitle] = useState("");
+  const [price, setPrice] = useState("");
+  const [storage, setStorage] = useState("");
+  const [color, setColor] = useState("");
+  const [categories, setCategories] = useState("Điện thoại");
+  const [quantity, setQuantity] = useState("");
+  const [description, setDescription] = useState("");
+  const { dataDM } = useContext(CategoryContext);
+  const [data, setData] = useState({
+    title: "",
+    price: "",
+    storage: "128GB",
+    categories: "Điện thoại",
+    quantity: "",
+    colors: "",
+    description: "",
+  });
+  const [image, setImage] = useState<File | null>(null);
   const [selectedCategory, setSelectedCategory] = useState("");
 
   const handleCategoryChange = (event: any) => {
     setSelectedCategory(event.target.options[event.target.selectedIndex].text);
+
     console.log(event.target.options[event.target.selectedIndex].text);
   };
 
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-    reset,
-  } = useForm<Products>({
-    resolver: zodResolver(productSchema),
-  });
-  if (id) {
-    useEffect(() => {
-      (async () => {
-        const data = await ins.get(`/products/${id}`);
-        reset(data.data);
-        console.log(data.data);
-      })();
-    }, [id, reset]);
-  }
+  const Suckmit = async (e: any) => {
+    e.preventDefault();
+    const formData = new FormData();
+    formData.append("title", title);
+    if (image) {
+      formData.append("image", image);
+    }
+    formData.append("categories", categories);
+    formData.append("storage", storage);
+    formData.append("price", price);
+    formData.append("quantity", quantity);
+    formData.append("color", color);
+    formData.append("description", description);
+    console.log(title, image, categories);
 
+    // console.log();
+    const response = await axios.post(
+      `http://localhost:8000/products/add`,
+      formData,
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      }
+    );
+    console.log(response);
+    window.location.href = "/admin/qlsp";
+  };
   return (
     <div>
       <p className="m-3">
-        {id ? <h2>Cập nhật sản phẩm</h2> : <h2>Thêm mới sản phẩm</h2>}
+        <h2>Thêm mới sản phẩm</h2>
       </p>
-      <form
-        onSubmit={handleSubmit((data, e) => {
-          onSubmitProduct({ ...data, _id: id }, e);
-        })}
-      >
+      <form onSubmit={Suckmit}>
         <div className="m-5 d-flex">
           <div className="form-group">
             <label htmlFor="title">Tên sản phẩm</label>
@@ -81,53 +83,44 @@ const Form = () => {
               style={{ width: "500px", height: "50px" }}
               type="text"
               placeholder="Tên sản phẩm"
-              // onChange={onChangeHandler}
-              // name="title"
-              // value={data1.title}
-              // required
-              {...register("title", {
-                required: true,
-                onChange: onChangeHandler,
-              })}
+              onChange={(e) => setTitle(e.target.value)}
+              required
             />
-            {errors.title && <span>{errors.title.message}</span>}
           </div>
-
           <div className="form-group category">
             <label htmlFor="categories">Danh mục</label>
             <select
               className="form-control"
               style={{ width: "200px", height: "50px" }}
-              onChange={(event) => {
-                handleCategoryChange(event);
-                onChangeHandler(event);
+              onChange={(e) => {
+                setCategories(e.target.value);
+                handleCategoryChange(e);
               }}
             >
               <option value="0">-----</option>
-              {data.category.map((i) => (
+              {dataDM.category.map((i) => (
                 <option key={i._id} value={i._id}>
                   {i.name}
                 </option>
               ))}
             </select>
           </div>
-
           <div className="form-group category">
             <label htmlFor="storage">Dung lượng</label>
             <select
               className="form-control"
               style={{ width: "200px", height: "50px" }}
-              onChange={onChangeHandler}
+              onChange={(e) => setStorage(e.target.value)}
               name="storage"
             >
               {selectedCategory === "Phụ kiện" &&
-                storage.map((i) => (
+                storage1.map((i) => (
                   <option disabled value={i.options}>
                     {i.options}
                   </option>
                 ))}
               {selectedCategory === "Điện thoại" &&
-                storage.map((i) => (
+                storage1.map((i) => (
                   <option value={i.options}>{i.options}</option>
                 ))}
             </select>
@@ -142,17 +135,10 @@ const Form = () => {
               style={{ width: "200px", height: "50px" }}
               type="number"
               placeholder="Giá sản phẩm"
-              // onChange={onChangeHandler}
-              // name="price"
-              // required
-              // value={data1.price}
-              {...register("price", {
-                required: true,
-                onChange: onChangeHandler,
-                valueAsNumber: true,
-              })}
+              onChange={(e) => setPrice(e.target.value)}
+              name="price"
+              required
             />
-            {errors.price && <span>{errors.price.message}</span>}
           </div>
           <div className="form-group quantity">
             <label htmlFor="price">Số lượng</label>
@@ -161,18 +147,12 @@ const Form = () => {
               type="number"
               placeholder="Số lượng sản phẩm"
               style={{ width: "200px", height: "50px" }}
-              // onChange={onChangeHandler}
-              // name="quantity"
-              // required
-              // value={data1.quantity}
-              {...register("quantity", {
-                required: true,
-                onChange: onChangeHandler,
-                valueAsNumber: true,
-              })}
+              onChange={(e) => setQuantity(e.target.value)}
+              name="quantity"
+              required
             />
-            {errors.quantity && <span>{errors.quantity.message}</span>}
           </div>
+
           <div className="form-group category">
             <label htmlFor="image">Ảnh sản phẩm</label>
             <input
@@ -180,28 +160,31 @@ const Form = () => {
               style={{ width: "200px", height: "50px" }}
               type="file"
               name="image"
-              onChange={(e: BaseSyntheticEvent) => {
-                onChangeHandler(e);
-                setImage(true);
+              accept="image/*"
+              onChange={(e) => {
+                if (e.target.files) {
+                  setImage(e.target.files[0]);
+                }
               }}
             />
           </div>
+
           <div className="form-group category">
             <label htmlFor="specialFeature">Màu</label>
             <select
               className="form-control"
               style={{ width: "200px", height: "50px" }}
-              onChange={onChangeHandler}
+              onChange={(e) => setColor(e.target.value)}
               name="color"
             >
               {selectedCategory === "Phụ kiện" &&
-                color.map((i) => (
+                color1.map((i) => (
                   <option disabled value={i.options}>
                     {i.options}
                   </option>
                 ))}
               {selectedCategory === "Điện thoại" &&
-                color.map((i) => (
+                color1.map((i) => (
                   <option value={i.options}>{i.options}</option>
                 ))}
             </select>
@@ -217,11 +200,9 @@ const Form = () => {
               rows={3}
               style={{ width: "500px" }}
               placeholder="Mô tả sản phẩm"
-              onChange={onChangeHandler}
+              onChange={(e) => setDescription(e.target.value)}
               name="description"
-              value={data1.description}
             />
-            {errors.description && <span>{errors.description.message}</span>}
           </div>
           <button
             className="btn btn1"
@@ -233,7 +214,7 @@ const Form = () => {
             }}
             type="submit"
           >
-            {id ? <h5>Cập nhật sản phẩm</h5> : <h5>Thêm mới sản phẩm</h5>}
+            <h5>Thêm mới sản phẩm</h5>
           </button>
         </div>
       </form>
@@ -241,4 +222,4 @@ const Form = () => {
   );
 };
 
-export default Form;
+export default AddForm;

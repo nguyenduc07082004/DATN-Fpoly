@@ -5,7 +5,7 @@ import { Category } from "../../interfaces/Category";
 import categoryReducer from "../reducers/CategoryReducers";
 
 export type CateContextType = {
-  data: { category: Category[] };
+  dataDM: { category: Category[] };
   onDel: (id: string) => void;
   onSubmitCategory: (data: Category) => void;
   dispatch: React.Dispatch<any>;
@@ -22,7 +22,7 @@ export type CateContextType = {
 export const CategoryContext = createContext({} as CateContextType);
 
 export const CateProvider = ({ children }: { children: React.ReactNode }) => {
-  const [data, dispatch] = useReducer(categoryReducer, { category: [] });
+  const [dataDM, dispatch] = useReducer(categoryReducer, { category: [] });
 
   const [currentPage, setCurrentPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState("");
@@ -33,7 +33,7 @@ export const CateProvider = ({ children }: { children: React.ReactNode }) => {
     setSearchQuery(event.target.value);
     setCurrentPage(1); // Reset to first page on new search
   };
-  const filteredProducts = data.category?.filter((category) =>
+  const filteredProducts = dataDM.category?.filter((category) =>
     category.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
@@ -98,7 +98,7 @@ export const CateProvider = ({ children }: { children: React.ReactNode }) => {
   return (
     <CategoryContext.Provider
       value={{
-        data,
+        dataDM,
         dispatch,
         onDel,
         onSubmitCategory,

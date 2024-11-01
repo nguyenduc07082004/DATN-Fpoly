@@ -3,7 +3,7 @@ import { Route, Routes } from "react-router-dom";
 import "../../App.scss";
 import QLSP from "./QLSP";
 
-import Form from "../form/Form";
+import Form from "../form/AddForm";
 import QLTK from "./QLTK";
 import QLBL from "./QLBL";
 import QLDM from "./QLDM";
@@ -14,6 +14,7 @@ import CateForm from "../form/CateForm";
 import { useContext } from "react";
 import { AuthContext, AuthContextType } from "../../api/contexts/AuthContext";
 import Details from "./Details";
+import AddForm from "../form/AddForm";
 
 function Dashboard() {
   const { user } = useContext(AuthContext) as AuthContextType;
@@ -35,7 +36,7 @@ function Dashboard() {
           {/* QLSP */}
           <Route path="/" element={<TrangChu />} />
           <Route path="/qlsp" element={<QLSP />} />
-          <Route path="qlsp/add" element={<Form />} />
+          <Route path="qlsp/add" element={<AddForm />} />
           <Route path="/qlsp/edit/:id" element={<Form />} />
           <Route path="/qltk" element={<QLTK />} />
           <Route path="/qlbl" element={<QLBL />} />

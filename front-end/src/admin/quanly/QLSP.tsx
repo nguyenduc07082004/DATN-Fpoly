@@ -2,6 +2,7 @@ import "../.././App.scss";
 import { useContext } from "react";
 import { ProdContext } from "../../api/contexts/ProductsContexts";
 import { Link } from "react-router-dom";
+import { baseURL } from "../../api";
 
 const QLSP = () => {
   const {
@@ -63,7 +64,11 @@ const QLSP = () => {
               <td className="col-2">{i.title}</td>
               <td className="col-1">{i.price}</td>
               <td className="col-1">
-                <img src={i.image} alt="error" width="50%" />
+                <img
+                  src={`${baseURL}/images/` + i.image}
+                  alt="error"
+                  width="50%"
+                />
               </td>
               <td className="col-1">{i.quantity}</td>
               <td className="col-2">

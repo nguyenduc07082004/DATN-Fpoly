@@ -27,16 +27,21 @@ const register = async (req, res) => {
     await newUser.save();
 
     // Tạo token sau khi đăng ký
-    const token = jwt.sign({ id: newUser._id, role: newUser.role }, "secretKey", {
-      expiresIn: "1h",
-    });
+    const token = jwt.sign(
+      { id: newUser._id, role: newUser.role },
+      "secretKey",
+      {
+        expiresIn: "1h",
+      }
+    );
 
-    res.status(201).json({ message: "Đăng ký thành công.", token, user: newUser });
+    res
+      .status(201)
+      .json({ message: "Đăng ký thành công.", token, user: newUser });
   } catch (error) {
     res.status(500).json({ message: "Lỗi server." });
   }
 };
-
 
 const login = async (req, res) => {
   const { email, password } = req.body;
@@ -58,7 +63,7 @@ const login = async (req, res) => {
 
     // Tạo token
     const token = jwt.sign({ id: user._id, role: user.role }, "secretKey", {
-      expiresIn: "1h",
+      expiresIn: "1y",
     });
 
     res.json({ message: "Đăng nhập thành công.", token, user: user });
@@ -81,11 +86,14 @@ const getUserById = async (req, res) => {
   try {
     // Tìm người dùng dựa trên id
     const user = await User.findById(id);
-    if (!user) return res.status(404).json({ message: "Người dùng không tồn tại." });
+    if (!user)
+      return res.status(404).json({ message: "Người dùng không tồn tại." });
 
     res.status(200).json(user);
   } catch (error) {
-    res.status(500).json({ message: "Lỗi khi lấy thông tin người dùng.", error });
+    res
+      .status(500)
+      .json({ message: "Lỗi khi lấy thông tin người dùng.", error });
   }
 };
 const getCurrentUser = async (req, res) => {
@@ -99,7 +107,9 @@ const getCurrentUser = async (req, res) => {
 
     res.status(200).json(user);
   } catch (error) {
-    res.status(500).json({ message: "Lỗi khi lấy thông tin người dùng.", error });
+    res
+      .status(500)
+      .json({ message: "Lỗi khi lấy thông tin người dùng.", error });
   }
 };
-module.exports = { register, login, getUser , getUserById ,getCurrentUser};
+module.exports = { register, login, getUser, getUserById, getCurrentUser };

@@ -32,7 +32,8 @@ exports.getProductById = async (req, res) => {
 
 // Thêm sản phẩm
 exports.addProduct = async (req, res) => {
-  const { categories } = req.body;
+  const { title, price, storage, color, categories, quantity, description } =
+    req.body;
   let image_filename = req.file ? req.file.filename : null;
 
   try {
@@ -43,11 +44,21 @@ exports.addProduct = async (req, res) => {
     }
 
     // Tạo sản phẩm mới
-    const newProduct = new Product({ ...req.body, image: image_filename });
+    const newProduct = new Product({
+      title,
+      price,
+      storage,
+      color,
+      image: image_filename,
+      categories,
+      quantity,
+      description,
+    });
     const savedProduct = await newProduct.save();
 
     res.status(201).json(savedProduct);
   } catch (error) {
+    console.error("Error adding product:", error);
     res.status(500).json({ message: "Lỗi khi thêm sản phẩm", error });
   }
 };

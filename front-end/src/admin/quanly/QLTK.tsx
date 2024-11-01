@@ -14,8 +14,6 @@ const QLTK = () => {
     indexOfFirstProduct,
     searchQuery,
   } = useContext(UserContext);
-  const { id } = useParams();
-  console.log(id);
 
   return (
     <div>
