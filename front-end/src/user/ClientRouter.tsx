@@ -1,7 +1,7 @@
 import { Route, Routes } from "react-router-dom";
 import ProductPage from "./page/ProductPage";
 import { CartProvider } from "./Cart/CartContext";
-import ProdfuctList from "./ProductList/ProductList";
+import ProductList from "./ProductList/ProductList";
 import Header from "./home/Header";
 import Footer from "./home/Footer";
 import Home from "./home/Home";
@@ -19,7 +19,7 @@ const Client = () => {
         <Route path="/" element={<Home />} />
         <Route path="/other" element={<ProductPage />} />{" "}
         {/* Thay đổi theo trang khác */}
-        <Route path="/products" element={<ProdfuctList />} />
+        <Route path="/products" element={<ProductList />} />
         <Route path="/products/:productId" element={<ProductsDetails />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
