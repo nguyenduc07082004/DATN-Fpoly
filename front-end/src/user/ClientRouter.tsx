@@ -1,5 +1,6 @@
 import { Route, Routes } from "react-router-dom";
 import ProductPage from "./page/ProductPage";
+import { CartProvider } from "./Cart/CartContext";
 import ProdfuctList from "./ProductList/ProductList";
 import Header from "./home/Header";
 import Footer from "./home/Footer";
@@ -11,7 +12,8 @@ import Cart from "./Cart/Cart";
 import FromUser from "./middleware/authUser/FromUser";
 const Client = () => {
   return (
-    <div>
+    <CartProvider>
+      <div>
       <Header />
       <Routes>
         <Route path="/" element={<Home />} />
@@ -26,6 +28,8 @@ const Client = () => {
       </Routes>
       <Footer />
     </div>
+    </CartProvider>
+    
   );
 };
 

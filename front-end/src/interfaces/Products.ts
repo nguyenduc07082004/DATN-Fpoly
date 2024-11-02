@@ -11,3 +11,8 @@ export interface Products {
   storage: string;
   color: string;
 }
+
+
+export interface CartItem extends Products {
+  quantity: number;
+}
