@@ -2,10 +2,10 @@
 import React, { useEffect, useState } from "react";
 import "../css/ProductList.css";
 import { Products } from "../../interfaces/Products";
-import { useCart } from "../Cart/CartContext"; // Nhập useCart
+// Nhập useCart
 
 const ProductList = () => {
-  const { addToCart } = useCart(); // Lấy hàm addToCart từ context
+   // Lấy hàm addToCart từ context
   const [products, setProducts] = useState<Products[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -44,7 +44,7 @@ const ProductList = () => {
           <img src={product.image} alt={product.title} />
           <h3>{product.title}</h3>
           <p>{product.price.toLocaleString()} VND</p>
-          <button onClick={() => addToCart(product)}>Thêm vào giỏ hàng</button> {/* Gọi addToCart */}
+          <button >Thêm vào giỏ hàng</button> {/* Gọi addToCart */}
         </div>
       ))}
     </div>

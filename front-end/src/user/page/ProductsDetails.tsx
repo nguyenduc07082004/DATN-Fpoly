@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import axios from "axios";
+import { useCart } from "../Cart/CartContext"; 
 import {
   Container,
   Grid,
@@ -40,6 +41,7 @@ const Header = () => {
 
 // Main ProductDetails Component
 const ProductDetails = () => {
+  const { addToCart } = useCart();
   const { productId } = useParams<{ productId: string }>();
   const [product, setProduct] = useState<Products | null>(null);
   const [loading, setLoading] = useState(true);
@@ -108,7 +110,7 @@ const ProductDetails = () => {
   }
 
   const additionalImages = [
-    product.imageURL,
+    product.image,
     "https://cdn2.cellphones.com.vn/insecure/rs:fill:358:358/q:90/plain/https://cellphones.com.vn/media/catalog/product/i/p/iphone-15-pro-max_3.png",
     "https://cdn2.cellphones.com.vn/insecure/rs:fill:358:358/q:90/plain/https://cellphones.com.vn/media/catalog/product/i/p/iphone-15-pro-max_3.png",
   ];
@@ -228,6 +230,7 @@ const ProductDetails = () => {
 
               <Button
                 variant="contained"
+                onClick={() => addToCart(product)}
                 sx={{
                   backgroundColor: "#ff5722",
                   color: "#fff",
@@ -266,7 +269,7 @@ const ProductDetails = () => {
                   >
                     <Box
                       component="img"
-                      src={suggestedProduct.imageURL}
+                      src={suggestedProduct.image}
                       alt={suggestedProduct.title}
                       sx={{
                         width: "100%",
