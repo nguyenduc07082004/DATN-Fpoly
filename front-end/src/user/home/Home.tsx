@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import "../css/Home.css";
+import "../css/Style.css";
+
 import Banner from "../../assets/banner.jpg";
 import { Products } from "../../interfaces/Products";
 import { Link } from "react-router-dom";
@@ -19,7 +21,7 @@ const ProductCard = ({ product }: { product: Products }) => {
   return (
     <div className="product-card">
       <div>
-        <img src={product.imageURL} alt={product.title} />
+        <img src={product._id} alt={product.title} />
       </div>
       <h3>{product.title}</h3>
       <p>{product.price} VNĐ</p>

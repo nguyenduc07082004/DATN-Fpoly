@@ -1,0 +1,611 @@
+/* CSS Document */
+
+/* Table of Content
+
+=======================================
+	1 - Global
+                1.1 - Global
+	        1.2 - General
+                1.3 - Effect
+	2 - Components
+                2.1 - Cart
+                2.2 - CustomerInfo
+                2.3 - FromUser
+                2.4 - Home
+                2.5 - Login
+                2.6 - ProductList
+                2.7 - ProductPage
+                2.8 - Register
+                2.9 - Shipping Info
+=======================================
+/*-------------------------------------
+1.1 - Global
+-------------------------------------*/
+
+/*-------------------------------------
+1.2 - General
+-------------------------------------*/
+
+/*-------------------------------------
+1.3 - Effect
+-------------------------------------*/
+
+/*-------------------------------------
+2.1 - Cart
+-------------------------------------*/
+
+.cart-container {
+        display: flex;
+        flex-direction: column;
+        padding: 20px;
+        max-width: 600px;
+        margin: auto;
+        background-color: #ffffff;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+      
+      }
+      
+      /* Phần chứa thông tin khách hàng và giao hàng */
+      .info-section {
+        display: flex;
+        flex-direction: column;
+      }
+      
+      /* Phần thanh toán */
+      .payment-section {
+        padding: 15px;
+        border-top: 1px solid #ddd;
+        margin-top: 15px;
+      }
+      
+      .payment-section .total,
+      .payment-section .cod-section {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 10px;
+        font-size: 1.1em;
+        font-weight: bold;
+        color: #333;
+      }
+      
+      .payment-section .cod-section label {
+        margin-right: 10px;
+      }
+      
+      .payment-section .payment-button {
+        width: 100%;
+        padding: 10px;
+        font-size: 1.1em;
+        font-weight: bold;
+        color: #fff;
+        background-color: #007bff;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+      } 
+      
+      .payment-section .payment-button:hover {
+        background-color: #0056b3;
+      }
+      
+/*-------------------------------------
+2.2 - CustomerInfo
+-------------------------------------*/
+/* Hộp chứa thông tin khách hàng */
+.info-section {
+        padding: 15px;
+        background-color: #fff;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        margin-bottom: 20px;
+        box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+      }
+      
+      /* Tiêu đề phần thông tin */
+      .info-section h2 {
+        font-size: 1.2em;
+        font-weight: bold;
+        color: #333;
+        margin-bottom: 10px;
+        border-bottom: 1px solid #ddd;
+        padding-bottom: 5px;
+      }
+      
+      /* Thông tin chi tiết khách hàng */
+      .customer-info {
+        font-size: 1em;
+        color: #666;
+      }
+      
+      .customer-info span {
+        display: block;
+        font-weight: 600;
+        color: #333;
+        margin-bottom: 4px;
+      }
+      
+/*-------------------------------------
+2.3 - FromUser
+-------------------------------------*/
+.container {
+        max-width: 800px;
+        margin: 20px auto;
+        padding: 20px;
+        border-radius: 12px;
+        background-color: #ffffff;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        font-family: Arial, sans-serif;
+      }
+      
+      .teude {
+        text-align: center;
+        font-size: 2em;
+        margin-bottom: 20px;
+        color: #333;
+      }
+      
+      .profileBox {
+        padding: 20px;
+        border-radius: 8px;
+        background-color: #f9f9f9;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+      }
+      
+      .infoContainer,
+      .editContainer {
+        display: flex;
+        flex-direction: column;
+      }
+      
+      .table {
+        width: 100%;
+        border-collapse: collapse;
+        border: 1px solid #ddd;
+        margin-bottom: 20px;
+      }
+      
+      .caption {
+        font-size: 1.2em;
+        font-weight: bold;
+        margin: 10px 0;
+        color: #555;
+      }
+      
+      .label {
+        font-weight: bold;
+        color: #555;
+        padding: 12px 8px;
+        border-bottom: 1px solid #ddd;
+      }
+      
+      .input {
+        padding: 10px;
+        width: 100%;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        font-size: 1em;
+        margin-top: 8px;
+      }
+      
+      .buttonContainer {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 20px;
+      }
+      
+      .editButton,
+      .saveButton,
+      .cancelButton {
+        padding: 10px 15px;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+      }
+      
+      .editButton {
+        background-color: #007bff;
+        color: #fff;
+        margin-top: 10px;
+      }
+      
+      .saveButton {
+        background-color: #28a745;
+        color: #fff;
+        width: 48%;
+      }
+      
+      .cancelButton {
+        background-color: #dc3545;
+        color: #fff;
+        width: 48%;
+      }
+      
+/*-------------------------------------
+2.4 - Home
+-------------------------------------*/
+* {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      
+      body {
+        font-family: 'Arial', sans-serif;
+        background-color: #f4f4f4;
+        color: #333;
+        line-height: 1.6;
+      }
+      
+      /* Header styles */
+      .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background-color: #14759b;
+        padding: 20px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        position: sticky;
+        top: 0;
+        z-index: 100;
+      }
+      
+      .logo img {
+        height: 50px;
+      }
+      
+      nav ul {
+        display: flex;
+        list-style: none;
+      }
+      
+      nav ul li {
+        margin: 0 15px;
+        cursor: pointer;
+        font-size: 18px;
+        color: white;
+        transition: color 0.3s ease, transform 0.2s ease;
+      }
+      
+      nav ul li:hover {
+        color: #ffdf00;
+        transform: scale(1.05);
+      }
+      
+      .user-options {
+        display: flex;
+        gap: 20px;
+      }
+      
+      .user-options span {
+        color: white;
+        font-size: 16px;
+        cursor: pointer;
+        transition: color 0.3s ease, transform 0.2s ease;
+      }
+      
+      .user-options span:hover {
+        color: #ffdf00;
+        transform: scale(1.05);
+      }
+      
+      /* Search bar styles */
+      .search-container {
+        position: relative;
+      }
+      
+      .search-bar {
+        padding: 8px 15px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        width: 220px;
+        transition: border-color 0.3s ease, box-shadow 0.3s ease;
+      }
+      
+      .search-bar:focus {
+        border-color: #007bff;
+        box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+        outline: none;
+      }
+      
+      /* Suggestions dropdown */
+      .suggestions-list {
+        position: absolute;
+        top: 40px;
+        left: 0;
+        width: 100%;
+        background-color: white;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        max-height: 200px;
+        overflow-y: auto;
+        z-index: 100;
+      }
+      
+      .suggestions-list li {
+        padding: 10px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+      }
+      
+      .suggestions-list li:hover {
+        background-color: #f0f0f0;
+      }
+      
+      /* Main banner styles */
+      .banner img {
+        width: 100%;
+        height: auto;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        margin-top: 20px;
+      }
+      
+      /* Deals section styles */
+      .deals {
+        padding: 30px;
+        background-color: #fff;
+        margin-top: 20px;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      }
+      
+      .deals h2 {
+        margin-bottom: 20px;
+        font-size: 24px;
+        color: #14759b;
+        text-align: center;
+      }
+      
+      svg.svg-inline--fa.fa-cart-shopping {
+        color: white;
+      }
+      
+      /* Product list styles */
+      .product-list {
+        display: flex;
+        flex-direction: column;
+        margin-top: 20px;
+      }
+      
+      .product-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        gap: 25px;
+        margin-top: 20px;
+      }
+      
+      .product-card {
+        background-color: #fff;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        padding: 20px;
+        text-align: center;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+      }
+      
+      .product-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+      }
+      
+      .product-card img {
+        width: 100%;
+        height: auto;
+        border-radius: 10px;
+        margin-bottom: 15px;
+      }
+      
+      .product-card h3 {
+        font-size: 20px;
+        margin: 15px 0;
+        color: #333;
+      }
+      
+      .product-card p {
+        font-size: 16px;
+        color: #666;
+        margin-bottom: 15px;
+      }
+      
+      .product-card button {
+        padding: 10px 20px;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 16px;
+        transition: background-color 0.3s ease, transform 0.3s ease;
+      }
+      
+      .product-card button:hover {
+        background-color: #0056b3;
+        transform: scale(1.05);
+      }
+      
+      /* Footer styles */
+      .footer {
+        padding: 20px;
+        background-color: #f8f9fa;
+        text-align: center;
+        margin-top: 40px;
+        box-shadow: 0 -4px 8px rgba(0, 0, 0, 0.1);
+      }
+      
+      .footer p {
+        margin: 0;
+        color: #666;
+        font-size: 14px;
+        line-height: 1.5;
+      }
+      
+/*-------------------------------------
+2.5 - Login
+-------------------------------------*/
+/* src/components/Login.css */
+
+.login-container {
+        background-color: #fff;
+        padding: 40px;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        text-align: center;
+      }
+      
+      .login-button {
+        background-color: #ff5722;
+        color: #fff;
+      }
+      
+      .login-button:hover {
+        background-color: #ff3d00;
+      }
+      
+      .error-text {
+        color: red;
+      }
+      
+      .forgot-password-link {
+        display: block;
+        margin-top: 16px;
+        color: #ff5722;
+        text-decoration: none;
+      }
+      
+/*-------------------------------------
+2.6 - ProductList
+-------------------------------------*/
+.product-list {
+        padding: 20px;
+      }
+      
+      .category-filter {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 20px;
+      }
+      
+      .category-filter button {
+        padding: 10px;
+        border: none;
+        background-color: #007bff;
+        color: white;
+        cursor: pointer;
+      }
+      
+      .category-filter button:hover {
+        background-color: #0056b3;
+      }
+      
+      .product-item {
+        border: 1px solid #ddd;
+        padding: 10px;
+        margin-bottom: 20px;
+        text-align: center;
+      }
+      
+      .product-item img {
+        width: 100px;
+        height: 100px;
+        object-fit: cover;
+      }
+/*-------------------------------------
+2.7 - ProductPage
+-------------------------------------*/
+.container {
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh; /* Chiều cao tối thiểu là 100% chiều cao của viewport */
+      }
+      
+      .product-section {
+        flex: 1; /* Chiếm toàn bộ không gian có sẵn ở trên footer */
+      }
+      
+      .footer {
+        text-align: center;
+        padding: 20px;
+        background-color: #f1f1f1;
+        position: relative; /* Đảm bảo footer không bị đè lên */
+        bottom: 0;
+        width: 100%;
+      }
+      
+/*-------------------------------------
+2.8 - Register
+-------------------------------------*/
+/* src/components/Register.css */
+
+.register-container {
+        background-color: #fff;
+        padding: 40px;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        text-align: center;
+      }
+      
+      .register-button {
+        background-color: #ff5722;
+        color: #fff;
+      }
+      
+      .register-button:hover {
+        background-color: #ff3d00;
+      }
+      
+      .error-text {
+        color: red;
+      }
+      
+/*-------------------------------------
+2.9 - Shipping Info
+-------------------------------------*/
+/* Hộp chứa thông tin giao hàng */
+.shipping-info {
+        padding: 15px;
+        background-color: #f8f9fa;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        font-size: 0.95em;
+        color: #333;
+        margin-bottom: 15px;
+      }
+      
+      /* Kiểu nhãn */
+      .shipping-info label {
+        font-weight: 500;
+        color: #333;
+        display: block;
+        margin-bottom: 5px;
+      }
+      
+      /* Hộp chọn */
+      .shipping-info select {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        background-color: #ffffff;
+        font-size: 1em;
+        color: #333;
+        margin-bottom: 10px;
+      }
+      
+      /* Hiệu ứng khi focus */
+      .shipping-info select:focus {
+        border-color: #007bff;
+        outline: none;
+      }
+      
+      /* Bố cục cho các phần con */
+      .category-info,
+      .phone-info,
+      .accessory-info {
+        margin-bottom: 15px;
+      }
+      

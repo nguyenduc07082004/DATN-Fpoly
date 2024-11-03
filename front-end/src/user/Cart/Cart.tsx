@@ -1,35 +1,32 @@
-// src/Cart/Cart.tsx
-import React from 'react';
-import { useCart } from './CartContext';
-import '../css/Cart.css';
+import React from "react";
+import ProductList from "../ProductList/ProductList";
+import CustomerInfo from "../page/CustomerInfo";
+import ShippingInfo from "../page/ShippingInfo";
 
 const Cart: React.FC = () => {
-  const { cartItems, removeFromCart, updateQuantity } = useCart();
-
-  if (cartItems.length === 0) {
-    return <div>Giỏ hàng trống.</div>; // Hiển thị khi giỏ hàng trống
-  }
-
-  const subtotal = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
-
   return (
     <div className="cart-container">
-      <h2>Giỏ hàng</h2>
-      {cartItems.map(item => (
-        <div key={item._id} className="cart-item">
-          <img src={item.image} alt={item.title} />
-          <h4>{item.title}</h4>
-          <p>Giá: {item.price.toLocaleString()} VND</p>
-          <div>
-            <button onClick={() => updateQuantity(item._id, item.quantity - 1)} disabled={item.quantity <= 1}>-</button>
-            <span>{item.quantity}</span>
-            <button onClick={() => updateQuantity(item._id, item.quantity + 1)}>+</button>
-            <button onClick={() => removeFromCart(item._id)}>Xóa</button>
-          </div>
+      {/* Danh sách sản phẩm */}
+      <ProductList />
+
+      {/* Thông tin khách hàng và giao hàng */}
+      <div className="info-section">
+        <CustomerInfo />
+        <ShippingInfo />
+      </div>
+
+      {/* Thanh toán */}
+      <div className="payment-section">
+        <div className="total">
+          <span>Tổng tiền hàng</span>
+          <span>8,820,000 đ</span>
         </div>
-      ))}
-      <div>
-        <h3>Tổng cộng: {subtotal.toLocaleString()} VND</h3>
+        <div className="cod-section">
+          <label>Thu hộ tiền (COD)</label>
+          <input type="checkbox" defaultChecked />
+          <span>8,820,000 đ</span>
+        </div>
+        <button className="payment-button">THANH TOÁN</button>
       </div>
     </div>
   );

@@ -1,12 +1,16 @@
 import { Link } from "react-router-dom"; // Import Link for navigation
 import Logo from "../../../logo.png";
 import "../css/Home.css";
+import "../css/Style.css";
+
 import {
   AuthContext,
   AuthContextType,
   useAuth,
 } from "../../api/contexts/AuthContext";
 import { useContext } from "react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faCartShopping } from "@fortawesome/free-solid-svg-icons";
 
 const Header = () => {
   const { logout } = useAuth();
@@ -94,7 +98,7 @@ const Header = () => {
         )}
 
         <Link to="/cart" className="text-decoration-none">
-          <span>Giỏ hàng</span>
+        <FontAwesomeIcon icon={faCartShopping} />
         </Link>
       </div>
     </header>
