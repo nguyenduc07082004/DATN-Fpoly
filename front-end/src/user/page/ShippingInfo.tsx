@@ -3,43 +3,44 @@ import React, { useState } from "react";
 import "../css/Style.css";
 
 const ShippingInfo: React.FC = () => {
-  const [category, setCategory] = useState<string>("");
+  const [city, setCity] = useState<string>("");
+  const [district, setDistrict] = useState<string>("");
+
+  const cityDistrictMap: { [key: string]: string[] } = {
+    "Hà Nội": ["Hồ Tây", "Mỹ Đình", "Cầu Giấy"],
+    "Hồ Chí Minh": ["Quận 1", "Quận 3", "Bình Thạnh", "Thủ Đức"],
+  };
 
   return (
     <div className="shipping-info">
       <div className="category-info">
-        <label>Loại sản phẩm</label>
+        <label>Thành phố</label>
         <select
-          value={category}
-          onChange={(e) => setCategory(e.target.value)}
+          value={city}
+          onChange={(e) => {
+            setCity(e.target.value);
+            setDistrict(""); // Reset district when city changes
+          }}
         >
-          <option value="">Chọn loại sản phẩm</option>
-          <option value="phone">Điện thoại</option>
-          <option value="accessory">Phụ kiện điện thoại</option>
+          <option value="">Chọn Thành phố</option>
+          <option value="Hà Nội">Hà Nội</option>    
+          <option value="Hồ Chí Minh">Hồ Chí Minh</option>        
         </select>
       </div>
 
-      {category === "phone" && (
-        <div className="phone-info">
-          <label>Chọn hãng điện thoại</label>
-          <select>
-            <option value="apple">Apple</option>
-            <option value="samsung">Samsung</option>
-            <option value="xiaomi">Xiaomi</option>
-            <option value="other">Khác</option>
-          </select>
-        </div>
-      )}
-
-      {category === "accessory" && (
-        <div className="accessory-info">
-          <label>Loại phụ kiện</label>
-          <select>
-            <option value="charger">Sạc</option>
-            <option value="headphones">Tai nghe</option>
-            <option value="case">Ốp lưng</option>
-            <option value="screen-protector">Kính cường lực</option>
-            <option value="other">Khác</option>
+      {city && (
+        <div className="district-info">
+          <label>Tỉnh Thành/Quận Huyện</label>
+          <select
+            value={district}
+            onChange={(e) => setDistrict(e.target.value)}
+          >
+            <option value="">Chọn Quận/Huyện</option>
+            {cityDistrictMap[city]?.map((district) => (
+              <option key={district} value={district}>
+                {district}
+              </option>
+            ))}
           </select>
         </div>
       )}
@@ -47,4 +48,4 @@ const ShippingInfo: React.FC = () => {
   );
 };
 
-export default ShippingInfo; 
+export default ShippingInfo;
