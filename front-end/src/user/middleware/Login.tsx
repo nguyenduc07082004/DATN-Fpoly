@@ -16,7 +16,7 @@ import {
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import ins from "../../api";
 import { useAuth } from "../../api/contexts/AuthContext";
-import "../css/Login.css";
+import "../css/Style.css";
 
 const Login: React.FC = () => {
   const [email, setEmail] = useState("");

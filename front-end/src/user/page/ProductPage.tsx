@@ -1,5 +1,5 @@
 import React from 'react';
-import '../css/ProductPage.css'; // Đảm bảo bạn có CSS trong file này hoặc có thể dùng styled-components
+// import '../css/ProductPage.css';  Đảm bảo bạn có CSS trong file này hoặc có thể dùng styled-components
 import "../css/Style.css";
  
 

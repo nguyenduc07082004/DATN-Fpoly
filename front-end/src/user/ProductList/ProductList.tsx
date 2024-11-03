@@ -1,16 +1,14 @@
 import React, { useEffect, useState } from "react";
-import "../css/ProductList.css";
 import "../css/Style.css";
-
 import { Products } from "../../interfaces/Products";
-import { useCart } from "../Cart/CartContext"; // Nhập useCart
+import { useCart } from "../Cart/CartContext"; // Import the updated path for useCart
 
 const ProductList = () => {
-  const { addToCart } = useCart(); // Lấy hàm addToCart từ context
+  const { addToCart } = useCart(); // Retrieve addToCart from CartContext
   const [products, setProducts] = useState<Products[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [category, setCategory] = useState("all"); // Thêm state cho danh mục
+  const [category, setCategory] = useState("all");
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -33,7 +31,7 @@ const ProductList = () => {
 
   const filteredProducts = category === "all"
     ? products
-    : products.filter((product) => product._id === category);
+    : products.filter((product) => product.categories === category);
 
   if (loading) {
     return <div>Loading...</div>;
@@ -45,20 +43,24 @@ const ProductList = () => {
 
   return (
     <div className="product-list">
+      {/* Category filter buttons */}
       <div className="category-filter">
-        <button onClick={() => setCategory("all")}>Tất cả</button>
-        <button onClick={() => setCategory("phone")}>Điện thoại</button>
-        <button onClick={() => setCategory("accessory")}>Phụ kiện</button>
+        <button className={category === "all" ? "active" : ""} onClick={() => setCategory("all")}>Tất cả</button>
+        <button className={category === "phone" ? "active" : ""} onClick={() => setCategory("phone")}>Điện thoại</button>
+        <button className={category === "accessory" ? "active" : ""} onClick={() => setCategory("accessory")}>Phụ kiện</button>
       </div>
 
-      {filteredProducts.map((product) => (
-        <div key={product._id} className="product-item">
-          <img src={product.image} alt={product.title} />
-          <h3>{product.title}</h3>
-          <p>{product.price.toLocaleString()} VND</p>
-          <button onClick={() => addToCart(product)}>Thêm vào giỏ hàng</button>
-        </div>
-      ))}
+      {/* Product list */}
+      <div className="products-grid">
+        {filteredProducts.map((product) => (
+          <div key={product._id} className="product-item">
+            <img src={product.image} alt={product.title} className="product-image" />
+            <h3 className="product-title">{product.title}</h3>
+            <p className="product-price">{product.price.toLocaleString()} VND</p>
+            <button onClick={() => addToCart(product)} className="add-to-cart-button">Thêm vào giỏ hàng</button>
+          </div>
+        ))}
+      </div>
     </div>
   );
 };

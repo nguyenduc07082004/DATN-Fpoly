@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
-import "../css/Home.css";
+// import "../css/Home.css";
 import "../css/Style.css";
 
 import Banner from "../../assets/banner.jpg";

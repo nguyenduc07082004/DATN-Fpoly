@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import "../css/ShippingInfo.css";
+// import "../css/ShippingInfo.css";
 import "../css/Style.css";
 
 const ShippingInfo: React.FC = () => {

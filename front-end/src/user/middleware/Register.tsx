@@ -14,7 +14,7 @@ import {
   IconButton,
 } from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
-import "../css/Register.css";
+import "../css/Style.css";
 
 const Register: React.FC = () => {
   const [fullName, setFullName] = useState("");

@@ -1,5 +1,5 @@
 import React from "react";
-import "../css/CustomerInfo.css";
+// import "../css/CustomerInfo.css";
 import "../css/Style.css";
 
 const CustomerInfo: React.FC = () => {

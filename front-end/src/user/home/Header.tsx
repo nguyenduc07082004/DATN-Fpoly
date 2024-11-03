@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom"; // Import Link for navigation
 import Logo from "../../../logo.png";
-import "../css/Home.css";
+// import "../css/Home.css";
 import "../css/Style.css";
 
 import {
@@ -54,7 +54,7 @@ const Header = () => {
           <div className="dropdown">
             <Link
               to="#"
-              className="d-flex align-items-center text-white text-decoration-none dropdown-toggle"
+              className="text-white text-decoration-none d-flex align-items-center dropdown-toggle"
               id="dropdownUser1"
               data-bs-toggle="dropdown"
               aria-expanded="false"
@@ -64,7 +64,7 @@ const Header = () => {
               </strong>
             </Link>
             <ul
-              className="dropdown-menu dropdown-menu-dark text-small shadow"
+              className="shadow text-small dropdown-menu dropdown-menu-dark"
               aria-labelledby="dropdownUser1"
             >
               <li>

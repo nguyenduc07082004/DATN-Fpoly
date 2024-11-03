@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
-import "../../css/FromUser.css"; // Đảm bảo có file CSS để quản lý style nếu cần
+import "../../css/Style.css"; // Đảm bảo có file CSS để quản lý style nếu cần
 
 const UserForm = () => {
   const { id } = useParams(); // Lấy ID người dùng từ URL
