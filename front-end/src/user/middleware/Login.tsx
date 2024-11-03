@@ -13,7 +13,7 @@ import {
   InputAdornment,
   IconButton,
 } from "@mui/material";
-import { Visibility, VisibilityOff } from "@mui/icons-material";
+import { Token, Visibility, VisibilityOff } from "@mui/icons-material";
 import ins from "../../api";
 import { useAuth } from "../../api/contexts/AuthContext";
 import "../css/Style.css";
@@ -39,9 +39,12 @@ const Login: React.FC = () => {
     }
 
     try {
-      const { data } = await ins.post("/login", { email, password });
-      contextLogin(data.token, data.user);
-      navigate(data.user.role === "admin" ? "/admin" : "/");
+      
+        const { data } = await ins.post("/login", { email, password });
+        contextLogin(data.token, data.user);
+        navigate(data.user.role === "admin" ? "/admin" : "/");
+      
+     
     } catch (error) {
       setError("Email hoặc mật khẩu không chính xác. Vui lòng thử lại.");
       setLoading(false);

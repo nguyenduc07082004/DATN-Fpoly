@@ -18,7 +18,7 @@ const Cart: React.FC = () => {
       {user && (
         <div className="user-info">
           <h3>Thông tin khách hàng</h3>
-          <p>Họ và tên: {user.username}</p>
+          <p>Họ và tên: {user.fullName}</p>
           <p>Email: {user.email}</p>
         </div>
       )}
