@@ -399,6 +399,25 @@
         top: 0;
         z-index: 100;
       }
+      .cart-icon {
+        position: relative;
+      }
+      
+      .cart-count-badge {
+        position: absolute;
+        top: -6px;
+        left: -6px;
+        min-width: 16px; /* Kích thước chấm đỏ */
+        height: 16px;
+        background-color: red;
+        color: white;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 10px; /* Kích thước chữ nhỏ */
+        padding: 2px;
+      }
       
       .logo img {
         height: 50px;

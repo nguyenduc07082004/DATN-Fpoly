@@ -1,6 +1,5 @@
-import { Link } from "react-router-dom"; // Import Link for navigation
+import { Link } from "react-router-dom"; 
 import Logo from "../../../logo.png";
-// import "../css/Home.css";
 import "../css/Style.css";
 
 import {
@@ -11,10 +10,16 @@ import {
 import { useContext } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCartShopping } from "@fortawesome/free-solid-svg-icons";
+import { useCart } from "../Cart/CartContext"; // Import useCart to get cart data
 
 const Header = () => {
   const { logout } = useAuth();
   const { user } = useContext(AuthContext) as AuthContextType;
+  const { cartItems } = useCart(); // Get cart items from context
+
+  // Calculate the total number of items in the cart
+  const cartItemCount = cartItems.reduce((total, item) => total + item.quantity, 0);
+
   return (
     <header className="header">
       <div className="logo">
@@ -34,7 +39,6 @@ const Header = () => {
         </ul>
       </nav>
       <div className="user-options">
-        {/* Search bar */}
         <input
           type="text"
           placeholder="Tìm kiếm sản phẩm..."
@@ -45,7 +49,6 @@ const Header = () => {
             <Link to="/login" className="text-decoration-none">
               <span>Đăng nhập</span>
             </Link>
-            {/* Wrap Đăng kí in a Link component */}
             <Link to="/register" className="text-decoration-none">
               <span style={{ margin: "0 10px" }}>Đăng kí</span>
             </Link>
@@ -97,8 +100,11 @@ const Header = () => {
           </div>
         )}
 
-        <Link to="/cart" className="text-decoration-none">
-        <FontAwesomeIcon icon={faCartShopping} />
+        <Link to="/cart" className="text-decoration-none cart-icon">
+          <FontAwesomeIcon icon={faCartShopping} />
+          {cartItemCount > 0 && (
+            <span className="cart-count-badge">{cartItemCount}</span>
+          )}
         </Link>
       </div>
     </header>
