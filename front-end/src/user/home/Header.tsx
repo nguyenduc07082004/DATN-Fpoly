@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom"; 
+import { Link } from "react-router-dom";
 import Logo from "../../../logo.png";
 import "../css/Style.css";
 
@@ -10,15 +10,13 @@ import {
 import { useContext } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCartShopping } from "@fortawesome/free-solid-svg-icons";
-import { useCart } from "../Cart/CartContext"; // Import useCart to get cart data
+// Import useCart to get cart data
 
 const Header = () => {
   const { logout } = useAuth();
   const { user } = useContext(AuthContext) as AuthContextType;
-  const { cartItems } = useCart(); // Get cart items from context
 
   // Calculate the total number of items in the cart
-  const cartItemCount = cartItems.reduce((total, item) => total + item.quantity, 0);
 
   return (
     <header className="header">
@@ -101,10 +99,7 @@ const Header = () => {
         )}
 
         <Link to="/cart" className="text-decoration-none cart-icon">
-          <FontAwesomeIcon icon={faCartShopping} />
-          {cartItemCount > 0 && (
-            <span className="cart-count-badge">{cartItemCount}</span>
-          )}
+          Giỏ hàng
         </Link>
       </div>
     </header>

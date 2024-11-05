@@ -13,7 +13,6 @@ import { Box } from "@mui/system";
 import { Products } from "../../interfaces/Products";
 import Logo from "../../assets/logoshop.jpg";
 import { CartContext } from "../../api/contexts/CartContext";
-import { UserContext } from "../../api/contexts/UserContext";
 
 // Component Header
 const Header = () => {
@@ -53,6 +52,7 @@ const ProductDetails = () => {
   const [product, setProduct] = useState<Products>({} as Products);
   const [quantity, setQuantity] = useState(1);
   const { addToCart } = useContext(CartContext);
+
   const handleAddToCart = async () => {
     addToCart(product, quantity);
   };
