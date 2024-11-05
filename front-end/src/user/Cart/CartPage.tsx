@@ -1,12 +1,16 @@
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 import { CartContext, CartContextType } from "../../api/contexts/CartContext";
 import { CartItem } from "../../api/reducers/CartReducer";
 
 const Cart = () => {
-  const { state, removeFromCart, checkout } = useContext(
-    CartContext
-  ) as CartContextType;
-  console.log(state);
+  const { state, getCart, removeFromCart } = useContext(CartContext);
+  useEffect(() => {
+    getCart();
+  }, []);
+  const handleRemoveFromCart = (productId: string) => {
+    removeFromCart(productId);
+    getCart();
+  };
   return (
     <>
       <h1>Gio hang cua ban!</h1>
@@ -23,15 +27,17 @@ const Cart = () => {
         </thead>
         <tbody>
           {state.products.map((product: CartItem, index: number) => (
-            <tr key={product.product._id}>
+            <tr key={product.product?._id}>
               <td>{index + 1}</td>
-              <td>{product.product.title}</td>
-              <td>{product.quantity}</td>
-              <td>{product.product.price}</td>
-              <td>{product.product.price * product.quantity}</td>
+              <td>{product.product?.title}</td>
+              <td>{product?.quantity}</td>
+              <td>{product.product?.price}</td>
+              <td>{product.product?.price * product?.quantity}</td>
               <td>
                 <button
-                  onClick={() => removeFromCart(String(product.product._id))}
+                  onClick={() =>
+                    handleRemoveFromCart(String(product.product._id))
+                  }
                   className="btn btn-danger"
                 >
                   Xoa
@@ -43,9 +49,7 @@ const Cart = () => {
             <td colSpan={4}>Tong tien</td>
             <td>{state.totalPrice}</td>
             <td>
-              <button onClick={checkout} className="btn btn-success">
-                Thanh toan
-              </button>
+              <button className="btn btn-success">Thanh toan</button>
             </td>
           </tr>
         </tbody>
@@ -55,3 +59,34 @@ const Cart = () => {
 };
 
 export default Cart;
+
+// import { useContext, useEffect } from "react";
+// import { CartContext } from "../../api/contexts/CartContext";
+
+// const CartPage = () => {
+//   const { state, getCart } = useContext(CartContext);
+
+//   useEffect(() => {
+//     getCart();
+//   }, []);
+
+//   return (
+//     <div>
+//       <h1>Cart</h1>
+//       {state.products.length === 0 ? (
+//         <p>Your cart is empty</p>
+//       ) : (
+//         <ul>
+//           {state.products.map((product) => (
+//             <li key={product.product._id}>
+//               {product.product.title} - {product.quantity}
+//             </li>
+//           ))}
+//         </ul>
+//       )}
+//       <p>Total Price: {state.totalPrice}</p>
+//     </div>
+//   );
+// };
+
+// export default CartPage;

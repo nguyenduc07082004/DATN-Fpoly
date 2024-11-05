@@ -24,6 +24,7 @@ const CartContext = createContext({} as CartContextType);
 
 const CartProvider = ({ children }: { children: ReactNode }) => {
   const [state, dispatch] = useReducer(cartReducer, initialState);
+  const token = localStorage.getItem("accessToken");
   const addToCart = async (product: Products, quantity: number) => {
     const res = await ins.post("/carts/add", {
       productId: product._id,
@@ -36,8 +37,17 @@ const CartProvider = ({ children }: { children: ReactNode }) => {
     });
   };
   const getCart = async () => {
-    const res = await ins.get("/carts");
-    dispatch({ type: "SET_CART", payload: res.data });
+    try {
+      const res = await ins.get("/carts");
+      if (res.data) {
+        dispatch({ type: "SET_CART", payload: res.data });
+        console.log("hello");
+      } else {
+        console.error("Error: Cart data is null");
+      }
+    } catch (error) {
+      console.error("Error getting cart:", error);
+    }
   };
   const checkout = async () => {
     const res = await ins.post("/cart/checkout");
@@ -45,9 +55,17 @@ const CartProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const removeFromCart = async (productId: string) => {
-    const res = await ins.delete(`/cart/${productId}`);
-    res.data.success &&
-      dispatch({ type: "REMOVE_FROM_CART", payload: { productId } });
+    try {
+      const res = await ins.delete(`/carts/remove/${productId}`, {
+        data: { productId },
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      console.log(res.data);
+    } catch (error) {
+      console.error("Error removing from cart:", error);
+    }
   };
 
   return (

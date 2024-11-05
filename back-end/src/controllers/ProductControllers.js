@@ -75,7 +75,7 @@ export const updateProduct = async (req, res) => {
     }
 
     // Cập nhật sản phẩm
-    const updatedProduct = await ProductModels.findByIdAndUpdate(
+    const updatedProduct = await Product.findByIdAndUpdate(
       req.params.id,
       req.body,
       { new: true }

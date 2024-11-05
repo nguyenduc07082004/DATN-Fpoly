@@ -83,7 +83,7 @@ const EditForm = () => {
   return (
     <div>
       <p className="m-3">
-        <h2>Thêm mới sản phẩm</h2>
+        <h2>Cập nhật sản phẩm</h2>
       </p>
       <form onSubmit={Suckmit}>
         <div className="m-5 d-flex">
@@ -229,7 +229,7 @@ const EditForm = () => {
             }}
             type="submit"
           >
-            <h5>Thêm mới sản phẩm</h5>
+            <h5>Cập nhật sản phẩm</h5>
           </button>
         </div>
       </form>
