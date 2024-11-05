@@ -20,34 +20,53 @@ const initialState = {
   totalPrice: 0,
 };
 
-const CartContext = createContext({} as CartContextType);
+const CartContext = createContext<CartContextType>({} as CartContextType);
 
 const CartProvider = ({ children }: { children: ReactNode }) => {
   const [state, dispatch] = useReducer(cartReducer, initialState);
-  const addToCart = async (product: Products, quantity: number) => {
-    const res = await ins.post("/carts/add", {
-      productId: product._id,
-      quantity,
-    });
 
-    dispatch({
-      type: "ADD_TO_CART",
-      payload: { product: res.data.product, quantity },
-    });
+  const addToCart = async (product: Products, quantity: number) => {
+    try {
+      const res = await ins.post("/carts/add", {
+        productId: product._id,
+        quantity,
+      });
+      dispatch({
+        type: "ADD_TO_CART",
+        payload: { product: res.data.product, quantity },
+      });
+    } catch (error) {
+      console.error("Error adding to cart:", error);
+    }
   };
+
   const getCart = async () => {
-    const res = await ins.get("/carts");
-    dispatch({ type: "SET_CART", payload: res.data });
+    try {
+      const res = await ins.get("/carts");
+      dispatch({ type: "SET_CART", payload: res.data });
+    } catch (error) {
+      console.error("Error fetching cart:", error);
+    }
   };
+
   const checkout = async () => {
-    const res = await ins.post("/cart/checkout");
-    dispatch({ type: "CHECKOUT", payload: res.data });
+    try {
+      const res = await ins.post("/cart/checkout");
+      dispatch({ type: "CHECKOUT", payload: res.data });
+    } catch (error) {
+      console.error("Error during checkout:", error);
+    }
   };
 
   const removeFromCart = async (productId: string) => {
-    const res = await ins.delete(`/cart/${productId}`);
-    res.data.success &&
-      dispatch({ type: "REMOVE_FROM_CART", payload: { productId } });
+    try {
+      const res = await ins.delete(`/cart/${productId}`);
+      if (res.data.success) {
+        dispatch({ type: "REMOVE_FROM_CART", payload: { productId } });
+      }
+    } catch (error) {
+      console.error("Error removing from cart:", error);
+    }
   };
 
   return (

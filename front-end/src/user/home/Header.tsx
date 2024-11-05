@@ -10,13 +10,15 @@ import {
 import { useContext } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCartShopping } from "@fortawesome/free-solid-svg-icons";
-// Import useCart to get cart data
+import { useCart } from "../../api/contexts/CartContext"; // Import useCart để lấy dữ liệu giỏ hàng
 
 const Header = () => {
   const { logout } = useAuth();
   const { user } = useContext(AuthContext) as AuthContextType;
+  const { cartItems } = useCart(); // Lấy dữ liệu giỏ hàng từ context
 
-  // Calculate the total number of items in the cart
+  // Tính tổng số sản phẩm trong giỏ hàng
+  const totalItems = cartItems.reduce((sum, item) => sum + item.quantity, 0);
 
   return (
     <header className="header">
@@ -85,7 +87,6 @@ const Header = () => {
                   </Link>
                 </li>
               )}
-
               <li>
                 <hr className="dropdown-divider" />
               </li>
@@ -99,7 +100,8 @@ const Header = () => {
         )}
 
         <Link to="/cart" className="text-decoration-none cart-icon">
-          Giỏ hàng
+          <FontAwesomeIcon icon={faCartShopping} />
+          {totalItems > 0 && <span className="cart-badge">{totalItems}</span>}
         </Link>
       </div>
     </header>
