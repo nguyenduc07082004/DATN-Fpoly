@@ -1,18 +1,22 @@
 // routes/productRoutes.js
-const express = require("express");
-const router = express.Router();
-const { register, login, getUser ,getUserById, getCurrentUser} = require("../controllers/UserControllers");
-const { checkAuth } = require("../middleware/checkAuth");
-const { checkIsAdmin } = require("../middleware/adminChecking");
-const { verifyToken } = require("../middleware/authMiddleware");
-// const authMiddleware = require("../middleware/authmiddleware");
-router.post("/register", register);
-router.post("/login", login);
+import { Router } from "express";
+const UserRouter = Router();
+import {
+  register,
+  login,
+  getUser,
+  getUserById,
+  getCurrentUser,
+} from "../controllers/UserControllers.js";
+import { verifyToken } from "../middleware/authMiddleware.js";
+
+UserRouter.post("/register", register);
+UserRouter.post("/login", login);
 
 // router.use(checkAuth, checkIsAdmin);
-router.get("/users", getUser);
-router.get("/users/:id", getUserById);
+UserRouter.get("/users", getUser);
+UserRouter.get("/users/:id", getUserById);
 
-router.get("/me", verifyToken, getCurrentUser);
+UserRouter.get("/me", verifyToken, getCurrentUser);
 
-module.exports = router;
+export default UserRouter;

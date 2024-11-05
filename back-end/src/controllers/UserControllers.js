@@ -1,91 +1,130 @@
-const User = require("../models/UserModels");
-const bcrypt = require("bcryptjs");
-const jwt = require("jsonwebtoken");
+import UserModels from "../models/UserModels.js";
 
-const register = async (req, res) => {
-  const { username, email, password, fullName, address, phone } = req.body;
+import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
+import { hassPassword } from "../utils/password.js";
+import { generateToken } from "../utils/jwt.js";
 
+export const register = async (req, res, next) => {
   try {
-    // Kiểm tra nếu email đã tồn tại
-    const existingUser = await User.findOne({ email });
-    if (existingUser)
-      return res.status(400).json({ message: "Email đã tồn tại." });
+    /**
+     * 1. Kiem tra email co dk dang ky trong he thong chua?
+     * 2. Ma ma password
+     * 3. Khoi tao user moi
+     * 4. Thong bao thanh cong
+     */
 
-    // Mã hóa mật khẩu
-    const hashedPassword = await bcrypt.hash(password, 10);
+    const { username, email, password, fullName, address, phone } = req.body;
+    const useExists = await UserModels.findOne({ email });
+    console.log(useExists);
+    if (useExists) {
+      return res.status(400).json({
+        message: "Email da ton tai",
+      });
+    }
 
-    // Tạo người dùng mới
-    const newUser = new User({
-      username, // Thêm trường username
-      fullName,
+    const hassPass = hassPassword(password);
+    if (!hassPass) {
+      return res.status(400).json({
+        message: "Ma hoa mat khau that bai!",
+      });
+    }
+
+    const user = await UserModels.create({
       email,
-      password: hashedPassword,
+      password: hassPass,
+      username,
+      fullName,
       address,
       phone,
     });
 
-    await newUser.save();
+    user.password = undefined;
 
-    // Tạo token sau khi đăng ký
-    const token = jwt.sign(
-      { id: newUser._id, role: newUser.role },
-      "secretKey",
-      {
-        expiresIn: "1h",
-      }
-    );
-
-    res
-      .status(201)
-      .json({ message: "Đăng ký thành công.", token, user: newUser });
-  } catch (error) {
-    res.status(500).json({ message: "Lỗi server." });
-  }
-};
-
-const login = async (req, res) => {
-  const { email, password } = req.body;
-
-  try {
-    // Kiểm tra email
-    const user = await User.findOne({ email });
-    if (!user)
-      return res
-        .status(400)
-        .json({ message: "Email hoặc mật khẩu không đúng." });
-
-    // Kiểm tra mật khẩu
-    const isPasswordValid = await bcrypt.compare(password, user.password);
-    if (!isPasswordValid)
-      return res
-        .status(400)
-        .json({ message: "Email hoặc mật khẩu không đúng." });
-
-    // Tạo token
-    const token = jwt.sign({ id: user._id, role: user.role }, "secretKey", {
-      expiresIn: "1y",
+    return res.status(201).json({
+      success: true,
+      user,
+      message: "Dang ky thanh cong!",
     });
-
-    res.json({ message: "Đăng nhập thành công.", token, user: user });
   } catch (error) {
-    res.status(500).json({ message: "Lỗi server." });
+    next(error);
   }
 };
 
-const getUser = async (req, res) => {
+// const login = async (req, res, next) => {
+//   try {
+
+//     const { email, password } = req.body;
+//     const useExists = await User.findOne({ email });
+//     console.log(useExists);
+//     if (!useExists) {
+//       return res.status(404).json({
+//         message: "Email chua dang ky!",
+//       });
+//     }
+
+//     const isMatch = comparePassword(password, useExists.password);
+//     if (!isMatch) {
+//       return res.status(400).json({
+//         message: "Mat khau khong dung!",
+//       });
+//     }
+
+//     const token = jwt.sign({ _id: useExists._id }, "100d");
+//     console.log(token);
+//     useExists.password = undefined;
+
+//     return res.status(200).json({
+//       success: true,
+//       user: useExists,
+//       token: token,
+//       message: "Login successfully!",
+//     });
+//   } catch (error) {
+//     next(error);
+//   }
+// };
+
+export const login = async (req, res) => {
+  const { email, password } = req.body;
   try {
-    const user = await User.find();
+    const useExists = await UserModels.findOne({ email });
+    if (!useExists) {
+      return res.json({ success: false, message: "User Doesn't exists" });
+    }
+
+    const isMatch = await bcrypt.compare(password, useExists.password);
+    if (!isMatch) {
+      return res.json({ success: false, message: "Invalid credentials" });
+    }
+
+    const token = generateToken({ _id: useExists._id }, "100d");
+    return res.status(200).json({
+      success: true,
+      user: useExists,
+      token: token,
+      message: "Login successfully!",
+    });
+  } catch (error) {
+    console.log(error);
+    res.json({ success: false, message: "Error" });
+  }
+};
+
+export const getUser = async (req, res) => {
+  try {
+    const user = await UserModels.find();
     res.status(200).json(user);
   } catch (error) {
     res.status(500).json({ message: "Lỗi khi lấy danh sách ", error });
   }
 };
-const getUserById = async (req, res) => {
+export const getUserById = async (req, res) => {
   const { id } = req.params;
 
   try {
     // Tìm người dùng dựa trên id
-    const user = await User.findById(id);
+    const user = await UserModels.findById(id);
     if (!user)
       return res.status(404).json({ message: "Người dùng không tồn tại." });
 
@@ -96,10 +135,10 @@ const getUserById = async (req, res) => {
       .json({ message: "Lỗi khi lấy thông tin người dùng.", error });
   }
 };
-const getCurrentUser = async (req, res) => {
+export const getCurrentUser = async (req, res) => {
   try {
     const userId = req.user.id; // Lấy userId từ token đã giải mã
-    const user = await User.findById(userId).select("-password"); // Không trả về mật khẩu
+    const user = await UserModels.findById(userId).select("-password"); // Không trả về mật khẩu
 
     if (!user) {
       return res.status(404).json({ message: "Người dùng không tồn tại." });
@@ -112,4 +151,3 @@ const getCurrentUser = async (req, res) => {
       .json({ message: "Lỗi khi lấy thông tin người dùng.", error });
   }
 };
-module.exports = { register, login, getUser, getUserById, getCurrentUser };

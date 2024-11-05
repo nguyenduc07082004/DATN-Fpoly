@@ -1,35 +1,41 @@
-const express = require("express");
-const router = express.Router();
-const categoryController = require("../controllers/CategoryControllers");
+import { Router } from "express";
+const CategoryRouter = Router();
+import {
+  getCategory,
+  addCategory,
+  getCategoryById,
+  updateCategory,
+  deleteCategory,
+} from "../controllers/CategoryControllers.js";
 
 // Lấy danh sách sản phẩm
-router.get("/", categoryController.getCategory);
-router.get(
+CategoryRouter.get("/", getCategory);
+CategoryRouter.get(
   "/:id", //authMiddleware,
-  categoryController.getCategoryById
+  getCategoryById
 );
 
 // Thêm sản phẩm
-router.post(
+CategoryRouter.post(
   "/add", //authMiddleware,
-  categoryController.addCategory
+  addCategory
 );
 
-router.get(
+CategoryRouter.get(
   "/:id", //authMiddleware,
-  categoryController.getCategoryById
+  getCategoryById
 );
 
 // Cập nhật sản phẩm
-router.put(
+CategoryRouter.put(
   "/edit/:id", //authMiddleware,
-  categoryController.updateCategory
+  updateCategory
 );
 
 // Xóa sản phẩm
-router.delete(
+CategoryRouter.delete(
   "/:id", //authMiddleware,
-  categoryController.deleteCategory
+  deleteCategory
 );
 
-module.exports = router;
+export default CategoryRouter;

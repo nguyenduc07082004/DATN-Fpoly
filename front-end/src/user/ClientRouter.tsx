@@ -14,22 +14,21 @@ const Client = () => {
   return (
     <CartProvider>
       <div>
-      <Header />
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/other" element={<ProductPage />} />{" "}
-        {/* Thay đổi theo trang khác */}
-        <Route path="/products" element={<ProductList />} />
-        <Route path="/products/:productId" element={<ProductsDetails />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
-        <Route path="/cart" element={<Cart />} />
-        <Route path="/user/:id" element={<FromUser />} />
-      </Routes>
-      <Footer />
-    </div>
+        <Header />
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/other" element={<ProductPage />} />{" "}
+          {/* Thay đổi theo trang khác */}
+          <Route path="/products" element={<ProductList />} />
+          <Route path="/products/:productId" element={<ProductsDetails />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/cart" element={<Cart />} />
+          <Route path="/user/:id" element={<FromUser />} />
+        </Routes>
+        <Footer />
+      </div>
     </CartProvider>
-    
   );
 };
 

@@ -17,7 +17,7 @@ const UserForm = () => {
 
   useEffect(() => {
     const fetchUserData = async () => {
-      const token = localStorage.getItem("token"); // Lấy Bearer token từ localStorage
+      const token = localStorage.getItem("accessToken"); // Lấy Bearer token từ localStorage
       if (!token) {
         console.error("No token found");
         return;
@@ -128,7 +128,7 @@ const UserForm = () => {
                     <td className="label">Email:</td>
                     <td>
                       <input
-                       placeholder="username"
+                        placeholder="username"
                         type="email"
                         name="email"
                         defaultValue={userInfo.email}
@@ -142,7 +142,7 @@ const UserForm = () => {
                     <td className="label">Full Name:</td>
                     <td>
                       <input
-                       placeholder="username"
+                        placeholder="username"
                         type="text"
                         name="fullName"
                         defaultValue={userInfo.fullName}
@@ -162,7 +162,7 @@ const UserForm = () => {
                     <td className="label">Address:</td>
                     <td>
                       <input
-                       placeholder="username"
+                        placeholder="username"
                         type="text"
                         name="address"
                         defaultValue={userInfo.address}

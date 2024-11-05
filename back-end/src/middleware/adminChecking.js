@@ -1,6 +1,6 @@
-const { errorMessages } = require("../constants/message.js");
+import { errorMessages } from "../constants/errorMessages.js";
 
-const checkIsAdmin = async (req, res, next) => {
+export const checkIsAdmin = async (req, res, next) => {
   try {
     if (req?.user?.role !== "admin") {
       return res.status(400).json({
@@ -12,4 +12,3 @@ const checkIsAdmin = async (req, res, next) => {
     next(error);
   }
 };
-module.exports = { checkIsAdmin };

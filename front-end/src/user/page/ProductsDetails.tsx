@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { useParams, Link } from "react-router-dom";
 import axios from "axios";
-import { useCart } from "../Cart/CartContext"; 
+
 import {
   Container,
   Grid,
@@ -12,6 +12,8 @@ import {
 import { Box } from "@mui/system";
 import { Products } from "../../interfaces/Products";
 import Logo from "../../assets/logoshop.jpg";
+import { CartContext } from "../../api/contexts/CartContext";
+import { UserContext } from "../../api/contexts/UserContext";
 
 // Component Header
 const Header = () => {
@@ -41,13 +43,22 @@ const Header = () => {
 
 // Main ProductDetails Component
 const ProductDetails = () => {
-  const { addToCart } = useCart();
-  const { productId } = useParams<{ productId: string }>();
-  const [product, setProduct] = useState<Products | null>(null);
+  const { productId } = useParams();
   const [loading, setLoading] = useState(true);
+
   const [error, setError] = useState<string | null>(null);
   const [mainImage, setMainImage] = useState<string | null>(null);
   const [suggestedProducts, setSuggestedProducts] = useState<Products[]>([]);
+  const token = localStorage.getItem("accessToken");
+  const [product, setProduct] = useState<Products>({} as Products);
+  const [quantity, setQuantity] = useState(1);
+  const { addToCart } = useContext(CartContext);
+  const handleAddToCart = async () => {
+    addToCart(product, quantity);
+  };
+  const handleQuantityChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setQuantity(Number(e.target.value));
+  };
 
   useEffect(() => {
     // Fetch the current product
@@ -227,23 +238,32 @@ const ProductDetails = () => {
               >
                 {product.description}
               </Typography>
-
-              <Button
-                variant="contained"
-                onClick={() => addToCart(product)}
-                sx={{
-                  backgroundColor: "#ff5722",
-                  color: "#fff",
-                  mt: 3,
-                  width: "100%",
-                  py: 2,
-                  "&:hover": {
-                    backgroundColor: "#ff3d00",
-                  },
-                }}
-              >
-                Thêm vào giỏ hàng
-              </Button>
+              <input
+                type="number"
+                value={quantity}
+                min="1"
+                onChange={handleQuantityChange}
+              />
+              {!token ? (
+                "Đăng nhập để mua hàng"
+              ) : (
+                <Button
+                  variant="contained"
+                  onClick={handleAddToCart}
+                  sx={{
+                    backgroundColor: "#ff5722",
+                    color: "#fff",
+                    mt: 3,
+                    width: "100%",
+                    py: 2,
+                    "&:hover": {
+                      backgroundColor: "#ff3d00",
+                    },
+                  }}
+                >
+                  Thêm vào giỏ hàng
+                </Button>
+              )}
             </Grid>
           </Grid>
 

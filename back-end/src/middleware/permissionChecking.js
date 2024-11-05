@@ -1,7 +1,7 @@
-import { errorMessages } from "../constants/message.js";
+import { errorMessages } from "../constants/errorMessages.js";
 
 export const checkPermission = (roles) => (req, res, next) => {
-  roles: ["admin", "user"];
+  // roles: ["admin", "user"];
   const hashPermission = roles.some((role) => req.user.role.includes(role));
   if (!hashPermission) {
     return res.status(403).json({

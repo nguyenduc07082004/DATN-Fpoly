@@ -1,8 +1,8 @@
-const Product = require("../models/ProductModels");
-const Category = require("../models/CategoryModels"); // Giả sử bạn đã định nghĩa một model cho Product
+import Category from "../models/CategoryModels.js";
+import Product from "../models/ProductModels.js";
 
 // Lấy danh sách sản phẩm
-exports.getProducts = async (req, res) => {
+export const getProducts = async (req, res, next) => {
   try {
     const products = await Product.find().populate(
       "categories",
@@ -10,11 +10,11 @@ exports.getProducts = async (req, res) => {
     ); // populate name và description của danh mục
     res.status(200).json(products);
   } catch (error) {
-    res.status(500).json({ message: "Lỗi khi lấy danh sách sản phẩm", error });
+    next(error);
   }
 };
 
-exports.getProductById = async (req, res) => {
+export const getProductById = async (req, res) => {
   try {
     const product = await Product.findById(req.params.id).populate(
       "categories",
@@ -31,7 +31,7 @@ exports.getProductById = async (req, res) => {
 };
 
 // Thêm sản phẩm
-exports.addProduct = async (req, res) => {
+export const addProduct = async (req, res) => {
   const { title, price, storage, color, categories, quantity, description } =
     req.body;
   let image_filename = req.file ? req.file.filename : null;
@@ -64,7 +64,7 @@ exports.addProduct = async (req, res) => {
 };
 
 // Cập nhật sản phẩm
-exports.updateProduct = async (req, res) => {
+export const updateProduct = async (req, res) => {
   const { categories } = req.body;
 
   try {
@@ -75,7 +75,7 @@ exports.updateProduct = async (req, res) => {
     }
 
     // Cập nhật sản phẩm
-    const updatedProduct = await Product.findByIdAndUpdate(
+    const updatedProduct = await ProductModels.findByIdAndUpdate(
       req.params.id,
       req.body,
       { new: true }
@@ -91,7 +91,7 @@ exports.updateProduct = async (req, res) => {
 };
 
 // Xóa sản phẩm
-exports.deleteProduct = async (req, res) => {
+export const deleteProduct = async (req, res) => {
   try {
     const deletedProduct = await Product.findByIdAndDelete(req.params.id);
     if (!deletedProduct) {

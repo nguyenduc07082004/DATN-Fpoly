@@ -1,8 +1,7 @@
-const User = require("../models/UserModels");
+import User from "../models/UserModels.js";
+import { verifyToken } from "../utils/jwt.js";
 
-const { verifyToken } = require("../utils/jwt.js");
-
-const checkAuth = async (req, res, next) => {
+export const checkAuth = async (req, res, next) => {
   try {
     const token = req.headers?.authorization?.split(" ")[1];
     if (!token) {
@@ -23,4 +22,3 @@ const checkAuth = async (req, res, next) => {
     next(error);
   }
 };
-module.exports = { checkAuth };

@@ -8,7 +8,10 @@ import "../css/Style.css";
 const Cart: React.FC = () => {
   const { cartItems, user, updateQuantity, removeFromCart } = useCart();
 
-  const subtotal = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
+  const subtotal = cartItems.reduce(
+    (sum, item) => sum + item.price * item.quantity,
+    0
+  );
   const discount = 0; // Giảm giá (có thể thay đổi sau)
   const totalAmount = subtotal - discount; // Tổng tiền cần trả
 
@@ -32,16 +35,28 @@ const Cart: React.FC = () => {
               <span>{item.title}</span>
               <span>{item.price.toLocaleString()} VND</span>
               <div className="quantity-control">
-                <button className="btn-minus" onClick={() => updateQuantity(item._id, item.quantity - 1)} disabled={item.quantity <= 1}>
+                <button
+                  className="btn-minus"
+                  onClick={() => updateQuantity(item._id, item.quantity - 1)}
+                  disabled={item.quantity <= 1}
+                >
                   -
                 </button>
                 <span>{item.quantity}</span>
-                <button className="btn-plus" onClick={() => updateQuantity(item._id, item.quantity + 1)}>
+                <button
+                  className="btn-plus"
+                  onClick={() => updateQuantity(item._id, item.quantity + 1)}
+                >
                   +
                 </button>
               </div>
-              <span>Tổng: {(item.price * item.quantity).toLocaleString()} VND</span>
-              <button onClick={() => removeFromCart(item._id)} className="remove-button">
+              <span>
+                Tổng: {(item.price * item.quantity).toLocaleString()} VND
+              </span>
+              <button
+                onClick={() => removeFromCart(item._id)}
+                className="remove-button"
+              >
                 Xóa
               </button>
             </div>
@@ -77,7 +92,9 @@ const Cart: React.FC = () => {
               <tbody>
                 <tr>
                   <td className="total-label">Khách cần trả</td>
-                  <td className="total-value">{totalAmount.toLocaleString()} VND</td>
+                  <td className="total-value">
+                    {totalAmount.toLocaleString()} VND
+                  </td>
                 </tr>
               </tbody>
             </table>

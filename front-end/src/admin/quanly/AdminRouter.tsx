@@ -15,6 +15,7 @@ import { useContext } from "react";
 import { AuthContext, AuthContextType } from "../../api/contexts/AuthContext";
 import Details from "./Details";
 import AddForm from "../form/AddForm";
+import EditForm from "../form/EditForm";
 
 function Dashboard() {
   const { user } = useContext(AuthContext) as AuthContextType;
@@ -37,7 +38,7 @@ function Dashboard() {
           <Route path="/" element={<TrangChu />} />
           <Route path="/qlsp" element={<QLSP />} />
           <Route path="qlsp/add" element={<AddForm />} />
-          <Route path="/qlsp/edit/:id" element={<Form />} />
+          <Route path="/qlsp/edit/:id" element={<EditForm />} />
           <Route path="/qltk" element={<QLTK />} />
           <Route path="/qlbl" element={<QLBL />} />
           <Route path="/qldh" element={<QLDH />} />

@@ -1,15 +1,16 @@
-const express = require("express");
-const productsRouter = require("../routes/ProductsRouter.js");
-const categoryRouter = require("../routes/CategoryRouter.js");
-const userRouter = require("../routes/UserRouter.js");
-const cartRouter = require("../routes/CartRouter");
+import { Router } from "express";
+import ProductRouter from "../routes/ProductsRouter.js";
+import CategoryRouter from "../routes/CategoryRouter.js";
+import userRouter from "../routes/userRouter.js";
+import { checkAuth } from "../middleware/checkAuth.js";
+import cartRouter from "../routes/CartRouter.js";
+import express from "express";
 
-const authRouter = (app) => {
-  app.use(express.json());
-  app.use("/images", express.static("uploads"));
-  app.use("/products", productsRouter);
-  app.use("/categories", categoryRouter);
-  app.use("/", userRouter);
-  app.use("/carts", cartRouter);
-};
-module.exports = authRouter;
+const authRouter = Router();
+
+authRouter.use("/products", ProductRouter);
+authRouter.use("/categories", CategoryRouter);
+authRouter.use("/", userRouter);
+authRouter.use("/carts", checkAuth, cartRouter);
+
+export default authRouter;

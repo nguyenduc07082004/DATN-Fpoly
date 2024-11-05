@@ -1,18 +1,17 @@
-const Category = require("../models/CategoryModels"); // Giả sử bạn đã định nghĩa một model cho Product
-
+import CategoryModels from "../models/CategoryModels.js";
 // Lấy danh sách sản phẩm
-exports.getCategory = async (req, res) => {
+export const getCategory = async (req, res) => {
   try {
-    const category = await Category.find();
+    const category = await CategoryModels.find();
     res.status(200).json(category);
   } catch (error) {
     res.status(500).json({ message: "Lỗi khi lấy danh sách sản phẩm", error });
   }
 };
 
-exports.getCategoryById = async (req, res) => {
+export const getCategoryById = async (req, res) => {
   try {
-    const category = await Category.findById(req.params.id);
+    const category = await CategoryModels.findById(req.params.id);
     if (!category) {
       return res.status(404).json({ message: "Không tìm thấy danh mục" });
     }
@@ -23,7 +22,7 @@ exports.getCategoryById = async (req, res) => {
 };
 
 // Thêm sản phẩm
-exports.addCategory = async (req, res) => {
+export const addCategory = async (req, res) => {
   const newCategory = new Category(req.body);
   try {
     const savedCategory = await newCategory.save();
@@ -34,9 +33,9 @@ exports.addCategory = async (req, res) => {
 };
 
 // Cập nhật sản phẩm
-exports.updateCategory = async (req, res) => {
+export const updateCategory = async (req, res) => {
   try {
-    const updatedCategory = await Category.findByIdAndUpdate(
+    const updatedCategory = await CategoryModels.findByIdAndUpdate(
       req.params.id,
       req.body,
       { new: true }
@@ -48,9 +47,9 @@ exports.updateCategory = async (req, res) => {
 };
 
 // Xóa sản phẩm
-exports.deleteCategory = async (req, res) => {
+export const deleteCategory = async (req, res) => {
   try {
-    await Category.findByIdAndDelete(req.params.id);
+    await CategoryModels.findByIdAndDelete(req.params.id);
     res.status(200).json({ message: "Sản phẩm đã được xóa" });
   } catch (error) {
     res.status(500).json({ message: "Lỗi khi xóa sản phẩm", error });

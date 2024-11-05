@@ -44,7 +44,7 @@ const Header = () => {
           placeholder="Tìm kiếm sản phẩm..."
           className="search-bar"
         />
-        {!localStorage.getItem("token") ? (
+        {!localStorage.getItem("accessToken") ? (
           <>
             <Link to="/login" className="text-decoration-none">
               <span>Đăng nhập</span>

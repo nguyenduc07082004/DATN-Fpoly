@@ -1,4 +1,4 @@
-import { errorMessages } from "../constants/message.js";
+import { errorMessages } from "../constants/errorMessages.js";
 
 export const validBodyRequest = (schema) => async (req, res, next) => {
   try {

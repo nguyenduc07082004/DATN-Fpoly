@@ -1,7 +1,13 @@
-const express = require("express");
-const router = express.Router();
-const productController = require("../controllers/ProductControllers");
-const multer = require("multer");
+import { Router } from "express";
+const ProductRouter = Router();
+import {
+  addProduct,
+  getProducts,
+  getProductById,
+  updateProduct,
+  deleteProduct,
+} from "../controllers/ProductControllers.js";
+import multer from "multer";
 // Lấy danh sách sản phẩm (không cần xác thực)
 
 const storage = multer.diskStorage({
@@ -15,31 +21,32 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage });
 
-router.post("/add", upload.single("image"), productController.addProduct);
-router.get("/", productController.getProducts);
+ProductRouter.post("/add", upload.single("image"), addProduct);
+ProductRouter.get("/", getProducts);
 
-router.get(
+ProductRouter.get(
   "/:id", //authMiddleware,
-  productController.getProductById
+  getProductById
 );
 
 // Thêm sản phẩm (yêu cầu xác thực)
 
-router.get(
+ProductRouter.get(
   "/:id", //authMiddleware,
-  productController.getProductById
+  getProductById
 );
 
 // Cập nhật sản phẩm (yêu cầu xác thực)
-router.put(
-  "/edit/:id", //authMiddleware,
-  productController.updateProduct
+ProductRouter.put(
+  "/edit/:id",
+  upload.single("image"), //authMiddleware,
+  updateProduct
 );
 
 // Xóa sản phẩm (yêu cầu xác thực)
-router.delete(
+ProductRouter.delete(
   "/:id", //authMiddleware,
-  productController.deleteProduct
+  deleteProduct
 );
 
-module.exports = router;
+export default ProductRouter;

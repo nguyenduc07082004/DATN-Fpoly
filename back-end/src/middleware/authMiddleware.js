@@ -1,22 +1,22 @@
-const jwt = require("jsonwebtoken");
+import jwt from "jsonwebtoken";
+import User from "../models/UserModels.js";
 
-// Middleware xác thực người dùng qua JWT
-exports.verifyToken = (req, res, next) => {
-  const token = req.headers["authorization"];
-
-  if (!token || !token.startsWith("Bearer ")) {
-    return res.status(403).json({ success: false, message: "Access denied. No token provided." });
-  }
-
-  const actualToken = token.split(" ")[1]; // Lấy token thực tế
-
+export const verifyToken = async (req, res, next) => {
+  const token = req.header("Authorization").replace("Bearer ", "");
   try {
-    // Sử dụng biến môi trường cho khóa bí mật
-    const decoded = jwt.verify(actualToken, "secretKey");
-    req.user = decoded; // Lưu thông tin người dùng vào req để sử dụng tiếp
-    next(); // Cho phép tiếp tục nếu xác thực thành công
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const user = await User.findOne({
+      _id: decoded._id,
+      "tokens.token": token,
+    });
+
+    if (!user) {
+      throw new Error();
+    }
+
+    req.user = user;
+    next();
   } catch (error) {
-    console.error("Token verification error:", error); // Log lỗi ra console
-    return res.status(401).json({ success: false, message: "Invalid token." });
+    res.status(401).json({ message: "Please authenticate." });
   }
 };

@@ -1,7 +1,7 @@
 export interface Products {
   // name: ReactNode;
   // id: Key | null | undefined;
-  _id: any;
+  _id?: any;
   title: string;
   price: number;
   image: string;
@@ -11,7 +11,6 @@ export interface Products {
   storage: string;
   color: string;
 }
-
 
 export interface CartItem extends Products {
   quantity: number;
