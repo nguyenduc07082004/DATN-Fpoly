@@ -7,6 +7,7 @@ export type CartContextType = {
   state: {
     products: { product: Products; quantity: number }[];
     totalPrice: number;
+    order: any; // Thêm phần order vào state
   };
   dispatch: React.Dispatch<any>;
   addToCart: (product: Products, quantity: number) => void;
@@ -18,6 +19,7 @@ export type CartContextType = {
 const initialState = {
   products: [],
   totalPrice: 0,
+  order: null, // Khởi tạo order là null
 };
 
 const CartContext = createContext({} as CartContextType);
@@ -25,23 +27,23 @@ const CartContext = createContext({} as CartContextType);
 const CartProvider = ({ children }: { children: ReactNode }) => {
   const [state, dispatch] = useReducer(cartReducer, initialState);
   const token = localStorage.getItem("accessToken");
+
   const addToCart = async (product: Products, quantity: number) => {
     const res = await ins.post("/carts/add", {
       productId: product._id,
       quantity,
     });
-
     dispatch({
       type: "ADD_TO_CART",
       payload: { product: res.data.product, quantity },
     });
   };
+
   const getCart = async () => {
     try {
       const res = await ins.get("/carts");
       if (res.data) {
         dispatch({ type: "SET_CART", payload: res.data });
-        console.log("hello");
       } else {
         console.error("Error: Cart data is null");
       }
@@ -49,9 +51,10 @@ const CartProvider = ({ children }: { children: ReactNode }) => {
       console.error("Error getting cart:", error);
     }
   };
+
   const checkout = async () => {
-    const res = await ins.post("/cart/checkout");
-    dispatch({ type: "CHECKOUT", payload: res.data });
+    const res = await ins.post("/orders/checkout");
+    dispatch({ type: "CHECKOUT", payload: res.data }); // Lưu thông tin đơn hàng vào state
   };
 
   const removeFromCart = async (productId: string) => {
@@ -62,7 +65,7 @@ const CartProvider = ({ children }: { children: ReactNode }) => {
           Authorization: `Bearer ${token}`,
         },
       });
-      console.log(res.data);
+      dispatch({ type: "REMOVE_FROM_CART", payload: { productId } });
     } catch (error) {
       console.error("Error removing from cart:", error);
     }

@@ -1,16 +1,26 @@
-import { useContext, useEffect } from "react";
+import React, { useContext, useEffect } from "react";
 import { CartContext, CartContextType } from "../../api/contexts/CartContext";
 import { CartItem } from "../../api/reducers/CartReducer";
+import { useNavigate } from "react-router-dom";
 
 const Cart = () => {
-  const { state, getCart, removeFromCart } = useContext(CartContext);
+  const { state, getCart, removeFromCart, checkout } = useContext(CartContext) as CartContextType;
+  const navigate = useNavigate();
+
   useEffect(() => {
     getCart();
   }, []);
+
   const handleRemoveFromCart = (productId: string) => {
     removeFromCart(productId);
     getCart();
   };
+
+  const handleCheckout = async () => {
+    await checkout();  // Xử lý thanh toán
+    navigate("/product-page");  // Chuyển hướng sang trang ProductPage
+  };
+
   return (
     <>
       <h1>Gio hang cua ban!</h1>
@@ -49,7 +59,9 @@ const Cart = () => {
             <td colSpan={4}>Tong tien</td>
             <td>{state.totalPrice}</td>
             <td>
-              <button className="btn btn-success">Thanh toan</button>
+              <button onClick={handleCheckout} className="btn btn-success">
+                Thanh toan
+              </button>
             </td>
           </tr>
         </tbody>
@@ -59,34 +71,3 @@ const Cart = () => {
 };
 
 export default Cart;
-
-// import { useContext, useEffect } from "react";
-// import { CartContext } from "../../api/contexts/CartContext";
-
-// const CartPage = () => {
-//   const { state, getCart } = useContext(CartContext);
-
-//   useEffect(() => {
-//     getCart();
-//   }, []);
-
-//   return (
-//     <div>
-//       <h1>Cart</h1>
-//       {state.products.length === 0 ? (
-//         <p>Your cart is empty</p>
-//       ) : (
-//         <ul>
-//           {state.products.map((product) => (
-//             <li key={product.product._id}>
-//               {product.product.title} - {product.quantity}
-//             </li>
-//           ))}
-//         </ul>
-//       )}
-//       <p>Total Price: {state.totalPrice}</p>
-//     </div>
-//   );
-// };
-
-// export default CartPage;
