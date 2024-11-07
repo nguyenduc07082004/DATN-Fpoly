@@ -5,6 +5,12 @@
   },
   "devDependencies": {
     "@types/chart.js": "^2.9.41",
-    "@types/react-chartjs-2": "^2.5.7"
+    "@types/react-chartjs-2": "^2.5.7",
+    "concurrently": "^9.1.0"
+  },
+  "scripts": {
+    "frontend": "cd front-end && npm run dev",
+    "backend": "cd back-end && npm start",
+    "dev": "concurrently \"npm run frontend\" \"npm run backend\""
   }
 }
