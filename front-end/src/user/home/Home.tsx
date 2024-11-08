@@ -1,18 +1,53 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
-// import "../css/Home.css";
+
 import "../css/Style.css";
 
-import Banner from "../../assets/banner.jpg";
+import banner1 from "../../assets/banner.jpg";
+import banner2 from "../../assets/banner1.jpg";
+import banner3 from "../../assets/banner 2.jpg";
 import { Products } from "../../interfaces/Products";
 import { Link } from "react-router-dom";
 import { baseURL } from "../../api";
 
+const bannerImages = [banner1, banner2, banner3,];
+
 // Component Banner (Phần banner chính)
 const MainBanner = () => {
+  const [currentIndex, setCurrentIndex] = useState(0);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentIndex((prevIndex) =>
+        prevIndex === bannerImages.length - 1 ? 0 : prevIndex + 1
+      );
+    }, 3000); // Đổi ảnh mỗi 3 giây
+    return () => clearInterval(interval);
+  }, []);
+
+  const handlePrev = () => {
+    setCurrentIndex((prevIndex) =>
+      prevIndex === 0 ? bannerImages.length - 1 : prevIndex - 1
+    );
+  };
+
+  const handleNext = () => {
+    setCurrentIndex((prevIndex) =>
+      prevIndex === bannerImages.length - 1 ? 0 : prevIndex + 1
+    );
+  };
+
   return (
     <div className="banner">
-      <img src={Banner} alt="Banner" />
+      <img src={bannerImages[currentIndex]} alt={`Banner ${currentIndex + 1}`} />
+      <div className="banner-controls">
+        <button className="banner-button left" onClick={handlePrev}>
+          &#8592;
+        </button>
+        <button className="banner-button right" onClick={handleNext}>
+          &#8594;
+        </button>
+      </div>
     </div>
   );
 };
