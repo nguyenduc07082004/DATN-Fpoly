@@ -13,6 +13,7 @@ import { Box } from "@mui/system";
 import { Products } from "../../interfaces/Products";
 import Logo from "../../assets/logoshop.jpg";
 import { CartContext } from "../../api/contexts/CartContext";
+import { baseURL } from "../../api";
 
 // Component Header
 const Header = () => {
@@ -55,6 +56,7 @@ const ProductDetails = () => {
 
   const handleAddToCart = async () => {
     addToCart(product, quantity);
+    alert("Đã thêm vào giỏ hàng!");
   };
   const handleQuantityChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setQuantity(Number(e.target.value));
@@ -159,7 +161,7 @@ const ProductDetails = () => {
                   <Grid item xs={4} key={index}>
                     <Box
                       component="img"
-                      src={img}
+                      src={`${baseURL}/images/` + product.image}
                       alt={`additional ${index}`}
                       sx={{
                         width: "100%",
@@ -289,7 +291,7 @@ const ProductDetails = () => {
                   >
                     <Box
                       component="img"
-                      src={suggestedProduct.image}
+                      src={`${baseURL}/images/` + product.image}
                       alt={suggestedProduct.title}
                       sx={{
                         width: "100%",

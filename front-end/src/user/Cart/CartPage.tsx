@@ -4,8 +4,11 @@ import { CartItem } from "../../api/reducers/CartReducer";
 import { useNavigate } from "react-router-dom";
 
 const Cart = () => {
-  const { state, getCart, removeFromCart, checkout } = useContext(CartContext) as CartContextType;
+  const { state, getCart, removeFromCart, checkout } = useContext(
+    CartContext
+  ) as CartContextType;
   const navigate = useNavigate();
+  console.log(state);
 
   useEffect(() => {
     getCart();
@@ -17,22 +20,22 @@ const Cart = () => {
   };
 
   const handleCheckout = async () => {
-    await checkout();  // Xử lý thanh toán
-    navigate("/product-page");  // Chuyển hướng sang trang ProductPage
+    await checkout(); // Xử lý thanh toán
+    navigate("/product-page"); // Chuyển hướng sang trang ProductPage
   };
 
   return (
     <>
-      <h1>Gio hang cua ban!</h1>
+      <h1></h1>
       <table className="table table-striped table-bordered">
         <thead>
           <tr>
             <th>STT</th>
-            <th>Ten san pham</th>
-            <th>So luong</th>
-            <th>Gia</th>
-            <th>Thanh tien</th>
-            <th>Xoa</th>
+            <th>Tên sản phẩm</th>
+            <th>Số lượng mua</th>
+            <th>Giá</th>
+            <th>Thành tiền</th>
+            <th>Xóa</th>
           </tr>
         </thead>
         <tbody>

@@ -8,6 +8,7 @@ import { CateProvider } from "./api/contexts/CategoryContext.tsx";
 import { UserProvider } from "./api/contexts/UserContext.tsx";
 import { AuthProvider } from "./api/contexts/AuthContext.tsx";
 import { CartProvider } from "./api/contexts/CartContext.tsx";
+import { OrderProvider } from "./api/contexts/OrdersContext.tsx";
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
@@ -17,7 +18,9 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
           <CateProvider>
             <UserProvider>
               <CartProvider>
-                <App />
+                <OrderProvider>
+                  <App />
+                </OrderProvider>
               </CartProvider>
             </UserProvider>
           </CateProvider>

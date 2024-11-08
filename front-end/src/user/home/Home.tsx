@@ -6,6 +6,7 @@ import "../css/Style.css";
 import Banner from "../../assets/banner.jpg";
 import { Products } from "../../interfaces/Products";
 import { Link } from "react-router-dom";
+import { baseURL } from "../../api";
 
 // Component Banner (Phần banner chính)
 const MainBanner = () => {
@@ -21,7 +22,7 @@ const ProductCard = ({ product }: { product: Products }) => {
   return (
     <div className="product-card">
       <div>
-        <img src={product._id} alt={product.title} />
+        <img src={`${baseURL}/images/` + product.image} alt="error" />
       </div>
       <h3>{product.title}</h3>
       <p>{product.price} VNĐ</p>

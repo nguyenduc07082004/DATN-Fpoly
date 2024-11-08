@@ -2,6 +2,7 @@
 import Order from "../models/OrderModels.js";
 import Cart from "../models/CartModels.js";
 import Product from "../models/ProductModels.js";
+import User from "../models/UserModels.js";
 
 // Xuất khẩu hàm trực tiếp khi khai báo
 export const checkout = async (req, res, next) => {
@@ -40,5 +41,23 @@ export const checkout = async (req, res, next) => {
     });
   } catch (error) {
     next(error);
+  }
+};
+
+export const getOrderDetail = async (req, res) => {
+  const userId = req.user._id;
+
+  try {
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    const orders = await Order.findOne({ userId })
+      .populate("items.product")
+      .populate("userId");
+
+    res.status(200).json({ orders });
+  } catch (error) {
+    res.status(500).json({ message: "Lỗi khi lấy danh sách ", error });
   }
 };

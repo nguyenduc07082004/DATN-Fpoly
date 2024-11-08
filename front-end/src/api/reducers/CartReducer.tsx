@@ -16,6 +16,7 @@ type CartAction =
   | { type: "REMOVE_FROM_CART"; payload: { productId: string } }
   | { type: "SET_CART"; payload: { products: CartItem[]; totalPrice: number } }
   | { type: "CHECKOUT"; payload: any }; // Thêm loại hành động cho checkout
+// Thêm loại hành động cho checkout
 
 const cartReducer = (state: State, action: CartAction) => {
   switch (action.type) {

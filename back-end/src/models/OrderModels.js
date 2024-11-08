@@ -2,11 +2,13 @@
 import mongoose from "mongoose";
 
 const orderSchema = new mongoose.Schema({
-  userId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "User", // Liên kết với người dùng
-    required: true,
-  },
+  userId: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User", // Liên kết với người dùng
+      required: true,
+    },
+  ],
   items: [
     {
       product: {
@@ -26,7 +28,13 @@ const orderSchema = new mongoose.Schema({
   },
   status: {
     type: String,
-    default: "Pending", // Trạng thái đơn hàng
+    enum: [
+      "Đang chuẩn bị hàng",
+      "Đang giao hàng",
+      "Giao hàng thành công",
+      "Đơn hàng đã bị hủy",
+    ],
+    default: "Đang chuẩn bị hàng", // Trạng thái đơn hàng
   },
   createdAt: {
     type: Date,
