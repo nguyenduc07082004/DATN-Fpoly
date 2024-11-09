@@ -45,19 +45,23 @@ export const checkout = async (req, res, next) => {
 };
 
 export const getOrderDetail = async (req, res) => {
-  const userId = req.user._id;
+  if (!req.user) {
+    return res.status(401).json({ message: "User not authenticated" });
+  }
+
+  const userId = req.user._id; // Assuming you have user authentication and req.user is set
 
   try {
-    const user = await User.findById(userId);
-    if (!user) {
-      return res.status(404).json({ message: "User not found" });
-    }
-    const orders = await Order.findOne({ userId })
+    const order = await Order.find()
       .populate("items.product")
       .populate("userId");
+    if (!order) {
+      return res.status(404).json({ message: "order not found" });
+    }
 
-    res.status(200).json({ orders });
+    res.status(200).json(order);
   } catch (error) {
-    res.status(500).json({ message: "Lỗi khi lấy danh sách ", error });
+    console.error("Error getting cart:", error);
+    res.status(500).json({ message: "Error getting cart", error });
   }
 };

@@ -1,33 +1,33 @@
 import React, { createContext, useReducer, ReactNode } from "react";
 import ins from "../../api";
 import orderReducer, { CartItem } from "../../api/reducers/OrderReducer";
+import { Products } from "../../interfaces/Products";
+import { User } from "../../interfaces/User";
 
-export interface OrderContextType {
+interface OrderContextType {
   state: {
-    orders: CartItem[];
-    items: CartItem[];
+    userId: User | null;
+    items: { product: Products; quantity: number }[];
     totalPrice: number;
   };
   dispatch: React.Dispatch<any>;
   getOrder: () => Promise<void>;
 }
 
-const initialState = {
-  orders: [],
-  items: [],
-  totalPrice: 0,
-};
-
 const OrderContext = createContext<OrderContextType | undefined>(undefined);
 
 const OrderProvider = ({ children }: { children: ReactNode }) => {
-  const [state, dispatch] = useReducer(orderReducer, initialState);
+  const [state, dispatch] = useReducer(orderReducer, {
+    userId: null,
+    items: [],
+    totalPrice: 0,
+  });
 
   const getOrder = async () => {
     try {
-      const res = await ins.get("/orders");
-      if (res.data) {
-        dispatch({ type: "SET_ORDER", payload: res.data });
+      const { data } = await ins.get("/orders");
+      if (data) {
+        dispatch({ type: "SET_ORDER", payload: data });
       } else {
         console.error("Error: Order data is null");
       }
@@ -44,3 +44,4 @@ const OrderProvider = ({ children }: { children: ReactNode }) => {
 };
 
 export { OrderContext, OrderProvider };
+export type { OrderContextType };
