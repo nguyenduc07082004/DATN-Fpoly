@@ -17,6 +17,7 @@ const Header = () => {
   const { user } = useContext(AuthContext) as AuthContextType;
 
   // Calculate the total number of items in the cart
+  const cartItemCount = 0; // Replace with actual cart item count logic
 
   return (
     <header className="header">
@@ -85,7 +86,6 @@ const Header = () => {
                   </Link>
                 </li>
               )}
-
               <li>
                 <hr className="dropdown-divider" />
               </li>
@@ -99,7 +99,11 @@ const Header = () => {
         )}
 
         <Link to="/cart" className="text-decoration-none cart-icon">
-          Giỏ hàng
+          <FontAwesomeIcon icon={faCartShopping} />
+          {/* Optionally, add a badge or number of items in the cart */}
+          {cartItemCount > 0 && (
+            <span className="cart-item-count">{cartItemCount}</span>
+          )}
         </Link>
       </div>
     </header>

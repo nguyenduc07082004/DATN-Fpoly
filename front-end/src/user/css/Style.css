@@ -503,13 +503,54 @@
       }
       
       /* Main banner styles */
+      .banner {
+        position: relative;
+        width: 100%;
+        height: 400px;
+        overflow: hidden;
+      }
+      
       .banner img {
         width: 100%;
-        height: auto;
-        border-radius: 10px;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        margin-top: 20px;
+        height: 100%;
+        object-fit: cover;
       }
+      
+      .banner-controls {
+        position: absolute;
+        top: 50%;
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+        transform: translateY(-50%);
+      }
+      
+      .banner-button {
+        background-color: #ffd400; /* Màu vàng */
+        color: #333; /* Màu chữ tối hơn */
+        border: 1px solid #ccc; /* Đường viền nhạt */
+        padding: 10px 15px; /* Kích thước nút */
+        font-size: 18px; /* Kích thước chữ */
+        font-weight: bold; /* Độ đậm chữ */
+        border-radius: 8px; /* Bo tròn nhẹ các góc */
+        cursor: pointer;
+        transition: background-color 0.3s, transform 0.2s;
+      }
+      
+      .banner-button:hover {
+        background-color: #ffffff; 
+        transform: scale(1.05); /* Hiệu ứng phóng to nhẹ */
+      }
+      
+      .banner-button.left {
+        margin-left: 20px; /* Căn lề cho nút bên trái */
+      }
+      
+      .banner-button.right {
+        margin-right: 20px; /* Căn lề cho nút bên phải */
+      }
+      
+      
       
       /* Deals section styles */
       .deals {
