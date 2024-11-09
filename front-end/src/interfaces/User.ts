@@ -7,4 +7,5 @@ export interface User {
   phone: number;
   role: string;
   id: any;
+  0: any;
 }

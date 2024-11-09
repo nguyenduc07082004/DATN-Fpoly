@@ -1,38 +1,30 @@
 import { Products } from "../../interfaces/Products";
+import { User } from "../../interfaces/User";
 
 export type CartItem = {
   product: Products;
   quantity: number;
 };
 
-type State = {
-  orders: CartItem[];
+export type State = {
+  userId: User | null;
   items: CartItem[];
   totalPrice: number;
 };
 
 type CartAction = {
   type: "SET_ORDER";
-  payload: { orders: CartItem[]; items: CartItem[]; totalPrice: number };
+  payload: State;
 };
 
-const initialState: State = {
-  orders: [],
-  items: [],
-  totalPrice: 0,
-};
+// Thêm loại hành động cho checkout
 
-const orderReducer = (
-  state: State = initialState,
-  action: CartAction
-): State => {
+const orderReducer = (state: State, action: CartAction) => {
   switch (action.type) {
     case "SET_ORDER":
       return {
         ...state,
-        orders: action.payload.orders,
-        items: action.payload.items,
-        totalPrice: action.payload.totalPrice,
+        ...action.payload,
       };
 
     default:

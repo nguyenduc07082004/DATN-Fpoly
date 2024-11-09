@@ -1,8 +1,4 @@
-import "../.././App.scss";
-import { useContext, useEffect, useState } from "react";
-import { ProdContext } from "../../api/contexts/ProductsContexts";
-import { Link, useParams } from "react-router-dom";
-import ins from "../../api";
+import React, { useContext, useEffect } from "react";
 import {
   OrderContext,
   OrderContextType,
@@ -11,10 +7,16 @@ import { CartItem } from "../../api/reducers/OrderReducer";
 
 const QLDH = () => {
   const { state, getOrder } = useContext(OrderContext) as OrderContextType;
+  console.log(state);
+
   useEffect(() => {
     getOrder();
   }, []);
-  console.log(state.orders);
+
+  if (!state || !Array.isArray(state.items)) {
+    return <div>ok</div>;
+  }
+
   return (
     <div>
       <p className="m-3">
@@ -26,14 +28,24 @@ const QLDH = () => {
       <table className="table">
         <thead className="text-center">
           <tr className="d-flex">
-            <th className="col-3">Tên khách hàng</th>
+            <th className="col-3">STT</th>
             <th className="col-3">Tên sản phẩm</th>
             <th className="col-1">Giá(VND)</th>
             <th className="col-1">Số lượng</th>
             <th className="col-4">Chức năng</th>
           </tr>
         </thead>
-        <tbody></tbody>
+        <tbody className="table">
+          {state.items.map((item, index) => (
+            <tr className="d-flex">
+              <td>{index + 1}</td>
+              <td className="col-3">{}</td>
+              <td className="col-1">{}</td>
+              <td className="col-1">{item.quantity}</td>
+              <th className="col-4">OK</th>
+            </tr>
+          ))}
+        </tbody>
       </table>
     </div>
   );
