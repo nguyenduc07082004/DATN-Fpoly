@@ -20,6 +20,9 @@ const Cart = () => {
     if (product?.quantity > 0) {
       addToCart(product.product, -1);
     }
+    if (product?.quantity === 1) {
+      handleRemoveFromCart(String(product.product?._id));
+    }
   };
 
   const handleIncreaseQuantity = (product: any) => {

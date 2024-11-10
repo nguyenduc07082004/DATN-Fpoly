@@ -76,6 +76,7 @@ const CartProvider = ({ children }: { children: ReactNode }) => {
     } catch (error) {
       console.error("Error removing from cart:", error);
     }
+    fetchCart();
   };
 
   return (
