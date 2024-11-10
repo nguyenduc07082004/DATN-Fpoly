@@ -17,7 +17,9 @@ const Cart = () => {
     removeFromCart(productId);
   };
   const handleDecreaseQuantity = (product: any) => {
-    addToCart(product.product, -1 < 0 ? 0 : -1);
+    if (product?.quantity > 0) {
+      addToCart(product.product, -1);
+    }
   };
 
   const handleIncreaseQuantity = (product: any) => {
