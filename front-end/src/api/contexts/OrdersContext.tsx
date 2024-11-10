@@ -28,6 +28,8 @@ const OrderProvider = ({ children }: { children: ReactNode }) => {
       const { data } = await ins.get("/orders");
       if (data) {
         dispatch({ type: "SET_ORDER", payload: data });
+        console.log(data);
+        
       } else {
         console.error("Error: Order data is null");
       }
