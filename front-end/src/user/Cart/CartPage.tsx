@@ -2,26 +2,37 @@ import React, { useContext, useEffect } from "react";
 import { CartContext, CartContextType } from "../../api/contexts/CartContext";
 import { CartItem } from "../../api/reducers/CartReducer";
 import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { FaMinusCircle, FaPlusCircle } from "react-icons/fa";
 
 const Cart = () => {
-  const { state, getCart, removeFromCart, checkout } = useContext(
+  const { state, removeFromCart, checkout, addToCart } = useContext(
     CartContext
   ) as CartContextType;
   const navigate = useNavigate();
   console.log(state);
-
-  useEffect(() => {
-    getCart();
-  }, []);
+  const token = localStorage.getItem("accessToken");
 
   const handleRemoveFromCart = (productId: string) => {
     removeFromCart(productId);
-    getCart();
+  };
+  const handleDecreaseQuantity = (product: any) => {
+    addToCart(product.product, -1 < 0 ? 0 : -1);
+  };
+
+  const handleIncreaseQuantity = (product: any) => {
+    addToCart(product.product, +1);
   };
 
   const handleCheckout = async () => {
-    await checkout(); // Xử lý thanh toán
-    navigate("/product-page"); // Chuyển hướng sang trang ProductPage
+    if (!token) {
+      alert("Vui lòng đăng nhập để thanh toán");
+      navigate("/login");
+    } else {
+      alert("Thanh toán thành công");
+      await checkout(); // Xử lý thanh toán
+      navigate("/product-page"); // Chuyển hướng sang trang ProductPage
+    }
   };
 
   return (
@@ -43,7 +54,17 @@ const Cart = () => {
             <tr key={product.product?._id}>
               <td>{index + 1}</td>
               <td>{product.product?.title}</td>
-              <td>{product?.quantity}</td>
+              <td>
+                <FaMinusCircle
+                  onClick={() => handleDecreaseQuantity(product)}
+                  className="text-danger"
+                />{" "}
+                {product?.quantity}{" "}
+                <FaPlusCircle
+                  onClick={() => handleIncreaseQuantity(product)}
+                  className="text-primary"
+                />
+              </td>
               <td>{product.product?.price}</td>
               <td>{product.product?.price * product?.quantity}</td>
               <td>

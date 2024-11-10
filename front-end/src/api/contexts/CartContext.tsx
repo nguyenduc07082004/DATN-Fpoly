@@ -1,4 +1,4 @@
-import React, { createContext, useReducer, ReactNode } from "react";
+import React, { createContext, useReducer, ReactNode, useEffect } from "react";
 import { Products } from "../../interfaces/Products";
 import cartReducer from "../reducers/CartReducer";
 import ins from "../index";
@@ -11,7 +11,6 @@ export type CartContextType = {
   };
   dispatch: React.Dispatch<any>;
   addToCart: (product: Products, quantity: number) => void;
-  getCart: () => void;
   checkout: () => void;
   removeFromCart: (productId: string) => void;
 };
@@ -28,6 +27,13 @@ const CartProvider = ({ children }: { children: ReactNode }) => {
   const [state, dispatch] = useReducer(cartReducer, initialState);
   const token = localStorage.getItem("accessToken");
 
+  const fetchCart = async () => {
+    const res = await ins.get("/carts");
+    dispatch({ type: "SET_CART", payload: res.data });
+  };
+  useEffect(() => {
+    fetchCart();
+  }, []);
   const addToCart = async (product: Products, quantity: number) => {
     const res = await ins.post("/carts/add", {
       productId: product._id,
@@ -37,20 +43,21 @@ const CartProvider = ({ children }: { children: ReactNode }) => {
       type: "ADD_TO_CART",
       payload: { product: res.data.product, quantity },
     });
+    fetchCart();
   };
 
-  const getCart = async () => {
-    try {
-      const res = await ins.get("/carts");
-      if (res.data) {
-        dispatch({ type: "SET_CART", payload: res.data });
-      } else {
-        console.error("Error: Cart data is null");
-      }
-    } catch (error) {
-      console.error("Error getting cart:", error);
-    }
-  };
+  // const getCart = async () => {
+  //   try {
+  //     const res = await ins.get("/carts");
+  //     if (res.data) {
+  //       dispatch({ type: "SET_CART", payload: res.data });
+  //     } else {
+  //       console.error("Error: Cart data is null");
+  //     }
+  //   } catch (error) {
+  //     console.error("Error getting cart:", error);
+  //   }
+  // };
 
   const checkout = async () => {
     const res = await ins.post("/orders/checkout");
@@ -73,7 +80,13 @@ const CartProvider = ({ children }: { children: ReactNode }) => {
 
   return (
     <CartContext.Provider
-      value={{ state, dispatch, addToCart, getCart, checkout, removeFromCart }}
+      value={{
+        state,
+        dispatch,
+        addToCart,
+        checkout,
+        removeFromCart,
+      }}
     >
       {children}
     </CartContext.Provider>

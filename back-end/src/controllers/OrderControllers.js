@@ -7,7 +7,7 @@ import User from "../models/UserModels.js";
 export const checkout = async (req, res, next) => {
   try {
     const userId = req.user._id; // Lấy thông tin người dùng từ token
-    const cart = await Cart.findOne({ userId }).populate("items.product");
+    const cart = await Cart.findOne({ userId }).populate("products.product");
 
     if (!cart) {
       return res.status(400).json({ message: "Giỏ hàng không tồn tại" });
