@@ -7,14 +7,13 @@ import { CartItem } from "../../api/reducers/OrderReducer";
 
 const QLDH = () => {
   const { state, getOrder } = useContext(OrderContext) as OrderContextType;
-  console.log(state);
 
   useEffect(() => {
     getOrder();
   }, []);
 
   if (!state || !Array.isArray(state.items)) {
-    return <div>ok</div>;
+    return <div>Không có đơn hàng nào để hiển thị</div>;
   }
 
   return (
@@ -28,21 +27,27 @@ const QLDH = () => {
       <table className="table">
         <thead className="text-center">
           <tr className="d-flex">
-            <th className="col-3">STT</th>
+            <th className="col-1">STT</th>
             <th className="col-3">Tên sản phẩm</th>
-            <th className="col-1">Giá(VND)</th>
-            <th className="col-1">Số lượng</th>
-            <th className="col-4">Chức năng</th>
+            <th className="col-2">Giá (VND)</th>
+            <th className="col-2">Số lượng</th>
+            <th className="col-2">Thành tiền (VND)</th>
+            <th className="col-2">Chức năng</th>
           </tr>
         </thead>
-        <tbody className="table">
-          {state.items.map((item, index) => (
-            <tr className="d-flex">
-              <td>{index + 1}</td>
-              <td className="col-3">{}</td>
-              <td className="col-1">{}</td>
-              <td className="col-1">{item.quantity}</td>
-              <th className="col-4">OK</th>
+        <tbody>
+          {state.items.map((item: CartItem, index: number) => (
+            <tr key={index} className="text-center d-flex">
+              <td className="col-1">{index + 1}</td>
+              <td className="col-3">{item.product.title}</td>
+              <td className="col-2">{item.product.price.toLocaleString()}</td>
+              <td className="col-2">{item.quantity}</td>
+              <td className="col-2">
+                {(item.product.price * item.quantity).toLocaleString()}
+              </td>
+              <td className="col-2">
+                <button className="btn btn-primary">Xem chi tiết</button>
+              </td>
             </tr>
           ))}
         </tbody>

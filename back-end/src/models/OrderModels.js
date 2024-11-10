@@ -1,10 +1,11 @@
 // models/Order.js
-import mongoose from "mongoose";
+import { Schema, model } from "mongoose";
 
-const orderSchema = new mongoose.Schema({
+const orderSchema = new Schema(
+  {
   userId: [
     {
-      type: mongoose.Schema.Types.ObjectId,
+      type: Schema.Types.ObjectId,
       ref: "User", // Liên kết với người dùng
       required: true,
     },
@@ -12,7 +13,7 @@ const orderSchema = new mongoose.Schema({
   items: [
     {
       product: {
-        type: mongoose.Schema.Types.ObjectId,
+        type: Schema.Types.ObjectId,
         ref: "Product", // Liên kết với sản phẩm
         required: true,
       },
@@ -29,10 +30,10 @@ const orderSchema = new mongoose.Schema({
   status: {
     type: String,
     enum: [
-      "Đang chuẩn bị hàng",
-      "Đang giao hàng",
-      "Giao hàng thành công",
-      "Đơn hàng đã bị hủy",
+      "Pending",
+      "In Delivery",
+      "Delivered",
+      "Cancelled",
     ],
     default: "Đang chuẩn bị hàng", // Trạng thái đơn hàng
   },
@@ -43,4 +44,4 @@ const orderSchema = new mongoose.Schema({
 });
 
 // Xuất khẩu mặc định đối tượng Order
-export default mongoose.model("Order", orderSchema);
+export default model("Order", orderSchema);
