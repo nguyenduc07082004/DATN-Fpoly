@@ -13,6 +13,7 @@ export type CartContextType = {
   addToCart: (product: Products, quantity: number) => void;
   checkout: () => void;
   removeFromCart: (productId: string) => void;
+  fetchCart: () => void;
 };
 
 const initialState = {
@@ -83,6 +84,7 @@ const CartProvider = ({ children }: { children: ReactNode }) => {
     <CartContext.Provider
       value={{
         state,
+        fetchCart,
         dispatch,
         addToCart,
         checkout,

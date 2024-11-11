@@ -3,16 +3,18 @@ import {
   OrderContext,
   OrderContextType,
 } from "../../api/contexts/OrdersContext";
+import { FaMinusCircle, FaPlusCircle } from "react-icons/fa";
 import { CartItem } from "../../api/reducers/OrderReducer";
 
 const QLDH = () => {
-  const { state, getOrder } = useContext(OrderContext) as OrderContextType;
+  const { state, fetchOrder } = useContext(OrderContext) as OrderContextType;
+  console.log(state);
 
   useEffect(() => {
-    getOrder();
+    fetchOrder();
   }, []);
 
-  if (!state || !Array.isArray(state.items)) {
+  if (!state || !Array.isArray(state.products)) {
     return <div>Không có đơn hàng nào để hiển thị</div>;
   }
 
@@ -29,26 +31,37 @@ const QLDH = () => {
           <tr className="d-flex">
             <th className="col-1">STT</th>
             <th className="col-3">Tên sản phẩm</th>
-            <th className="col-2">Giá (VND)</th>
             <th className="col-2">Số lượng</th>
             <th className="col-2">Thành tiền (VND)</th>
             <th className="col-2">Chức năng</th>
           </tr>
         </thead>
-        <tbody>
-          {state.items.map((item: CartItem, index: number) => (
-            <tr key={index} className="text-center d-flex">
-              <td className="col-1">{index + 1}</td>
-              <td className="col-3">{item.product.title}</td>
-              <td className="col-2">{item.product.price.toLocaleString()}</td>
-              <td className="col-2">{item.quantity}</td>
-              <td className="col-2">
-                {(item.product.price * item.quantity).toLocaleString()}
-              </td>
-              <td className="col-2">
-                <button className="btn btn-primary">Xem chi tiết</button>
-              </td>
-            </tr>
+
+        <tbody className="text-center">
+          {state.products.map((order, orderIndex) => (
+            <React.Fragment key={order._id}>
+              {order.products.map((item: CartItem, productIndex: number) => (
+                <tr className="d-flex" key={item.product._id}>
+                  {productIndex === 0 && (
+                    <td className="col-1" rowSpan={order.products.length}>
+                      {orderIndex + 1}
+                    </td>
+                  )}
+                  <td className="col-3">{item.product.title}</td>
+                  <td className="col-2">{item.quantity}</td>
+                  {productIndex === 0 && (
+                    <>
+                      <td className="col-2" rowSpan={order.products.length}>
+                        {order.totalPrice}
+                      </td>
+                      <td className="col-2" rowSpan={order.products.length}>
+                        {order.status}
+                      </td>
+                    </>
+                  )}
+                </tr>
+              ))}
+            </React.Fragment>
           ))}
         </tbody>
       </table>
