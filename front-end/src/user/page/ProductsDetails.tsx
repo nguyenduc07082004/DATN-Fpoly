@@ -241,8 +241,9 @@ const ProductDetails = () => {
                 {product.description}
               </Typography>
               <input
+                placeholder="gia"
                 type="number"
-                value={quantity}
+                defaultValue={quantity}
                 min="1"
                 onChange={handleQuantityChange}
               />

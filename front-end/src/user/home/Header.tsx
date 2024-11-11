@@ -1,16 +1,10 @@
 import { Link } from "react-router-dom";
 import Logo from "../../../logo.png";
 import "../css/Style.css";
-
-import {
-  AuthContext,
-  AuthContextType,
-  useAuth,
-} from "../../api/contexts/AuthContext";
+import { AuthContext, AuthContextType, useAuth } from "../../api/contexts/AuthContext";
 import { useContext } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCartShopping } from "@fortawesome/free-solid-svg-icons";
-// Import useCart to get cart data
 
 const Header = () => {
   const { logout } = useAuth();
@@ -28,13 +22,46 @@ const Header = () => {
       </div>
       <nav>
         <ul>
-          <li>Điện thoại</li>
-          <li>Laptop</li>
-          <li>Phụ kiện</li>
-          <li>Smartwatch</li>
-          <li>Đồng hồ</li>
-          <li>Máy cũ</li>
-          <li>Dịch vụ</li>
+          <li>
+            <Link to="/">Trang chủ</Link>
+          </li>
+          <li>
+            <Link to="/other">Sản phẩm</Link>
+          </li>
+          <li>
+            <Link to="/about">Giới thiệu</Link>
+          </li>
+          <li>
+            <Link to="/contact">Liên hệ</Link>
+          </li>
+          <li className="dropdown">
+            <Link to="#" className="dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+              Thiết bị
+            </Link>
+            <ul className="dropdown-menu">
+              <li>
+                <Link to="/products/phone" className="dropdown-item">Điện thoại</Link>
+              </li>
+              <li>
+                <Link to="/products/laptop" className="dropdown-item">Laptop</Link>
+              </li>
+              <li>
+                <Link to="/products/accessory" className="dropdown-item">Phụ kiện</Link>
+              </li>
+              <li>
+                <Link to="/products/smartwatch" className="dropdown-item">Smartwatch</Link>
+              </li>
+              <li>
+                <Link to="/products/watch" className="dropdown-item">Đồng hồ</Link>
+              </li>
+              <li>
+                <Link to="/products/used" className="dropdown-item">Máy cũ</Link>
+              </li>
+              <li>
+                <Link to="/services" className="dropdown-item">Dịch vụ</Link>
+              </li>
+            </ul>
+          </li>
         </ul>
       </nav>
       <div className="user-options">
@@ -61,46 +88,34 @@ const Header = () => {
               data-bs-toggle="dropdown"
               aria-expanded="false"
             >
-              <strong>
-                {JSON.parse(localStorage.getItem("user") || "{}").fullName}
-              </strong>
+              <strong>{JSON.parse(localStorage.getItem("user") || "{}").fullName}</strong>
             </Link>
             <ul
               className="shadow text-small dropdown-menu dropdown-menu-dark"
               aria-labelledby="dropdownUser1"
             >
               <li>
-                <Link className="dropdown-item" to="#">
-                  Tài khoản
-                </Link>
+                <Link className="dropdown-item" to="#">Tài khoản</Link>
               </li>
               <li>
-                <Link className="dropdown-item" to="#">
-                  Cài đặt
-                </Link>
+                <Link className="dropdown-item" to="#">Cài đặt</Link>
               </li>
               {user?.role === "admin" && (
                 <li>
-                  <Link className="dropdown-item" to="/admin">
-                    Trang quản trị
-                  </Link>
+                  <Link className="dropdown-item" to="/admin">Trang quản trị</Link>
                 </li>
               )}
               <li>
                 <hr className="dropdown-divider" />
               </li>
               <li>
-                <Link onClick={() => logout()} className="dropdown-item" to="#">
-                  Đăng xuất
-                </Link>
+                <Link onClick={() => logout()} className="dropdown-item" to="#">Đăng xuất</Link>
               </li>
             </ul>
           </div>
         )}
-
         <Link to="/cart" className="text-decoration-none cart-icon">
           <FontAwesomeIcon icon={faCartShopping} />
-          {/* Optionally, add a badge or number of items in the cart */}
           {cartItemCount > 0 && (
             <span className="cart-item-count">{cartItemCount}</span>
           )}

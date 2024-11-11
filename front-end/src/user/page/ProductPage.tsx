@@ -1,39 +1,60 @@
-import React, { useContext, useEffect, useState } from "react";
-import { CartContext, CartContextType } from "../../api/contexts/CartContext";
+import { useEffect, useState } from "react";
 import "../css/Style.css";
+import { Products } from "../../interfaces/Products";
 
 const ProductPage = () => {
-  const { state } = useContext(CartContext) as CartContextType;
-  const [orderDetails, setOrderDetails] = useState<any>(null);
+  const [products, setProducts] = useState<Products[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    // Nếu đã có đơn hàng trong context, lưu vào state local
-    if (state.order) {
-      setOrderDetails(state.order);
-    }
-  }, [state.order]);
+    const fetchProducts = async () => {
+      try {
+        const response = await fetch("http://localhost:8000/products");
+        if (!response.ok) {
+          throw new Error("Failed to fetch products");
+        }
+        const data = await response.json();
+        setProducts(data);
+      } catch (err) {
+        setError((err as Error).message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProducts();
+  }, []);
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  if (error) {
+    return <div>Error: {error}</div>;
+  }
 
   return (
     <div className="container">
       <div className="product-section">
-        <h1>Thông tin đơn hàng của bạn</h1>
+        <h1>Tất cả sản phẩm</h1>
 
-        {orderDetails ? (
-          <div>
-            <h2>Mã đơn hàng: {orderDetails.orderId}</h2>
-            <h3>Tổng tiền: {orderDetails.totalPrice} VND</h3>
-            <ul>
-              {orderDetails.items.map((item: any, index: number) => (
-                <li key={index}>
-                  {item.product?.title} - Số lượng: {item.quantity} - Giá:{" "}
-                  {item.product?.price} VND
-                </li>
-              ))}
-            </ul>
-          </div>
-        ) : (
-          <p>Chưa có đơn hàng nào được đặt.</p>
-        )}
+        <div className="products-grid">
+          {products.map((product) => (
+            <div key={product._id} className="product-item">
+              <img
+                src={product.image}
+                alt={product.title}
+                className="product-image"
+              />
+              <h3 className="product-title">{product.title}</h3>
+              <p className="product-price">
+                {product.price.toLocaleString()} VND
+              </p>
+              <button className="add-to-cart-button">Thêm vào giỏ hàng</button>
+            </div>
+          ))}
+        </div>
       </div>
 
       <footer className="footer">
