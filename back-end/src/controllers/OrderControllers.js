@@ -21,7 +21,7 @@ export const checkout = async (req, res, next) => {
     // Tạo đơn hàng mới
     const order = new Order({
       userId,
-      items: cart.products.map((item) => ({
+      products: cart.products.map((item) => ({
         product: item.product._id,
         quantity: item.quantity,
       })),
@@ -48,13 +48,8 @@ export const getOrderDetail = async (req, res) => {
   if (!req.user) {
     return res.status(401).json({ message: "User not authenticated" });
   }
-
-  const userId = req.user._id;
-
   try {
-    const order = await Order.find({ userId })
-      .populate("items.product")
-      .populate("userId");
+    const order = await Order.find().populate("products.product");
     if (!order) {
       return res.status(404).json({ message: "Đơn hàng không tồn tại" });
     }

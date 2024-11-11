@@ -6,7 +6,7 @@ import { useDispatch } from "react-redux";
 import { FaMinusCircle, FaPlusCircle } from "react-icons/fa";
 
 const Cart = () => {
-  const { state, removeFromCart, checkout, addToCart } = useContext(
+  const { state, removeFromCart, checkout, addToCart, fetchCart } = useContext(
     CartContext
   ) as CartContextType;
   const navigate = useNavigate();
@@ -17,14 +17,15 @@ const Cart = () => {
     removeFromCart(productId);
   };
   const handleDecreaseQuantity = (product: any) => {
-    if (product?.quantity > 0) {
+    if (product?.quantity > 1) {
       addToCart(product.product, -1);
-    }
-    if (product?.quantity === 1) {
+    } else {
       handleRemoveFromCart(String(product.product?._id));
     }
   };
-
+  useEffect(() => {
+    fetchCart();
+  }, []);
   const handleIncreaseQuantity = (product: any) => {
     addToCart(product.product, +1);
   };
