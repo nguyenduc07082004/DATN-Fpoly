@@ -54,15 +54,15 @@ const Cart = () => {
         <tbody>
           <tr>
             <th>Tên:</th>
-            <td>{state.userId.userId?.fullName}</td>
+            <td>{JSON.parse(localStorage.getItem("user") || "{}").fullName}</td>
           </tr>
           <tr>
             <th>Địa chỉ:</th>
-            <td>{state.userId.userId?.address}</td>
+            <td>{JSON.parse(localStorage.getItem("user") || "{}").address}</td>
           </tr>
           <tr>
             <th>Số điện thoại:</th>
-            <td>{state.userId.userId?.phone}</td>
+            <td>{JSON.parse(localStorage.getItem("user") || "{}").phone}</td>
           </tr>
         </tbody>
       </table>
