@@ -23,19 +23,19 @@ const Header = () => {
       <nav>
         <ul>
           <li>
-            <Link to="/">Trang chủ</Link>
+            <Link to="/" style={{ color: 'white' }} >Trang chủ</Link>
           </li>
           <li>
-            <Link to="/other">Sản phẩm</Link>
+            <Link to="/other" style={{ color: 'white' }} >Sản phẩm</Link>
           </li>
           <li>
-            <Link to="/about">Giới thiệu</Link>
+            <Link to="/about" style={{ color: 'white' }} >Giới thiệu</Link>
           </li>
           <li>
-            <Link to="/contact">Liên hệ</Link>
+            <Link to="/contact" style={{ color: 'white' }} >Liên hệ</Link>
           </li>
           <li className="dropdown">
-            <Link to="#" className="dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+            <Link to="#" className="dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" style={{ color: 'white' }} >
               Thiết bị
             </Link>
             <ul className="dropdown-menu">

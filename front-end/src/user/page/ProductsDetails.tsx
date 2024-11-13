@@ -1,15 +1,14 @@
 import React, { useState, useEffect, useContext } from "react";
 import { useParams, Link } from "react-router-dom";
 import axios from "axios";
-
 import {
   Container,
   Grid,
   Typography,
   Button,
   CircularProgress,
+  Box,
 } from "@mui/material";
-import { Box } from "@mui/system";
 import { Products } from "../../interfaces/Products";
 import Logo from "../../assets/logoshop.jpg";
 import { CartContext } from "../../api/contexts/CartContext";
@@ -45,9 +44,9 @@ const Header = () => {
 const ProductDetails = () => {
   const { productId } = useParams();
   const [loading, setLoading] = useState(true);
-
   const [error, setError] = useState<string | null>(null);
   const [mainImage, setMainImage] = useState<string | null>(null);
+  const [selectedColor, setSelectedColor] = useState<string>("");
   const [suggestedProducts, setSuggestedProducts] = useState<Products[]>([]);
   const token = localStorage.getItem("accessToken");
   const [product, setProduct] = useState<Products>({} as Products);
@@ -55,11 +54,20 @@ const ProductDetails = () => {
   const { addToCart } = useContext(CartContext);
 
   const handleAddToCart = async () => {
-    addToCart(product, quantity);
+    if (!selectedColor) {
+      alert("Vui lòng chọn màu sắc!");
+      return;
+    }
+    addToCart(product, quantity, selectedColor ); // Truyền selectedColor vào
     alert("Đã thêm vào giỏ hàng!");
   };
+
   const handleQuantityChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setQuantity(Number(e.target.value));
+  };
+
+  const handleColorChange = (color: string) => {
+    setSelectedColor(color);
   };
 
   useEffect(() => {
@@ -240,13 +248,43 @@ const ProductDetails = () => {
               >
                 {product.description}
               </Typography>
+
+              {/* Color Selection */}
+              <Box sx={{ mt: 3 }}>
+                <Typography variant="body1" sx={{ fontWeight: "bold" }}>
+                  Chọn màu sắc:
+                </Typography><br />
+                <Grid container spacing={2}>
+                  {product.colors?.map((color, index) => (
+                    <Grid item key={index}>
+                      <Button
+                        variant="outlined"
+                        sx={{
+                          backgroundColor: color,
+                          color: selectedColor === color ? "#fff" : "#000",
+                          borderColor: color,
+                          "&:hover": {
+                            backgroundColor: color,
+                          },
+                        }}
+                        onClick={() => handleColorChange(color)}
+                      >
+                        {color}
+                      </Button>
+                    </Grid>
+                  ))}
+                </Grid>
+              </Box>
+
               <input
-                placeholder="gia"
+                placeholder="Số lượng"
                 type="number"
                 defaultValue={quantity}
                 min="1"
                 onChange={handleQuantityChange}
+                style={{ marginTop: 10, padding: 5 }}
               />
+
               {!token ? (
                 "Đăng nhập để mua hàng"
               ) : (
