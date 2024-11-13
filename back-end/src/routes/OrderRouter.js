@@ -11,6 +11,6 @@ router.post("/checkout", checkAuth, checkout);
 router.get("/", checkAuth, getOrderDetail);
 
 // Route để cập nhật trạng thái đơn hàng
-router.put("/:orderId/status", checkAuth, updateOrderStatus);
+router.put("/:orderId", checkAuth, updateOrderStatus);
 
 export default router; // Export mặc định

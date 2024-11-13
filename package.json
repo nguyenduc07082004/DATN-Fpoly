@@ -1,7 +1,9 @@
 {
   "dependencies": {
     "chart.js": "^4.4.6",
-    "react-chartjs-2": "^5.2.0"
+    "querystring": "^0.2.1",
+    "react-chartjs-2": "^5.2.0",
+    "react-redux": "^9.1.2"
   },
   "devDependencies": {
     "@types/chart.js": "^2.9.41",

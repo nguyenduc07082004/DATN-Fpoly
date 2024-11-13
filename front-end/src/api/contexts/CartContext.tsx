@@ -1,10 +1,12 @@
 import React, { createContext, useReducer, ReactNode, useEffect } from "react";
 import { Products } from "../../interfaces/Products";
+import { User } from "../../interfaces/User";
 import cartReducer from "../reducers/CartReducer";
 import ins from "../index";
 
 export type CartContextType = {
   state: {
+    userId:{user: User}
     products: { product: Products; quantity: number }[];
     totalPrice: number;
     order: any; // Thêm phần order vào state
@@ -17,6 +19,7 @@ export type CartContextType = {
 };
 
 const initialState = {
+  userId:{user:null},
   products: [],
   totalPrice: 0,
   order: null, // Khởi tạo order là null
@@ -47,18 +50,6 @@ const CartProvider = ({ children }: { children: ReactNode }) => {
     fetchCart();
   };
 
-  // const getCart = async () => {
-  //   try {
-  //     const res = await ins.get("/carts");
-  //     if (res.data) {
-  //       dispatch({ type: "SET_CART", payload: res.data });
-  //     } else {
-  //       console.error("Error: Cart data is null");
-  //     }
-  //   } catch (error) {
-  //     console.error("Error getting cart:", error);
-  //   }
-  // };
 
   const checkout = async () => {
     const res = await ins.post("/orders/checkout");

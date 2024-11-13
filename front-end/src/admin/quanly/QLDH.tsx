@@ -7,16 +7,27 @@ import { FaMinusCircle, FaPlusCircle } from "react-icons/fa";
 import { CartItem } from "../../api/reducers/OrderReducer";
 
 const QLDH = () => {
-  const { state, fetchOrder } = useContext(OrderContext) as OrderContextType;
+  const { state, fetchOrder, updateOrderStatus } = useContext(OrderContext) as OrderContextType;
   console.log(state);
 
   useEffect(() => {
     fetchOrder();
   }, []);
 
+  const handleStatusChange = async (orderId: string, newStatus: string) => {
+    try {
+      await updateOrderStatus(orderId, newStatus); // Cập nhật trạng thái đơn hàng
+      fetchOrder(); // Làm mới đơn hàng sau khi cập nhật
+    } catch (error) {
+      console.error("Cập nhật trạng thái đơn hàng thất bại: ", error);
+    }
+  };
+
   if (!state || !Array.isArray(state.products)) {
     return <div>Không có đơn hàng nào để hiển thị</div>;
   }
+
+  const statusOptions = ["Pending", "In Delivery", "Delivered", "Cancelled"];
 
   return (
     <div>
@@ -33,17 +44,17 @@ const QLDH = () => {
             <th className="col-3">Tên sản phẩm</th>
             <th className="col-2">Số lượng</th>
             <th className="col-2">Thành tiền (VND)</th>
-            <th className="col-2">Chức năng</th>
+            <th className="col-2">Trạng thái</th>
           </tr>
         </thead>
 
         <tbody className="text-center">
           {state.products.map((order, orderIndex) => (
             <React.Fragment key={order._id}>
-              {order.products.map((item: CartItem, productIndex: number) => (
+              {order.products?.map((item: CartItem, productIndex: number) => (
                 <tr className="d-flex" key={item.product._id}>
                   {productIndex === 0 && (
-                    <td className="col-1" rowSpan={order.products.length}>
+                    <td className="col-1" rowSpan={order.products?.length}>
                       {orderIndex + 1}
                     </td>
                   )}
@@ -51,11 +62,22 @@ const QLDH = () => {
                   <td className="col-2">{item.quantity}</td>
                   {productIndex === 0 && (
                     <>
-                      <td className="col-2" rowSpan={order.products.length}>
+                      <td className="col-2" rowSpan={order.products?.length}>
                         {order.totalPrice}
                       </td>
-                      <td className="col-2" rowSpan={order.products.length}>
-                        {order.status}
+                      <td className="col-2" rowSpan={order.products?.length}>
+                        <select
+                          value={order.status}
+                          onChange={(e) =>
+                            handleStatusChange(order._id, e.target.value)
+                          }
+                        >
+                          {statusOptions.map((status) => (
+                            <option key={status} value={status}>
+                              {status}
+                            </option>
+                          ))}
+                        </select>
                       </td>
                     </>
                   )}

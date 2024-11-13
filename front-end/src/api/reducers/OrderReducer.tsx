@@ -12,22 +12,30 @@ export type State = {
   products: CartItem[];
 };
 
-type OrderAction = {
-  type: "GET_ORDER";
-  payload: { products: CartItem[] };
-};
-export const initialState = {
+type OrderAction =
+  | { type: "GET_ORDER"; payload: { products: CartItem[] } }
+  | { type: "UPDATE_ORDER_STATUS"; payload: { orderId: string; status: string } };
+
+export const initialState: State = {
   products: [],
 };
 
-// Thêm loại hành động cho checkout
-
-const orderReducer = (state: State, action: OrderAction) => {
+const orderReducer = (state: State, action: OrderAction): State => {
   switch (action.type) {
     case "GET_ORDER":
       return {
         ...state,
-        products: action.payload,
+        products: action.payload.products,
+      };
+
+    case "UPDATE_ORDER_STATUS":
+      return {
+        ...state,
+        products: state.products.map((order) =>
+          order._id === action.payload.orderId
+            ? { ...order, status: action.payload.status }
+            : order
+        ),
       };
 
     default:
