@@ -7,7 +7,7 @@ export interface Products {
   quantity: number;
   description: string;
   storage: string;
-  colors: string[]; // Mảng chuỗi các màu sắc
+  color: string[]; // Mảng chuỗi các màu sắc
 }
 
 export interface CartItem extends Products {

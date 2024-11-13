@@ -10,6 +10,7 @@ import Register from "./middleware/Register";
 import ProductsDetails from "./page/ProductsDetails";
 import FromUser from "./middleware/authUser/FromUser";
 import Cart from "./Cart/CartPage";
+
 const Client = () => {
   return (
     <div>

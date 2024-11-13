@@ -1,4 +1,5 @@
 import { Products } from "../../interfaces/Products";
+import { User } from "../../interfaces/User";
 
 export type CartItem = {
   product: Products;
@@ -58,6 +59,7 @@ const cartReducer = (state: State, action: CartAction) => {
     case "SET_CART":
       return {
         ...state,
+        userId: action.payload,
         products: action.payload.products,
         totalPrice: action.payload.totalPrice,
       };

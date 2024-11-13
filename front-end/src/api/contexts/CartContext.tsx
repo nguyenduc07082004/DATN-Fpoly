@@ -3,10 +3,11 @@ import { Products } from "../../interfaces/Products";
 import { User } from "../../interfaces/User";
 import cartReducer from "../reducers/CartReducer";
 import ins from "../index";
+import { colors } from "@mui/material";
 
 export type CartContextType = {
   state: {
-    userId:{user: User}
+    userId: { user: User };
     products: { product: Products; quantity: number }[];
     totalPrice: number;
     order: any; // Thêm phần order vào state
@@ -19,7 +20,7 @@ export type CartContextType = {
 };
 
 const initialState = {
-  userId:{user:null},
+  userId: { user: null },
   products: [],
   totalPrice: 0,
   order: null, // Khởi tạo order là null
@@ -40,6 +41,7 @@ const CartProvider = ({ children }: { children: ReactNode }) => {
   }, []);
   const addToCart = async (product: Products, quantity: number) => {
     const res = await ins.post("/carts/add", {
+      colors,
       productId: product._id,
       quantity,
     });
@@ -49,7 +51,6 @@ const CartProvider = ({ children }: { children: ReactNode }) => {
     });
     fetchCart();
   };
-
 
   const checkout = async () => {
     const res = await ins.post("/orders/checkout");

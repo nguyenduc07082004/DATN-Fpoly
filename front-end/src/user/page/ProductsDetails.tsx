@@ -13,7 +13,18 @@ import { Products } from "../../interfaces/Products";
 import Logo from "../../assets/logoshop.jpg";
 import { CartContext } from "../../api/contexts/CartContext";
 import { baseURL } from "../../api";
-
+const storage1 = [
+  { _id: "1", options: "128GB" },
+  { _id: "2", options: "256GB" },
+  { _id: "3", options: "512GB" },
+  { _id: "4", options: "1TB" },
+];
+const color1 = [
+  { _id: "1", options: "Đen" },
+  { _id: "2", options: "Trắng" },
+  { _id: "3", options: "Hồng" },
+  { _id: "4", options: "Xanh" },
+];
 // Component Header
 const Header = () => {
   return (
@@ -58,7 +69,7 @@ const ProductDetails = () => {
       alert("Vui lòng chọn màu sắc!");
       return;
     }
-    addToCart(product, quantity, selectedColor ); // Truyền selectedColor vào
+    addToCart(product, quantity, selectedColor); // Truyền selectedColor vào
     alert("Đã thêm vào giỏ hàng!");
   };
 
@@ -253,26 +264,18 @@ const ProductDetails = () => {
               <Box sx={{ mt: 3 }}>
                 <Typography variant="body1" sx={{ fontWeight: "bold" }}>
                   Chọn màu sắc:
-                </Typography><br />
+                </Typography>
+                <br />
                 <Grid container spacing={2}>
-                  {product.colors?.map((color, index) => (
-                    <Grid item key={index}>
-                      <Button
-                        variant="outlined"
-                        sx={{
-                          backgroundColor: color,
-                          color: selectedColor === color ? "#fff" : "#000",
-                          borderColor: color,
-                          "&:hover": {
-                            backgroundColor: color,
-                          },
-                        }}
-                        onClick={() => handleColorChange(color)}
-                      >
-                        {color}
-                      </Button>
-                    </Grid>
-                  ))}
+                  <select
+                    className="form-control"
+                    style={{ width: "200px", height: "50px" }}
+                    onChange={(e) => handleColorChange(e.target.value)}
+                  >
+                    {color1?.map((color) => (
+                      <option value={color.options}>{color.options}</option>
+                    ))}
+                  </select>
                 </Grid>
               </Box>
 

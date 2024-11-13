@@ -11,6 +11,7 @@ const Cart = () => {
   const navigate = useNavigate();
   const token = localStorage.getItem("accessToken");
   const [paymentMethod, setPaymentMethod] = useState("COD");
+  console.log(state);
 
   useEffect(() => {
     fetchCart();
@@ -53,15 +54,15 @@ const Cart = () => {
         <tbody>
           <tr>
             <th>Tên:</th>
-            <td>{state.userId.user?.fullName}</td>
+            <td>{state.userId.userId?.fullName}</td>
           </tr>
           <tr>
             <th>Địa chỉ:</th>
-            <td>{state.userId.user?.address}</td>
+            <td>{state.userId.userId?.address}</td>
           </tr>
           <tr>
             <th>Số điện thoại:</th>
-            <td>{state.userId.user?.phone}</td>
+            <td>{state.userId.userId?.phone}</td>
           </tr>
         </tbody>
       </table>

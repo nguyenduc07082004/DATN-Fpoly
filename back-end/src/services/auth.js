@@ -13,6 +13,6 @@ authRouter.use("/products", ProductRouter);
 authRouter.use("/categories", CategoryRouter);
 authRouter.use("/", userRouter);
 authRouter.use("/carts", checkAuth, cartRouter);
-authRouter.use("/orders", checkAuth, OrderRouter);  // Thêm router cho orders
+authRouter.use("/orders", checkAuth, OrderRouter);
 
 export default authRouter;

@@ -6,7 +6,9 @@ export const addToCart = async (req, res, next) => {
   try {
     // Kiểm tra người dùng đã đăng nhập chưa
     if (!req.user || !req.user._id) {
-      return res.status(401).json({ message: 'Unauthorized. No valid user information found.' });
+      return res
+        .status(401)
+        .json({ message: "Unauthorized. No valid user information found." });
     }
 
     const userId = req.user._id;
@@ -41,7 +43,7 @@ export const addToCart = async (req, res, next) => {
     // Cập nhật lại tổng giá trị giỏ hàng
     cart.totalPrice = cart.products.reduce((total, item) => {
       const productPrice = product.price; // Cập nhật lại giá sản phẩm
-      return total + (productPrice * item.quantity);
+      return total + productPrice * item.quantity;
     }, 0);
 
     // Lưu giỏ hàng vào cơ sở dữ liệu
@@ -65,7 +67,9 @@ export const getUserCart = async (req, res, next) => {
   const userId = req.user._id; // Assuming you have user authentication and req.user is set
 
   try {
-    const cart = await Cart.findOne({ userId }).populate("products.product");
+    const cart = await Cart.findOne({ userId })
+      .populate("products.product")
+      .populate("userId");
     if (!cart) {
       return res.status(404).json({ message: "Cart not found" });
     }
@@ -79,7 +83,6 @@ export const getUserCart = async (req, res, next) => {
 
 // Remove cart item
 export const removeCartItem = async (req, res) => {
-  
   try {
     const userId = req.user._id; // Assuming you have user authentication and req.user is set
     const { productId } = req.body;
