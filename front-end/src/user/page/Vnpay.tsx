@@ -8,11 +8,18 @@ import { QRCodeSVG } from "qrcode.react";
 import vnpayLogo from "../../assets/vnpay.jpg"; 
 
 const Vnpay = () => {
+  const token = localStorage.getItem("accessToken"); // Lấy token từ localStorage
   const { state: userState } = useContext(UserContext);
   const { state: cartState, dispatch: cartDispatch } = useContext(CartContext);
   const { dispatch: orderDispatch } = useContext(OrderContext);
   const navigate = useNavigate();
   const [paymentUrl, setPaymentUrl] = useState("");
+
+  // Kiểm tra nếu không có token, yêu cầu người dùng đăng nhập
+  if (!token) {
+    alert("Vui lòng đăng nhập để thanh toán");
+    navigate("/login");
+  }
 
   const handleCreatePayment = async () => {
     try {
@@ -32,6 +39,12 @@ const Vnpay = () => {
   };
 
   const handlePayment = async () => {
+    if (!token) {
+      alert("Vui lòng đăng nhập để thanh toán");
+      navigate("/login");
+      return;
+    }
+
     const order = {
       userId: userState.user[0]?.id,
       products: cartState.products.map(item => ({
@@ -41,12 +54,14 @@ const Vnpay = () => {
       totalPrice: cartState.totalPrice,
       status: "Đang chuẩn bị hàng", 
     };
-
+  
     try {
-      const response = await axios.post("http://localhost:8000/orders/checkout", order);
+      const response = await axios.post("http://localhost:8000/orders/checkout", order, {
+        headers: { Authorization: `Bearer ${token}` } // Gửi token qua header nếu cần
+      });
       if (response.status === 201) {
         orderDispatch({ type: "ADD_ORDER", payload: response.data.order });
-        const clearCartResponse = await axios.delete(`http://localhost:8000/carts/${userState.user[0]?.id}`);
+        const clearCartResponse = await axios.delete(`http://localhost:8000/carts/remove/${userState.user[0]?.id}`);
         if (clearCartResponse.status === 200) {
           cartDispatch({ type: "CLEAR_CART" });
         }
