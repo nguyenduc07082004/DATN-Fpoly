@@ -1,5 +1,9 @@
 import { Router } from "express";
-import { checkout, getOrderDetail, updateOrderStatus } from "../controllers/OrderControllers.js"; // Đảm bảo nhập đúng đường dẫn
+import {
+  checkout,
+  getOrderDetail,
+  updateOrderStatus,
+} from "../controllers/OrderControllers.js"; // Đảm bảo nhập đúng đường dẫn
 import { checkAuth } from "../middleware/checkAuth.js";
 
 const router = Router();
@@ -11,6 +15,6 @@ router.post("/checkout", checkAuth, checkout);
 router.get("/", checkAuth, getOrderDetail);
 
 // Route để cập nhật trạng thái đơn hàng
-router.put("/:orderId", checkAuth, updateOrderStatus);
+router.patch("/:orderId", checkAuth, updateOrderStatus);
 
 export default router; // Export mặc định

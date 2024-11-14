@@ -67,12 +67,7 @@ export const updateOrderStatus = async (req, res) => {
   const { status } = req.body; // Trạng thái mới cần cập nhật
 
   // Danh sách trạng thái hợp lệ
-  const validStatuses = [
-    "Đang chuẩn bị hàng",
-    "Đang giao hàng",
-    "Giao hàng thành công",
-    "Đơn hàng đã bị hủy",
-  ];
+  const validStatuses = ["Pending", "In Delivery", "Delivered", "Cancelled"];
 
   // Kiểm tra trạng thái mới có hợp lệ không
   if (!validStatuses.includes(status)) {
