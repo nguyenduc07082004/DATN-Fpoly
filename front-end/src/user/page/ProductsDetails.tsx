@@ -65,11 +65,8 @@ const ProductDetails = () => {
   const { addToCart } = useContext(CartContext);
 
   const handleAddToCart = async () => {
-    if (!selectedColor) {
-      alert("Vui lòng chọn màu sắc!");
-      return;
-    }
-    addToCart(product, quantity, selectedColor); // Truyền selectedColor vào
+    
+    addToCart(product, quantity); // Truyền selectedColor vào
     alert("Đã thêm vào giỏ hàng!");
   };
 

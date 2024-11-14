@@ -14,7 +14,8 @@ export type State = {
 
 type OrderAction =
   | { type: "GET_ORDER"; payload: { products: CartItem[] } }
-  | { type: "UPDATE_ORDER_STATUS"; payload: { orderId: string; status: string } };
+  | { type: "UPDATE_ORDER_STATUS"; payload: { orderId: string; status: string } }
+  | { type: "ADD_ORDER"; payload: CartItem }; // Thêm hành động ADD_ORDER
 
 export const initialState: State = {
   products: [],
@@ -36,6 +37,12 @@ const orderReducer = (state: State, action: OrderAction): State => {
             ? { ...order, status: action.payload.status }
             : order
         ),
+      };
+
+    case "ADD_ORDER": // Thêm đơn hàng mới vào state
+      return {
+        ...state,
+        products: [...state.products, action.payload],
       };
 
     default:

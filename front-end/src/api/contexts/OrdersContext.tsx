@@ -5,10 +5,15 @@ import orderReducer, {
   State,
 } from "../../api/reducers/OrderReducer";
 
+// Import CartItem từ đúng file nơi đã định nghĩa
+import { CartItem } from "../../interfaces/Cart";
+
 interface OrderContextType {
   state: State;
+  dispatch: React.Dispatch<any>; // Thêm dispatch vào OrderContextType
   fetchOrder: () => void;
   updateOrderStatus: (orderId: string, status: string) => void;
+  addOrder: (order: CartItem) => void;
 }
 
 const OrderContext = createContext<OrderContextType | undefined>(undefined);
@@ -34,12 +39,17 @@ const OrderProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
+  // Hàm thêm đơn hàng mới vào state
+  const addOrder = (order: CartItem) => {
+    dispatch({ type: "ADD_ORDER", payload: order });
+  };
+
   useEffect(() => {
     fetchOrder();
   }, []);
 
   return (
-    <OrderContext.Provider value={{ state, fetchOrder, updateOrderStatus }}>
+    <OrderContext.Provider value={{ state, dispatch, fetchOrder, updateOrderStatus, addOrder }}>
       {children}
     </OrderContext.Provider>
   );
