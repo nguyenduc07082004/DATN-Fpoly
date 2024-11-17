@@ -4,25 +4,32 @@ import mongoose from "mongoose";
 import dotenv from "dotenv";
 import cors from "cors";
 import authRouter from "./src/services/auth.js";
-import vnpayRouter from "./src/routes/vnpayRouter.js"; // Import vnpayRouter
+import logger from "morgan";
+import bodyParser from "body-parser";
+import cookieParser from "cookie-parser";
+import path from "path";
+import { fileURLToPath } from "url";
 
 dotenv.config();
 
 const app = express();
 const port = process.env.PORT || 8000;
 const mongoURI = process.env.MONGO_URI || "mongodb://localhost:27017/DUAN";
+app.use(
+  cors({
+    origin: "http://localhost:5173", // Replace with your frontend's origin
+    methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+    credentials: true,
+  })
+);
 
 // Middleware
-app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use((req, res, next) => {
-  res.setHeader(
-    "Content-Security-Policy",
-    "default-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; img-src 'self' data:; font-src 'self'; connect-src 'self'"
-  );
-  next();
-});
+app.use(logger("dev"));
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(cookieParser());
 
 // Kết nối MongoDB
 mongoose
@@ -36,7 +43,6 @@ mongoose
 
 // Sử dụng các router
 app.use("/", authRouter);
-app.use("/vnpay", vnpayRouter); // Đảm bảo bạn đang sử dụng đúng route cho VNPay
 
 // Các route khác
 app.use("/images", express.static("uploads"));

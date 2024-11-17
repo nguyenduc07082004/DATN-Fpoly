@@ -25,7 +25,7 @@ const Vnpay = () => {
 
   const handleCreatePayment = async () => {
     try {
-      const response = await ins.post("/create_payment_url", {
+      const response = await ins.post("/vnpay/create_payment_url", {
         orderType: "billpayment",
         amount: cartState.totalPrice,
         orderDescription: "Payment for order",
@@ -33,14 +33,9 @@ const Vnpay = () => {
         language: "vn",
       });
 
-      if (response.data.data) {
-        setPaymentUrl(response.data.data);
-      } else {
-        console.error("Invalid response data:", response.data);
-        alert("Failed to create payment URL. Please try again.");
-      }
+      window.location.href = response.data.data;
     } catch (error) {
-      console.error("Error creating payment URL:", error);
+      console.error("Error creating payment:", error);
     }
   };
   // const handlePayment = async () => {
@@ -143,27 +138,9 @@ const Vnpay = () => {
       <h4>Tổng giá trị giỏ hàng: {cartState.totalPrice} VND</h4>
 
       <div className="my-4 text-center">
-        <h3>Mã QR thanh toán</h3>
-        {paymentUrl ? (
-          <QRCodeSVG value={paymentUrl} size={256} />
-        ) : (
-          <button
-            onClick={handleCreatePayment}
-            className="btn btn-primary btn-lg"
-          >
-            Tạo mã QR thanh toán
-          </button>
-        )}
-        {paymentUrl && (
-          <button className="btn btn-success btn-lg mt-3">
-            <a
-              href={paymentUrl}
-              style={{ color: "white", textDecoration: "none" }}
-            >
-              Thanh toán
-            </a>
-          </button>
-        )}
+        <h3>
+          <button onClick={handleCreatePayment}>Thanh toán</button>
+        </h3>
       </div>
     </div>
   );

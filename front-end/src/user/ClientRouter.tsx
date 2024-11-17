@@ -11,6 +11,7 @@ import ProductsDetails from "./page/ProductsDetails";
 import FromUser from "./middleware/authUser/FromUser";
 import Cart from "./Cart/CartPage";
 import VnpayPayment from "./page/Vnpay";
+import CheckOut from "./page/CheckOut";
 const Client = () => {
   return (
     <div>
@@ -26,6 +27,7 @@ const Client = () => {
         <Route path="/cart" element={<Cart />} />
         <Route path="/user/:id" element={<FromUser />} />
         <Route path="/vnpay" element={<VnpayPayment />} />
+        <Route path="/checkout" element={<CheckOut />} />
       </Routes>
       <Footer />
     </div>
