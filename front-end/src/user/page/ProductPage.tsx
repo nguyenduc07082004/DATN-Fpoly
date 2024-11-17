@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Products } from "../../interfaces/Products";
+import {baseURL} from "../../api";
 
 const ProductPage = () => {
   const [products, setProducts] = useState<Products[]>([]);
@@ -58,7 +59,7 @@ const ProductPage = () => {
               }}
             >
               <img
-                src={ product.image}
+                src={ `${baseURL}/images/` + product.image}
                 alt={product.title}
                 style={{
                   width: "100%",
