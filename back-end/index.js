@@ -16,6 +16,13 @@ const mongoURI = process.env.MONGO_URI || "mongodb://localhost:27017/DUAN";
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use((req, res, next) => {
+  res.setHeader(
+    "Content-Security-Policy",
+    "default-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; img-src 'self' data:; font-src 'self'; connect-src 'self'"
+  );
+  next();
+});
 
 // Kết nối MongoDB
 mongoose
