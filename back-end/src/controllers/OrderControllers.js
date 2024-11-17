@@ -96,3 +96,20 @@ export const updateOrderStatus = async (req, res) => {
     res.status(500).json({ message: "Error updating order status", error });
   }
 };
+
+// export const getOrderById = async (req, res) => {
+//   const { orderId } = req.params;
+
+//   try {
+//     const order = await Order.findById(orderId).populate("products.product");
+
+//     if (!order) {
+//       return res.status(404).json({ message: "Đơn hàng không tồn tại" });
+//     }
+
+//     res.status(200).json(order);
+//   } catch (error) {
+//     console.error("Error getting order by ID:", error);
+//     res.status(500).json({ message: "Error getting order by ID", error });
+//   }
+// };

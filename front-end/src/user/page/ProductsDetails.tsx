@@ -67,7 +67,7 @@ const ProductDetails = () => {
   const handleAddToCart = async () => {
     
     addToCart(product, quantity); // Truyền selectedColor vào
-    alert("Đã thêm vào giỏ hàng!");
+
   };
 
   const handleQuantityChange = (e: React.ChangeEvent<HTMLInputElement>) => {

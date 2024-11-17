@@ -3,6 +3,7 @@ import {
   checkout,
   getOrderDetail,
   updateOrderStatus,
+  // getOrderById
 } from "../controllers/OrderControllers.js"; // Đảm bảo nhập đúng đường dẫn
 import { checkAuth } from "../middleware/checkAuth.js";
 
@@ -16,5 +17,7 @@ router.get("/", checkAuth, getOrderDetail);
 
 // Route để cập nhật trạng thái đơn hàng
 router.patch("/:orderId", checkAuth, updateOrderStatus);
+
+// router.patch("/:orderId", getOrderById);
 
 export default router; // Export mặc định
