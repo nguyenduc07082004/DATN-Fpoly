@@ -4,6 +4,7 @@ export type CartItem = {
   _id: string;
   product: Products;
   quantity: number;
+  payment: string;
   totalPrice: number;
   status: string;
 };
@@ -14,7 +15,10 @@ export type State = {
 
 type OrderAction =
   | { type: "GET_ORDER"; payload: { products: CartItem[] } }
-  | { type: "UPDATE_ORDER_STATUS"; payload: { orderId: string; status: string } }
+  | {
+      type: "UPDATE_ORDER_STATUS";
+      payload: { orderId: string; status: string };
+    }
   | { type: "ADD_ORDER"; payload: CartItem }; // Thêm hành động ADD_ORDER
 
 export const initialState: State = {

@@ -6,8 +6,11 @@ import {
 import { CartItem } from "../../api/reducers/OrderReducer";
 
 const QLDH = () => {
-  const { state, fetchOrder, updateOrderStatus } = useContext(OrderContext) as OrderContextType;
+  const { state, fetchOrder, updateOrderStatus } = useContext(
+    OrderContext
+  ) as OrderContextType;
   const [expandedOrderId, setExpandedOrderId] = useState<string | null>(null);
+  console.log(state);
 
   useEffect(() => {
     fetchOrder();
@@ -58,18 +61,29 @@ const QLDH = () => {
               {order?.products?.map((item: CartItem, productIndex: number) => (
                 <tr className="d-flex" key={item?.product?._id}>
                   {productIndex === 0 && (
-                    <td className="col-1" rowSpan={order?.products?.length || 1}>
+                    <td
+                      className="col-1"
+                      rowSpan={order?.products?.length || 1}
+                    >
                       {orderIndex + 1}
                     </td>
                   )}
-                  <td className="col-3">{item?.product?.title || "Không có tiêu đề"}</td>
+                  <td className="col-3">
+                    {item?.product?.title || "Không có tiêu đề"}
+                  </td>
                   <td className="col-2">{item?.quantity || 0}</td>
                   {productIndex === 0 && (
                     <>
-                      <td className="col-2" rowSpan={order?.products?.length || 1}>
+                      <td
+                        className="col-2"
+                        rowSpan={order?.products?.length || 1}
+                      >
                         {order?.totalPrice || 0}
                       </td>
-                      <td className="col-2" rowSpan={order?.products?.length || 1}>
+                      <td
+                        className="col-2"
+                        rowSpan={order?.products?.length || 1}
+                      >
                         <select
                           value={order?.status}
                           onChange={(e) =>
@@ -83,9 +97,14 @@ const QLDH = () => {
                           ))}
                         </select>
                       </td>
-                      <td className="col-2" rowSpan={order?.products?.length || 1}>
+                      <td
+                        className="col-2"
+                        rowSpan={order?.products?.length || 1}
+                      >
                         <button onClick={() => toggleExpand(order._id)}>
-                          {expandedOrderId === order._id ? "Ẩn chi tiết" : "Chi tiết"}
+                          {expandedOrderId === order._id
+                            ? "Ẩn chi tiết"
+                            : "Chi tiết"}
                         </button>
                       </td>
                     </>
@@ -96,7 +115,9 @@ const QLDH = () => {
                 <tr className="d-flex">
                   <td className="col-12" colSpan={6}>
                     <div className="order-details">
-                      <p><strong>Chi tiết đơn hàng:</strong></p>
+                      <p>
+                        <strong>Chi tiết đơn hàng:</strong>
+                      </p>
                       <ul>
                         {order.products.map((item: CartItem, idx: number) => (
                           <li key={idx}>

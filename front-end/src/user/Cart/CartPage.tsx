@@ -44,11 +44,10 @@ const Cart = () => {
       } else {
         alert(`Thanh toán thành công với phương thức: ${paymentMethod}`);
         await checkout();
-        navigate("/product-page");
+        navigate("/checkout");
       }
     }
   };
-  
 
   return (
     <>
