@@ -25,6 +25,7 @@ export const checkout = async (req, res, next) => {
         product: item.product._id,
         quantity: item.quantity,
       })),
+      payment: "Chưa thanh toán",
       totalPrice,
       status: "Pending", // Trạng thái mặc định khi đơn hàng mới được tạo
     });

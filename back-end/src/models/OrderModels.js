@@ -51,6 +51,11 @@ const orderSchema = new Schema(
         quantity: Number,
       },
     ],
+    payment: {
+      type: String,
+      enum: ["Đã thanh toán", "Chưa thanh toán"],
+      default: "Chưa thanh toán",
+    },
     totalPrice: Number,
     status: {
       type: String,

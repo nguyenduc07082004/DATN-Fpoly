@@ -64,6 +64,26 @@ router.post("/create_payment_url", async function (req, res, next) {
   vnpUrl += "?" + querystring.stringify(vnp_Params, { encode: false });
 
   res.status(200).json({ code: "00", data: vnpUrl });
+  const userId = req.user._id; // Lấy thông tin người dùng từ token
+  const cart = await CartModels.findOne({ userId }).populate(
+    "products.product"
+  );
+  const order = new OrderModels({
+    userId,
+    products: cart.products.map((item) => ({
+      product: item.product._id,
+      quantity: item.quantity,
+    })),
+    payment: "Đã thanh toán",
+    totalPrice: amount,
+    status: "Pending", // Trạng thái mặc định khi đơn hàng mới được tạo
+  });
+
+  // Lưu đơn hàng vào cơ sở dữ liệu
+  await order.save();
+
+  // Xóa giỏ hàng sau khi thanh toán
+  await CartModels.findOneAndDelete({ userId });
 });
 
 router.get("/vnpay_return", async function (req, res, next) {

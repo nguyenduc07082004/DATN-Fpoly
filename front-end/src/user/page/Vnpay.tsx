@@ -32,7 +32,7 @@ const Vnpay = () => {
         bankCode: "",
         language: "vn",
       });
-      await checkout();
+
       window.location.href = response.data.data;
     } catch (error) {
       console.error("Error creating payment:", error);
