@@ -64,26 +64,6 @@ router.post("/create_payment_url", async function (req, res, next) {
   vnpUrl += "?" + querystring.stringify(vnp_Params, { encode: false });
 
   res.status(200).json({ code: "00", data: vnpUrl });
-
-  try {
-    await newOrder.save();
-    res.status(200).json({ code: "00", data: vnpUrl });
-  } catch (error) {
-    res.status(500).json({ code: "99", message: "Error saving order" });
-  }
-  const userId = req.user._id;
-  const cart = await CartModels.findOne({ userId }).populate(
-    "products.product"
-  );
-  const newOrder = new OrderModels({
-    userId,
-    products: cart.products.map((item) => ({
-      product: item.product._id,
-      quantity: item.quantity,
-    })),
-    totalPrice: amount,
-    status: "Pending",
-  });
 });
 
 router.get("/vnpay_return", async function (req, res, next) {

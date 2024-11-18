@@ -10,7 +10,7 @@ import ins from "../../api";
 
 const Vnpay = () => {
   const token = localStorage.getItem("accessToken"); // Lấy token từ localStorage
-
+  const { checkout } = useContext(CartContext);
   const { state: cartState } = useContext(CartContext);
   // const { dispatch: orderDispatch } = useContext(OrderContext);
   const navigate = useNavigate();
@@ -32,7 +32,7 @@ const Vnpay = () => {
         bankCode: "",
         language: "vn",
       });
-
+      await checkout();
       window.location.href = response.data.data;
     } catch (error) {
       console.error("Error creating payment:", error);

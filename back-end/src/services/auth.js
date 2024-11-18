@@ -15,6 +15,6 @@ authRouter.use("/categories", CategoryRouter);
 authRouter.use("/", userRouter);
 authRouter.use("/carts", checkAuth, cartRouter);
 authRouter.use("/orders", checkAuth, OrderRouter);
-authRouter.use("/vnpay", router);
+authRouter.use("/vnpay", checkAuth, router);
 
 export default authRouter;
