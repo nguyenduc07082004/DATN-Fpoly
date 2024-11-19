@@ -1,14 +1,21 @@
 import { Link } from "react-router-dom";
 import Logo from "../../../logo.png";
 import "../css/Style.css";
-import { AuthContext, AuthContextType, useAuth } from "../../api/contexts/AuthContext";
+import {
+  AuthContext,
+  AuthContextType,
+  useAuth,
+} from "../../api/contexts/AuthContext";
 import { useContext } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCartShopping } from "@fortawesome/free-solid-svg-icons";
+import { CartContext, CartContextType } from "../../api/contexts/CartContext";
 
 const Header = () => {
   const { logout } = useAuth();
   const { user } = useContext(AuthContext) as AuthContextType;
+  const { state } = useContext(CartContext) as CartContextType;
+  console.log(state);
 
   // Calculate the total number of items in the cart
   const cartItemCount = 0; // Replace with actual cart item count logic
@@ -23,42 +30,95 @@ const Header = () => {
       <nav>
         <ul>
           <li>
-            <Link to="/" style={{ color: 'white' }} >Trang chủ</Link>
+            <Link
+              to="/"
+              className="text-decoration-none"
+              style={{ color: "white" }}
+            >
+              Trang chủ
+            </Link>
           </li>
           <li>
-            <Link to="/other" style={{ color: 'white' }} >Sản phẩm</Link>
+            <Link
+              to="/other"
+              className="text-decoration-none"
+              style={{ color: "white" }}
+            >
+              Sản phẩm
+            </Link>
           </li>
           <li>
-            <Link to="/about" style={{ color: 'white' }} >Giới thiệu</Link>
+            <Link
+              to="/about"
+              className="text-decoration-none"
+              style={{ color: "white" }}
+            >
+              Giới thiệu
+            </Link>
           </li>
           <li>
-            <Link to="/contact" style={{ color: 'white' }} >Liên hệ</Link>
+            <Link
+              to="/contact"
+              className="text-decoration-none"
+              style={{ color: "white" }}
+            >
+              Liên hệ
+            </Link>
+          </li>
+          <li>
+            <Link
+              to="/orderplace"
+              className="text-decoration-none"
+              style={{ color: "white" }}
+            >
+              Đơn hàng
+            </Link>
           </li>
           <li className="dropdown">
-            <Link to="#" className="dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" style={{ color: 'white' }} >
+            <Link
+              to="#"
+              className="dropdown-toggle text-decoration-none"
+              data-bs-toggle="dropdown"
+              aria-expanded="false"
+              style={{ color: "white" }}
+            >
               Thiết bị
             </Link>
             <ul className="dropdown-menu">
               <li>
-                <Link to="/products/phone" className="dropdown-item">Điện thoại</Link>
+                <Link to="/products/phone" className="dropdown-item">
+                  Điện thoại
+                </Link>
               </li>
               <li>
-                <Link to="/products/laptop" className="dropdown-item">Laptop</Link>
+                <Link to="/products/laptop" className="dropdown-item">
+                  Laptop
+                </Link>
               </li>
               <li>
-                <Link to="/products/accessory" className="dropdown-item">Phụ kiện</Link>
+                <Link to="/products/accessory" className="dropdown-item">
+                  Phụ kiện
+                </Link>
               </li>
               <li>
-                <Link to="/products/smartwatch" className="dropdown-item">Smartwatch</Link>
+                <Link to="/products/smartwatch" className="dropdown-item">
+                  Smartwatch
+                </Link>
               </li>
               <li>
-                <Link to="/products/watch" className="dropdown-item">Đồng hồ</Link>
+                <Link to="/products/watch" className="dropdown-item">
+                  Đồng hồ
+                </Link>
               </li>
               <li>
-                <Link to="/products/used" className="dropdown-item">Máy cũ</Link>
+                <Link to="/products/used" className="dropdown-item">
+                  Máy cũ
+                </Link>
               </li>
               <li>
-                <Link to="/services" className="dropdown-item">Dịch vụ</Link>
+                <Link to="/services" className="dropdown-item">
+                  Dịch vụ
+                </Link>
               </li>
             </ul>
           </li>
@@ -88,28 +148,38 @@ const Header = () => {
               data-bs-toggle="dropdown"
               aria-expanded="false"
             >
-              <strong>{JSON.parse(localStorage.getItem("user") || "{}").fullName}</strong>
+              <strong>
+                {JSON.parse(localStorage.getItem("user") || "{}").fullName}
+              </strong>
             </Link>
             <ul
               className="shadow text-small dropdown-menu dropdown-menu-dark"
               aria-labelledby="dropdownUser1"
             >
               <li>
-                <Link className="dropdown-item" to="#">Tài khoản</Link>
+                <Link className="dropdown-item" to="#">
+                  Tài khoản
+                </Link>
               </li>
               <li>
-                <Link className="dropdown-item" to="#">Cài đặt</Link>
+                <Link className="dropdown-item" to="#">
+                  Cài đặt
+                </Link>
               </li>
               {user?.role === "admin" && (
                 <li>
-                  <Link className="dropdown-item" to="/admin">Trang quản trị</Link>
+                  <Link className="dropdown-item" to="/admin">
+                    Trang quản trị
+                  </Link>
                 </li>
               )}
               <li>
                 <hr className="dropdown-divider" />
               </li>
               <li>
-                <Link onClick={() => logout()} className="dropdown-item" to="#">Đăng xuất</Link>
+                <Link onClick={() => logout()} className="dropdown-item" to="#">
+                  Đăng xuất
+                </Link>
               </li>
             </ul>
           </div>

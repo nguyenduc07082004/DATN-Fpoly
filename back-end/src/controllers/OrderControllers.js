@@ -3,6 +3,7 @@ import Order from "../models/OrderModels.js";
 import Cart from "../models/CartModels.js";
 import Product from "../models/ProductModels.js";
 import User from "../models/UserModels.js";
+import { log } from "console";
 
 export const checkout = async (req, res, next) => {
   try {
@@ -98,19 +99,17 @@ export const updateOrderStatus = async (req, res) => {
   }
 };
 
-// export const getOrderById = async (req, res) => {
-//   const { orderId } = req.params;
+export const getOrderByUserID = async (req, res) => {
+  const userId = req.user._id;
+  try {
+    const order = await Order.find({ userId }).populate("products.product");
+    if (!order) {
+      return res.status(404).json({ message: "Đơn hàng không tồn tại" });
+    }
 
-//   try {
-//     const order = await Order.findById(orderId).populate("products.product");
-
-//     if (!order) {
-//       return res.status(404).json({ message: "Đơn hàng không tồn tại" });
-//     }
-
-//     res.status(200).json(order);
-//   } catch (error) {
-//     console.error("Error getting order by ID:", error);
-//     res.status(500).json({ message: "Error getting order by ID", error });
-//   }
-// };
+    res.status(200).json(order);
+  } catch (error) {
+    console.error("Error getting order details:", error);
+    res.status(500).json({ message: "Error getting order details", error });
+  }
+};

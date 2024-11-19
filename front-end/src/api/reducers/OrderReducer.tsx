@@ -19,7 +19,8 @@ type OrderAction =
       type: "UPDATE_ORDER_STATUS";
       payload: { orderId: string; status: string };
     }
-  | { type: "ADD_ORDER"; payload: CartItem }; // Thêm hành động ADD_ORDER
+  | { type: "ADD_ORDER"; payload: CartItem } // Thêm hành động ADD_ORDER
+  | { type: "GET_ORDER_ID"; payload: { products: CartItem[] } };
 
 export const initialState: State = {
   products: [],

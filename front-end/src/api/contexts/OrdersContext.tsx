@@ -50,7 +50,13 @@ const OrderProvider = ({ children }: { children: ReactNode }) => {
 
   return (
     <OrderContext.Provider
-      value={{ state, dispatch, fetchOrder, updateOrderStatus, addOrder }}
+      value={{
+        state,
+        dispatch,
+        fetchOrder,
+        updateOrderStatus,
+        addOrder,
+      }}
     >
       {children}
     </OrderContext.Provider>

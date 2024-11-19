@@ -12,6 +12,7 @@ import FromUser from "./middleware/authUser/FromUser";
 import Cart from "./Cart/CartPage";
 import VnpayPayment from "./page/Vnpay";
 import CheckOut from "./page/CheckOut";
+import OrderPlace from "./page/OrderPlace";
 const Client = () => {
   return (
     <div>
@@ -28,6 +29,7 @@ const Client = () => {
         <Route path="/user/:id" element={<FromUser />} />
         <Route path="/vnpay" element={<VnpayPayment />} />
         <Route path="/checkout" element={<CheckOut />} />
+        <Route path="/orderplace" element={<OrderPlace />} />
       </Routes>
       <Footer />
     </div>
