@@ -40,33 +40,19 @@
 // // Xuất khẩu mặc định đối tượng Order
 // export default model("Order", orderSchema);
 
+
 import { Schema, model } from "mongoose";
 
-const orderSchema = new Schema(
-  {
-    userId: { type: Schema.Types.ObjectId, ref: "User" },
-    products: [
-      {
-        product: { type: Schema.Types.ObjectId, ref: "Product" },
-        quantity: Number,
-      },
-    ],
-    payment: {
-      type: String,
-      enum: ["Đã thanh toán", "Chưa thanh toán"],
-      default: "Chưa thanh toán",
-    },
-    totalPrice: Number,
-    status: {
-      type: String,
-      enum: ["Pending", "In Delivery", "Delivered", "Cancelled"],
-      default: "Pending", // Trạng thái đơn hàng
-    },
-  },
-  {
-    timestamps: true,
-    versionKey: false,
-  }
-);
+const orderSchema = new Schema({
+  user_id: { type: Schema.Types.ObjectId, ref: "User", required: true },
+  status: { type: String, enum: ["pending", "confirmed", "completed", "cancelled"], required: true },
+  total_price: { type: Number, required: true },
+  receiver_name: { type: String, required: true },
+  receiver_phone: { type: String, required: true },
+  receiver_address: { type: String, required: true },
+  payment_status: { type: String, enum: ["unpaid", "paid"], required: true },
+  created_at: { type: Date, default: Date.now },
+  updated_at: { type: Date, default: Date.now },
+});
 
 export default model("Order", orderSchema);

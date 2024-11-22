@@ -11,7 +11,7 @@ const Cart = () => {
   const navigate = useNavigate();
   const token = localStorage.getItem("accessToken");
   const [paymentMethod, setPaymentMethod] = useState("COD");
-  console.log(state);
+  console.log(state , "state");
 
   useEffect(() => {
     fetchCart();
@@ -99,7 +99,7 @@ const Cart = () => {
         </thead>
         <tbody>
           {state.products.map((product: CartItem, index: number) => (
-            <tr key={product.product?._id}>
+            <tr key={index}>
               <td>{index + 1}</td>
               <td>{product.product?.title}</td>
               <td>{product.product?.color}</td>

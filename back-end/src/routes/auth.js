@@ -1,12 +1,12 @@
 import { Router } from "express";
-import ProductRouter from "../routes/ProductsRouter.js";
-import CategoryRouter from "../routes/CategoryRouter.js";
-import userRouter from "../routes/userRouter.js";
+import ProductRouter from "./ProductsRouter.js";
+import CategoryRouter from "./CategoryRouter.js";
+import userRouter from "./userRouter.js";
 import { checkAuth } from "../middleware/checkAuth.js";
-import cartRouter from "../routes/CartRouter.js";
-import OrderRouter from "../routes/OrderRouter.js"; // Import OrderRouter
+import cartRouter from "./CartRouter.js";
+import OrderRouter from "./OrderRouter.js"; // Import OrderRouter
 import express from "express";
-import router from "../routes/Payment.js";
+import router from "./Payment.js";
 
 const authRouter = Router();
 

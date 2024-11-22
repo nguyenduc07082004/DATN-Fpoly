@@ -1,30 +1,34 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState , useContext } from "react";
 import { Products } from "../../interfaces/Products";
 import {baseURL} from "../../api";
-
+import ins from "../../api";
+import { CartContext } from "../../api/contexts/CartContext";
 const ProductPage = () => {
   const [products, setProducts] = useState<Products[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-
+  const {addToCart} = useContext(CartContext)
   useEffect(() => {
     const fetchProducts = async () => {
+      setLoading(true);
+      setError(null);
+
       try {
-        const response = await fetch("http://localhost:8000/products");
-        if (!response.ok) {
-          throw new Error("Failed to fetch products");
+        const response = await ins.get(`${baseURL}/products`); 
+        if (response.status >= 200 && response.status < 300) {
+          setProducts(response.data); 
+        } else {
+          throw new Error(`Failed to fetch products: ${response.statusText}`);
         }
-        const data = await response.json();
-        setProducts(data);
       } catch (err) {
         setError((err as Error).message);
       } finally {
         setLoading(false);
       }
     };
-
     fetchProducts();
   }, []);
+  
 
   if (loading) {
     return <div>Loading...</div>;
@@ -76,6 +80,9 @@ const ProductPage = () => {
                 {product.price.toLocaleString()} VND
               </p>
               <button
+              onClick={() => {
+                addToCart(product, 1, product.price);
+              }}
                 style={{
                   padding: "8px 16px",
                   backgroundColor: "#ff6600",

@@ -1,7 +1,12 @@
-import mongoose from "mongoose";
+import { Schema, model } from "mongoose";
 
-const categorySchema = new mongoose.Schema({
-  name: { type: String, require: true },
-  note: { type: String },
+const categorySchema = new Schema({
+  parent_id: { type: Schema.Types.ObjectId, ref: "Category", default: null },
+  name: { type: String, required: true },
+  slug: { type: String, unique: true, required: true },
+  status: { type: String, enum: ["active", "inactive"], required: true },
+  created_at: { type: Date, default: Date.now },
+  updated_at: { type: Date, default: Date.now },
 });
-export default mongoose.model("Category", categorySchema);
+
+export default model("Category", categorySchema);
