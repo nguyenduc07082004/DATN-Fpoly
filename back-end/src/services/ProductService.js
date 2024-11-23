@@ -24,60 +24,37 @@ export const getProductById = async (productId) => {
 };
 
 // Thêm sản phẩm
-export const addProduct = async (productData, imageFilename) => {
-  const { title, price, storage, color, categories, quantity, description } = productData;
-
-  try {
-    // Kiểm tra danh mục
-    const categoryExists = await Category.findById(categories);
-    if (!categoryExists) {
-      throw new Error("Category not found");
-    }
-
-    // Tạo sản phẩm mới
-    const newProduct = new Product({
-      title,
-      price,
-      storage,
-      color,
-      image: imageFilename,
-      categories,
-      quantity,
-      description,
-    });
-    return await newProduct.save();
-  } catch (error) {
-    throw error; 
-  }
+export const addProduct = async (productData) => {
+  const product = new Product(productData);
+  return await product.save(); 
 };
+
 
 // Cập nhật sản phẩm
-export const updateProduct = async (productId, productData) => {
-  const { categories } = productData;
-
-  try {
-    // Kiểm tra danh mục
-    const categoryExists = await Category.findById(categories);
-    if (!categoryExists) {
-      throw new Error("Category not found");
-    }
-
-    // Cập nhật sản phẩm
-    return await Product.findByIdAndUpdate(productId, productData, { new: true }).populate("categories", "name description");
-  } catch (error) {
-    throw error; 
-  }
+export const updateProduct = async (productId, updateData) => {
+  return await Product.findByIdAndUpdate(productId, updateData, { new: true });
 };
+
 
 // Xóa sản phẩm
 export const deleteProduct = async (productId) => {
-  try {
-    const deletedProduct = await Product.findByIdAndDelete(productId);
-    if (!deletedProduct) {
-      throw new Error("Product not found");
-    }
-    return deletedProduct;
-  } catch (error) {
-    throw error; 
-  }
+  return await Product.findByIdAndDelete(productId);
 };
+
+
+export const createVariant = async (productId, variantData) => {
+  const product = await Product.findById(productId);
+  if (!product) {
+    throw new Error("Product not found");
+  }
+
+  const isSkuExist = product.variants.some(variant => variant.sku === variantData.sku);
+  if (isSkuExist) {
+    throw new Error("Sku already exists");
+  }
+
+  product.variants.push(variantData);
+
+  return await product.save();
+};
+
