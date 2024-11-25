@@ -1,18 +1,22 @@
 import * as productService from "../services/ProductService.js";
 import  getMessage from "../utils/getMessage.js"
  // Lấy danh sách sản phẩm
-export const getProducts = async (req, res, next) => {
+ export const getProducts = async (req, res, next) => {
   try {
-    const products = await productService.getAllProducts();
-    res.status(200).json(products);
+    const products = await productService.getAllProducts(); 
+    res.status(200).json(products); 
   } catch (error) {
     next(error);
   }
 };
 
+
 export const getProductById = async (req, res) => {
   try {
-    const product = await productService.getProductById(req.params.id);
+    const product = await productService.getProductById(req.params.id); 
+    if (!product) {
+      return res.status(404).json({ message: "Product not found." });
+    }
     res.status(200).json(product);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -23,14 +27,17 @@ export const getProductById = async (req, res) => {
 export const addProduct = async (req, res) => {
   const lang = req.lang;
 
+  console.log
   try {
-    const { title, price, storage, color, categories, quantity, description } = req.body;
+    const { title, description, categories } = req.body;
     const image_filename = req.file ? req.file.filename : null;
 
-    const newProduct = await productService.addProduct(
-      { title, price, storage, color, categories, quantity, description },
-      image_filename
-    );
+    const newProduct = await productService.addProduct({
+      title,
+      description,
+      categories,
+      image: image_filename,
+    });
 
     res.status(201).json({
       message: getMessage(lang, "success", "ADD_PRODUCT_SUCCESS"),
@@ -48,13 +55,21 @@ export const updateProduct = async (req, res) => {
   const lang = req.lang;
 
   try {
-    const updatedProduct = await productService.updateProduct(req.params.id, req.body);
+    const { title, description, categories, variants } = req.body;
+
+    const updatedProduct = await productService.updateProduct(req.params.id, {
+      title,
+      description,
+      categories,
+      variants, // Cập nhật danh sách biến thể nếu có
+    });
 
     if (!updatedProduct) {
       return res.status(404).json({
         message: getMessage(lang, "error", "UPDATE_PRODUCT_FAIL"),
       });
     }
+
     res.status(200).json({
       message: getMessage(lang, "success", "UPDATE_PRODUCT_SUCCESS"),
       data: updatedProduct,
@@ -70,16 +85,39 @@ export const updateProduct = async (req, res) => {
 export const deleteProduct = async (req, res) => {
   const lang = req.lang;
   try {
-    await productService.deleteProduct(req.params.id);
-    // Trả về thông báo thành công
+    const deletedProduct = await productService.deleteProduct(req.params.id);
+    if (!deletedProduct) {
+      return res.status(404).json({
+        message: getMessage(lang, "error", "DELETE_PRODUCT_FAIL"),
+      });
+    }
     res.status(200).json({
       message: getMessage(lang, "success", "DELETE_PRODUCT_SUCCESS"),
     });
   } catch (error) {
-    // Trả về thông báo lỗi
-    const errorMessage = getMessage(lang, "error", "DELETE_PRODUCT_FAIL") || error.message;
     res.status(500).json({
-      message: errorMessage,
+      message: getMessage(lang, "error", "DELETE_PRODUCT_FAIL") || error.message,
+    });
+  }
+};
+
+export const createVariant = async (req, res) => {
+  const lang = req.lang;
+  try {
+    const { productId, variantData } = req.body;
+    const createdVariant = await productService.createVariant(productId, variantData);
+    if (!createdVariant) {
+      return res.status(404).json({
+        message: getMessage(lang, "error", "CREATE_VARIANT_FAIL"),
+      });
+    }
+    res.status(201).json({
+      message: getMessage(lang, "success", "CREATE_VARIANT_SUCCESS"),
+      data: createdVariant,
+    });   
+  } catch (error) {
+    res.status(500).json({
+      message: error.message || getMessage(lang, "error", "CREATE_VARIANT_FAIL"),
     });
   }
 };

@@ -6,6 +6,7 @@ import {
   getProductById,
   updateProduct,
   deleteProduct,
+  createVariant
 } from "../controllers/ProductControllers.js";
 import multer from "multer";
 // Lấy danh sách sản phẩm (không cần xác thực)
@@ -49,4 +50,5 @@ ProductRouter.delete(
   deleteProduct
 );
 
+ProductRouter.post("/create/variants", createVariant);
 export default ProductRouter;

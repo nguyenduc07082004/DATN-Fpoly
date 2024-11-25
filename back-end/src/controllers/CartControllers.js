@@ -71,9 +71,10 @@ export const getUserCart = async (req, res, next) => {
   const userId = req.user._id; 
   try {
     const cart = await Cart.findOne({ user_id: userId })
-      .populate("products.product_id")
+      .populate("products.product")
       .populate("user_id"); 
   
+      console.log(cart);
     if (!cart) {
       return res.status(404).json({ message: "Cart not found" });
     }
