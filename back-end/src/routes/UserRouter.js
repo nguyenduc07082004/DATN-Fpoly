@@ -7,11 +7,15 @@ import {
   getUser,
   getUserById,
   getCurrentUser,
+  logout , blockUser
 } from "../controllers/UserControllers.js";
 import { verifyToken } from "../middleware/authMiddleware.js";
+import { checkAuth } from "../middleware/checkAuth.js";
 
 UserRouter.post("/register", register);
 UserRouter.post("/login", login);
+UserRouter.post('/logout', checkAuth, logout);
+UserRouter.post('/users/block', checkAuth, blockUser);
 
 // router.use(checkAuth, checkIsAdmin);
 UserRouter.get("/users", getUser);

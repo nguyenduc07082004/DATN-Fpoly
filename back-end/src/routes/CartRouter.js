@@ -16,7 +16,7 @@ cartRouter.post("/add", addToCart);
 cartRouter.get("/", getUserCart);
 
 // Xóa sản phẩm khỏi giỏ hàng
-cartRouter.delete(`/remove/:productId`, removeCartItem);
+cartRouter.delete(`/remove/:variantId`, removeCartItem);
 
 export default cartRouter;
 

@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import axios from "axios";
 import {
   Container,
   Typography,
@@ -10,9 +9,14 @@ import {
   Box,
   InputAdornment,
   IconButton,
+  Modal,
+  Backdrop,
+  Fade,
 } from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import "../css/Style.css";
+import ins from "../../api";
+import { baseURL } from "../../api";
 
 const Register: React.FC = () => {
   const [firstName, setFirstName] = useState("");
@@ -21,10 +25,12 @@ const Register: React.FC = () => {
   const [phone, setPhone] = useState("");
   const [address, setAddress] = useState("");
   const [password, setPassword] = useState("");
-  const [role, setRole] = useState("user"); 
+  const [role, setRole] = useState("user");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [showPassword, setShowPassword] = useState(false);
+  const [openModal, setOpenModal] = useState(false); // Trạng thái modal
+  const [modalMessage, setModalMessage] = useState(""); // Thông điệp hiển thị trong modal
   const navigate = useNavigate();
 
   const handleRegister = async (e: React.FormEvent) => {
@@ -39,26 +45,29 @@ const Register: React.FC = () => {
     }
 
     try {
-      const response = await axios.post("http://localhost:8000/register", {
+      const response = await ins.post(`${baseURL}/register`, {
         first_name: firstName,
         last_name: lastName,
         email,
         phone,
         address,
         password,
-        role, 
+        role,
       });
 
       if (response.status === 201) {
-        navigate("/login");
+        setModalMessage("Đăng ký thành công! Vui lòng đăng nhập.");
+        setOpenModal(true); // Mở modal thông báo
+        setTimeout(() => navigate("/login"), 2000); // Chờ 2 giây rồi điều hướng đến trang đăng nhập
       }
-    } catch (error) {
-      setError("Đã xảy ra lỗi. Vui lòng thử lại.");
+    } catch (error: any) {
+      setError(error.response.data.message);
       setLoading(false);
+      setModalMessage("Đã có lỗi xảy ra!"); // Thông báo lỗi
+      setOpenModal(true); // Mở modal thông báo lỗi
     }
   };
 
-  console.log(firstName, lastName, email, phone, address, password, role); 
   return (
     <Container maxWidth="sm" sx={{ mt: 8 }}>
       <Box className="register-container">
@@ -169,6 +178,44 @@ const Register: React.FC = () => {
           </Typography>
         </Box>
       </Box>
+
+      {/* Modal thông báo */}
+      <Modal
+        open={openModal}
+        onClose={() => setOpenModal(false)}
+        closeAfterTransition
+        BackdropComponent={Backdrop}
+        BackdropProps={{
+          timeout: 500,
+        }}
+      >
+        <Fade in={openModal}>
+          <Box
+            sx={{
+              position: "absolute",
+              top: "50%",
+              left: "50%",
+              transform: "translate(-50%, -50%)",
+              bgcolor: "background.paper",
+              boxShadow: 24,
+              p: 4,
+              borderRadius: 2,
+              textAlign: "center",
+            }}
+          >
+            <Typography variant="h6" sx={{ mb: 2 }}>
+              {modalMessage}
+            </Typography>
+            <Button
+              variant="contained"
+              onClick={() => setOpenModal(false)}
+              sx={{ mt: 2 }}
+            >
+              Đóng
+            </Button>
+          </Box>
+        </Fade>
+      </Modal>
     </Container>
   );
 };

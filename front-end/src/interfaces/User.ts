@@ -1,12 +1,14 @@
-export interface User {
-  userId: any;
-  username: string;
+interface User {
+  _id: string;
+  first_name: string;
+  last_name: string;
   email: string;
-  password: string;
-  fullName: string;
+  phone: string;
   address: string;
-  phone: number;
+  is_active: boolean;
+  is_blocked: boolean;
+  email_verified: boolean;
   role: string;
-  id: any;
-  0: any;
+  profile_picture: string;
+  created_at: string;
 }

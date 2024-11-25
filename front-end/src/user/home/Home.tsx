@@ -1,6 +1,4 @@
 import { useState, useEffect } from "react";
-import axios from "axios";
-
 import "../css/Style.css";
 
 import banner1 from "../../assets/banner.jpg";
@@ -9,7 +7,7 @@ import banner3 from "../../assets/banner 2.jpg";
 import { Products } from "../../interfaces/Products";
 import { Link } from "react-router-dom";
 import { baseURL } from "../../api";
-
+import ins from "../../api";
 const bannerImages = [banner1, banner2, banner3,];
 
 // Component Banner (Phần banner chính)
@@ -55,21 +53,23 @@ const MainBanner = () => {
 // Component ProductCard (Khung sản phẩm)
 const ProductCard = ({ product }: { product: Products }) => {
   return (
-    <div className="product-card">
-      <div>
-        <img src={`${baseURL}/images/` + product.image} alt="error" />
+    <Link
+      className="text-decoration-none text-white"
+      to={`/products/${product._id}`}
+    >
+      <div className="product-card">
+        <div className="product-image">
+          <img
+            src={`${baseURL}/images/` + product.image}
+            alt={product.title}
+            className="image"
+          />
+        </div>
+        <h3 className="product-title">{product.title}</h3>
+        <p className="price-range">{product.priceRange} VNĐ</p>
+        <button className="buy-button">Mua ngay</button>
       </div>
-      <h3>{product.title}</h3>
-      <p>{product.price} VNĐ</p>
-      <button>
-        <Link
-          className="text-decoration-none text-white"
-          to={`/products/${product._id}`}
-        >
-          Mua ngay
-        </Link>
-      </button>
-    </div>
+    </Link>
   );
 };
 
@@ -92,10 +92,10 @@ const Deals = () => {
   const [products, setProducts] = useState<Products[]>([]);
 
   useEffect(() => {
-    axios
-      .get("http://localhost:8000/products")
+    ins.get(`${baseURL}/products/without-variants`)
       .then((response) => {
         setProducts(response.data);
+        console.log(response.data,"réponse")
       })
       .catch((error) => {
         console.error("Đã xảy ra lỗi khi lấy dữ liệu sản phẩm: ", error);

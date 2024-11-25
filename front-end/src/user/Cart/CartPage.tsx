@@ -11,28 +11,38 @@ const Cart = () => {
   const navigate = useNavigate();
   const token = localStorage.getItem("accessToken");
   const [paymentMethod, setPaymentMethod] = useState("COD");
-  console.log(state , "state");
 
   useEffect(() => {
     fetchCart();
   }, []);
 
-  const handleRemoveFromCart = (productId: string) => {
-    removeFromCart(productId);
+  const handleRemoveFromCart = (variantId: string) => {
+    removeFromCart(variantId);
   };
 
-  const handleDecreaseQuantity = (product: any) => {
+  const handleDecreaseQuantity = (product: CartItem) => {
     if (product?.quantity > 1) {
-      addToCart(product.product, -1);
-    } else {
-      handleRemoveFromCart(String(product.product?._id));
-    }
+      addToCart({
+        productId: product.product._id, 
+        quantity: -1,                   
+        price: product.price,            
+        variantId: product.variantId,    
+        selectedColor: product.color,    
+        selectedStorage: product.storage 
+      });
+    } 
   };
 
-  const handleIncreaseQuantity = (product: any) => {
-    addToCart(product.product, +1);
+  const handleIncreaseQuantity = (product: CartItem) => {
+    addToCart({
+      productId: product.product._id, 
+      quantity: 1,                    
+      price: product.price,           
+      variantId: product.variantId,    
+      selectedColor: product.color,    
+      selectedStorage: product.storage 
+    });
   };
-
   const handleCheckout = async () => {
     if (!token) {
       alert("Vui lòng đăng nhập để thanh toán");
@@ -59,7 +69,7 @@ const Cart = () => {
         <tbody>
           <tr>
             <th>Tên:</th>
-            <td>{JSON.parse(localStorage.getItem("user") || "{}").fullName}</td>
+            <td>{JSON.parse(localStorage.getItem("user") || "{}").first_name + " " + JSON.parse(localStorage.getItem("user") || "{}").last_name}</td>
           </tr>
           <tr>
             <th>Địa chỉ:</th>
@@ -89,7 +99,7 @@ const Cart = () => {
             <th>STT</th>
             <th>Tên sản phẩm</th>
             <th>Màu sắc</th>
-            <th>Lưu trữ</th>
+            <th>Dung lượng</th>
             <th>Mô tả</th>
             <th>Số lượng mua</th>
             <th>Giá</th>
@@ -102,8 +112,8 @@ const Cart = () => {
             <tr key={index}>
               <td>{index + 1}</td>
               <td>{product.product?.title}</td>
-              <td>{product.product?.color}</td>
-              <td>{product.product?.storage}</td>
+              <td>{product.color}</td>
+              <td>{product.storage}</td>
               <td>{product.product?.description}</td>
               <td>
                 <FaMinusCircle
@@ -116,12 +126,12 @@ const Cart = () => {
                   className="text-primary"
                 />
               </td>
-              <td>{product.product?.price}</td>
-              <td>{product.product?.price * product?.quantity}</td>
+              <td>{product.price}</td>
+              <td>{product.price * product?.quantity}</td>
               <td>
                 <button
                   onClick={() =>
-                    handleRemoveFromCart(String(product.product._id))
+                    handleRemoveFromCart(String(product.variantId))
                   }
                   className="btn btn-danger"
                 >

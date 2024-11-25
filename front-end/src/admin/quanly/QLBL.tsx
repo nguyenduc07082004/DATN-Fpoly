@@ -1,222 +1,135 @@
-import axios from "axios";
-import { useContext, useState } from "react";
-import { CategoryContext } from "../../api/contexts/CategoryContext";
-
+import { useEffect, useState } from "react";
+import { Modal, Box, Typography, TextField, Button } from "@mui/material";
+import ins from "../../api";
+import { baseURL } from "../../api";
 const QLBL = () => {
-  const storage1 = [
-    { _id: "1", options: "128GB" },
-    { _id: "2", options: "256GB" },
-    { _id: "3", options: "512GB" },
-    { _id: "4", options: "1TB" },
-  ];
-  const color1 = [
-    { _id: "1", options: "Đen" },
-    { _id: "2", options: "Trắng" },
-    { _id: "3", options: "Hồng" },
-    { _id: "4", options: "Xanh" },
-  ];
-  const [title, setTitle] = useState("");
-  const [price, setPrice] = useState("");
-  const [storage, setStorage] = useState("");
-  const [color, setColor] = useState("");
-  const [categories, setCategories] = useState("Điện thoại");
-  const [quantity, setQuantity] = useState("");
-  const [description, setDescription] = useState("");
-  const { dataDM } = useContext(CategoryContext);
-  const [data, setData] = useState({
-    title: "",
-    price: "",
-    storage: "128GB",
-    categories: "Điện thoại",
-    quantity: "",
-    colors: "",
-    description: "",
-  });
-  const [image, setImage] = useState<File | null>(null);
-  const [selectedCategory, setSelectedCategory] = useState("");
+  const [comments, setComments] = useState<any[]>([]);  
+  const [isModalOpen, setIsModalOpen] = useState(false);  
+  const [selectedComment, setSelectedComment] = useState<any>(null); 
+  const [reply, setReply] = useState("");  
+  const userId = JSON.parse(localStorage.getItem("user") ?? "{}")?._id ?? "";
+  useEffect(() => {
+    const fetchComments = async () => {
+      try {
 
-  const handleCategoryChange = (event: any) => {
-    setSelectedCategory(event.target.options[event.target.selectedIndex].text);
-
-    console.log(event.target.options[event.target.selectedIndex].text);
-  };
-
-  const Suckmit = async (e: any) => {
-    e.preventDefault();
-    const formData = new FormData();
-    formData.append("title", title);
-    if (image) {
-      formData.append("image", image);
-    }
-    formData.append("categories", categories);
-    formData.append("storage", storage);
-    formData.append("price", price);
-    formData.append("quantity", quantity);
-    formData.append("color", color);
-    formData.append("description", description);
-    console.log(title, image, categories);
-
-    // console.log();
-    const response = await axios.post(
-      `http://localhost:8000/products/add`,
-      formData,
-      {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
+        const response = await ins.get(`${baseURL}/comments`);
+        setComments(response.data);
+      } catch (error) {
+        console.error("Lỗi khi lấy bình luận:", error);
       }
-    );
-    console.log(response);
+    };
+    
+
+    fetchComments();
+  }, []);
+
+  const openModal = (comment: any) => {
+    setSelectedComment(comment);
+    setIsModalOpen(true);
   };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+    setReply("");  
+  };
+
+  const handleReplySubmit = async (e: any) => {
+    e.preventDefault();
+    try {
+    const response = await ins.post(`${baseURL}/replies/${selectedComment._id}`, { reply , userId: userId });
+      setComments(comments.map((comment) =>
+        comment._id === selectedComment._id ? { ...comment, reply: response.data.reply } : comment
+      ));
+      closeModal();
+      alert("Trả lời thành công!");
+    } catch (error) {
+      console.error("Lỗi khi trả lời bình luận:", error);
+      alert("Có lỗi xảy ra, vui lòng thử lại.");
+    }
+  };
+
   return (
     <div>
-      <p className="m-3">
-        <h2>Add</h2>
-      </p>
-      <form onSubmit={Suckmit}>
-        <div className="m-5 d-flex">
-          <div className="form-group">
-            <label htmlFor="title">Tên sản phẩm</label>
-            <input
-              className="form-control"
-              style={{ width: "500px", height: "50px" }}
-              type="text"
-              placeholder="Tên sản phẩm"
-              onChange={(e) => setTitle(e.target.value)}
+      <h2>Bình luận của khách hàng</h2>
+      <table className="table">
+  <thead>
+    <tr>
+      <th>Tên sản phẩm</th>
+      <th>Bình luận</th>
+      <th>Ngày bình luận</th>
+      <th>Người bình luận</th>
+      <th>Trả lời</th>
+    </tr>
+  </thead>
+  <tbody>
+    {comments.length === 0 ? (
+      <tr>
+        <td colSpan={5}>Chưa có bình luận nào</td>
+      </tr>
+    ) : (
+      comments.map((comment) => (
+        <tr key={comment._id}>
+          <td>{comment.productId?._id}</td> 
+          <td>{comment.comment}</td>
+          <td>{new Date(comment.createdAt).toLocaleString()}</td>
+          <td>{comment.userId?._id}</td>
+          <td>
+            <Button variant="outlined" onClick={() => openModal(comment)}>
+              Trả lời
+            </Button>
+          </td>
+        </tr>
+      ))
+    )}
+  </tbody>
+</table>
+
+      <Modal
+        open={isModalOpen}
+        onClose={closeModal}
+        aria-labelledby="modal-title"
+        aria-describedby="modal-description"
+      >
+        <Box
+          sx={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            backgroundColor: "white",
+            padding: 3,
+            borderRadius: 2,
+            boxShadow: 24,
+            width: 400,
+          }}
+        >
+          <Typography id="modal-title" variant="h6" component="h2">
+            Trả lời bình luận cho sản phẩm: {selectedComment?.product_name}
+          </Typography>
+          <Typography id="modal-description" sx={{ mt: 2 }}>
+            <strong>Bình luận:</strong> {selectedComment?.comment}
+          </Typography>
+
+          <form onSubmit={handleReplySubmit} style={{ marginTop: 16 }}>
+            <TextField
+              fullWidth
+              id="reply"
+              label="Trả lời"
+              multiline
+              rows={4}
+              value={reply}
+              onChange={(e) => setReply(e.target.value)}
               required
+              sx={{ marginBottom: 2 }}
             />
-          </div>
-          <div className="form-group category">
-            <label htmlFor="categories">Danh mục</label>
-            <select
-              className="form-control"
-              style={{ width: "200px", height: "50px" }}
-              onChange={(e) => {
-                setCategories(e.target.value);
-                handleCategoryChange(e);
-              }}
-            >
-              <option value="0">-----</option>
-              {dataDM.category.map((i) => (
-                <option key={i._id} value={i._id}>
-                  {i.name}
-                </option>
-              ))}
-            </select>
-          </div>
-          <div className="form-group category">
-            <label htmlFor="storage">Dung lượng</label>
-            <select
-              className="form-control"
-              style={{ width: "200px", height: "50px" }}
-              onChange={(e) => setStorage(e.target.value)}
-              name="storage"
-            >
-              {selectedCategory === "Phụ kiện" &&
-                storage1.map((i) => (
-                  <option disabled value={i.options}>
-                    {i.options}
-                  </option>
-                ))}
-              {selectedCategory === "Điện thoại" &&
-                storage1.map((i) => (
-                  <option value={i.options}>{i.options}</option>
-                ))}
-            </select>
-          </div>
-        </div>
-
-        <div className="m-5 d-flex">
-          <div className="form-group price">
-            <label htmlFor="price">Giá sản phẩm</label>
-            <input
-              className="form-control"
-              style={{ width: "200px", height: "50px" }}
-              type="number"
-              placeholder="Giá sản phẩm"
-              onChange={(e) => setPrice(e.target.value)}
-              name="price"
-              required
-            />
-          </div>
-          <div className="form-group quantity">
-            <label htmlFor="price">Số lượng</label>
-            <input
-              className="form-control"
-              type="number"
-              placeholder="Số lượng sản phẩm"
-              style={{ width: "200px", height: "50px" }}
-              onChange={(e) => setQuantity(e.target.value)}
-              name="quantity"
-              required
-            />
-          </div>
-
-          <div className="form-group category">
-            <label htmlFor="image">Ảnh sản phẩm</label>
-            <input
-              className="form-control"
-              style={{ width: "200px", height: "50px" }}
-              type="file"
-              name="image"
-              accept="image/*"
-              onChange={(e) => {
-                if (e.target.files) {
-                  setImage(e.target.files[0]);
-                }
-              }}
-            />
-          </div>
-
-          <div className="form-group category">
-            <label htmlFor="specialFeature">Màu</label>
-            <select
-              className="form-control"
-              style={{ width: "200px", height: "50px" }}
-              onChange={(e) => setColor(e.target.value)}
-              name="color"
-            >
-              {selectedCategory === "Phụ kiện" &&
-                color1.map((i) => (
-                  <option disabled value={i.options}>
-                    {i.options}
-                  </option>
-                ))}
-              {selectedCategory === "Điện thoại" &&
-                color1.map((i) => (
-                  <option value={i.options}>{i.options}</option>
-                ))}
-            </select>
-          </div>
-        </div>
-
-        <div className="m-5 d-flex">
-          <div className="form-group desc">
-            <label htmlFor="description">Mô tả sản phẩm</label>
-            <textarea
-              className="form-control"
-              cols={100}
-              rows={3}
-              style={{ width: "500px" }}
-              placeholder="Mô tả sản phẩm"
-              onChange={(e) => setDescription(e.target.value)}
-              name="description"
-            />
-          </div>
-          <button
-            className="btn btn1"
-            style={{
-              width: "500px",
-              height: "50px",
-              backgroundColor: "#FF5151",
-              color: "white",
-            }}
-            type="submit"
-          >
-            ok
-          </button>
-        </div>
-      </form>
+            <div style={{ textAlign: "right" }}>
+              <Button type="submit" variant="contained" color="primary">
+                Gửi trả lời
+              </Button>
+            </div>
+          </form>
+        </Box>
+      </Modal>
     </div>
   );
 };

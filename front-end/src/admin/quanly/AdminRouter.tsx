@@ -16,6 +16,7 @@ import { AuthContext, AuthContextType } from "../../api/contexts/AuthContext";
 import Details from "./Details";
 import AddForm from "../form/AddForm";
 import EditForm from "../form/EditForm";
+import VariantsForm from "../form/VariantsForm";
 
 function Dashboard() {
   const { user } = useContext(AuthContext) as AuthContextType;
@@ -31,13 +32,14 @@ function Dashboard() {
 
       <div
         className="bg-light mx-3 content rounded-3"
-        style={{ height: "600px", width: "1000rem" }}
+        style={{ maxHeight: "900px", width: "1000rem" }}
       >
         <Routes>
           {/* QLSP */}
           <Route path="/" element={<TrangChu />} />
           <Route path="/qlsp" element={<QLSP />} />
           <Route path="qlsp/add" element={<AddForm />} />
+          <Route path="/qlsp/variants" element={<VariantsForm />} />
           <Route path="/qlsp/edit/:id" element={<EditForm />} />
           <Route path="/qltk" element={<QLTK />} />
           <Route path="/qlbl" element={<QLBL />} />

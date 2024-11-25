@@ -1,26 +1,64 @@
 import "../.././App.scss";
-import { useContext } from "react";
-import { Link, useParams } from "react-router-dom";
+import { useContext, useEffect, useState } from "react";
 import { UserContext } from "../../api/contexts/UserContext";
-
+import ins from "../../api";
+import { baseURL } from "../../api";
 const QLTK = () => {
   const {
     handleNextPage,
     handlePrevPage,
     handleSearch,
-    currentProducts,
     currentPage,
     totalPages,
-    indexOfFirstProduct,
     searchQuery,
   } = useContext(UserContext);
+
+  const [users, setUsers] = useState<User[]>([]); 
+
+  const getUser = async () => {
+    try {
+      const response = await ins.get(`${baseURL}/users`);
+      setUsers(response.data); 
+    } catch (error) {
+      console.error("Error fetching users:", error);
+    }
+  };
+
+  const handleToggleActive = async (userId: string, newStatus: boolean) => {
+    try {
+      const response = await ins.post(`${baseURL}/users/block`, {
+        userId,
+        is_blocked: newStatus,
+      });
+  
+      if (response.status === 200) {
+        setUsers((prevUsers) =>
+          prevUsers.map((user) =>
+            user._id === userId ? { ...user, is_blocked: newStatus } : user
+          )
+        );
+        console.log(response.data.message || "Status updated successfully!");
+      } else {
+        console.warn("Unexpected response status:", response.status);
+      }
+    } catch (error: any) {
+      console.error(
+        "Failed to update status:",
+        error.response?.data?.message || error.message
+      );
+    }
+  };
+  
+  useEffect(() => {
+    getUser();
+  }, []);
 
   return (
     <div>
       <p className="m-3">
         <b className="h2">Quản lý tài khoản</b>
       </p>
-      <div className="d-flex py-4 mx-5 ">
+      <div className="d-flex py-4 mx-5">
         <div className="search">
           Search
           <input
@@ -38,25 +76,33 @@ const QLTK = () => {
           <tr className="d-flex">
             <th className="col-1">STT</th>
             <th className="col-2">Tên tài khoản</th>
-            <th className="col-3">Email</th>
+            <th className="col-2">Email</th>
+            <th className="col-1">Trạng thái</th>
             <th className="col-1">SĐT</th>
             <th className="col-3">Địa chỉ</th>
             <th className="col-2">Chức năng</th>
           </tr>
         </thead>
         <tbody className="text-center">
-          {currentProducts.map((i, index) => (
-            <tr className="d-flex" key={i.id}>
-              <td className="col-1">{indexOfFirstProduct + index + 1}</td>
-              <td className="col-2">{i.fullName}</td>
-              <td className="col-3">{i.email}</td>
-              <td className="col-1">{i.phone}</td>
-              <td className="col-3">{i.address}</td>
-              <td className="col-2">
-                <button className="action-del rounded">Disable</button>
-              </td>
-            </tr>
-          ))}
+          {users.length > 0 &&
+            users.map((u, index) => (
+              <tr className="d-flex" key={u._id}>
+                <td className="col-1">{index + 1}</td>
+                <td className="col-2">{u.first_name} {u.last_name}</td>
+                <td className="col-2">{u.email}</td>
+                <td className="col-1">{u.is_active ? "Online" : "Offline"}</td>
+                <td className="col-1">{u.phone}</td>
+                <td className="col-3">{u.address}</td>
+                <td className="col-2">
+                  <button
+                    className={`rounded ${u.is_blocked ? "action-del" : "action-success"}`}
+                    onClick={() => handleToggleActive(u._id, !u.is_blocked)}
+                  >
+                    {u.is_blocked ? "Đang khoá" : "Đang mở"}
+                  </button>
+                </td>
+              </tr>
+            ))}
         </tbody>
       </table>
 

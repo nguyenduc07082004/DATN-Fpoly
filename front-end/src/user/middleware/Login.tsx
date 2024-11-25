@@ -1,8 +1,5 @@
-// src/components/Login.tsx
-
 import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import axios from "axios";
 import {
   Container,
   Typography,
@@ -13,7 +10,7 @@ import {
   InputAdornment,
   IconButton,
 } from "@mui/material";
-import { Token, Visibility, VisibilityOff } from "@mui/icons-material";
+import { Visibility, VisibilityOff } from "@mui/icons-material";
 import ins from "../../api";
 import { useAuth } from "../../api/contexts/AuthContext";
 import "../css/Style.css";
@@ -39,19 +36,19 @@ const Login: React.FC = () => {
     }
 
     try {
+      const { data } = await ins.post("/login", { email, password });
+
+      if (!data.success) {
+        setError(data.message); 
+        setLoading(false);
+        return;
+      }
+
+      contextLogin(data.token, data.user);
+      navigate(data.user.role === "admin" ? "/admin" : "/");
       
-        const { data } = await ins.post("/login", { email, password });
-        if (!data.success) {
-          setError(data.message);
-          setLoading(false);
-          return;
-        }
-        contextLogin(data.token, data.user);
-        navigate(data.user.role === "admin" ? "/admin" : "/");
-      
-     
     } catch (error) {
-      setError("Email hoặc mật khẩu không chính xác. Vui lòng thử lại.");
+      setError("Có lỗi xảy ra, vui lòng thử lại.");  
       setLoading(false);
     }
   };

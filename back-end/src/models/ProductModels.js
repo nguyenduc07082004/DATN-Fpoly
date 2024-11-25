@@ -1,7 +1,7 @@
 import { Schema, model } from "mongoose";
 
 const variantSchema = new Schema({
-  sku: { type: String, required: true, unique: true },
+  sku: { type: String, unique: true, sparse: true }, 
   color: {
     type: String,
     enum: ["Đen", "Trắng", "Hồng", "Xanh"],
@@ -21,6 +21,8 @@ const variantSchema = new Schema({
     required: true,
     min:[0, "Quantity cannot be negative"],
   },
+    variantImages: [{ type: Schema.Types.ObjectId, ref: "VariantImage" }]
+
 });
 
 const productSchema = new Schema({
@@ -28,7 +30,7 @@ const productSchema = new Schema({
   image: { type: String },
   categories: { type: Schema.Types.ObjectId, ref: "Category", required: true },
   description: { type: String },
-  variants: [variantSchema],
+  variants: { type: [variantSchema], default: [] }, 
   created_at: { type: Date, default: Date.now },
   updated_at: { type: Date, default: Date.now },
 });
