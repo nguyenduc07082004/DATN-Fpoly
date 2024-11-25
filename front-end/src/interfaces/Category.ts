@@ -1,5 +1,7 @@
 export interface Category {
-  name: any;
-  note: string;
-  _id: any;
+  _id: string; 
+  parent_id: string | null;
+  name: string; 
+  slug: string;
+  status: "active" | "inactive"; 
 }

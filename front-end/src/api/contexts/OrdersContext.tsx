@@ -13,6 +13,7 @@ interface OrderContextType {
   dispatch: React.Dispatch<any>; // Thêm dispatch vào OrderContextType
   fetchOrder: () => void;
   updateOrderStatus: (orderId: string, status: string) => void;
+  updatePaymentStatus: (orderId: string, payment_status: string) => void;
   addOrder: (order: CartItem) => void;
 }
 
@@ -21,25 +22,29 @@ const OrderContext = createContext<OrderContextType | undefined>(undefined);
 const OrderProvider = ({ children }: { children: ReactNode }) => {
   const [state, dispatch] = useReducer(orderReducer, initialState);
 
-  // Hàm fetch danh sách đơn hàng từ API
   const fetchOrder = async () => {
     const res = await ins.get("/orders");
     dispatch({ type: "GET_ORDER", payload: { products: res.data } });
   };
 
-  // Hàm cập nhật trạng thái của một đơn hàng
   const updateOrderStatus = async (orderId: string, status: string) => {
     try {
-      // Gửi yêu cầu cập nhật trạng thái lên API
       await ins.patch(`/orders/${orderId}`, { status });
-      // Cập nhật trạng thái đơn hàng trong reducer
       dispatch({ type: "UPDATE_ORDER_STATUS", payload: { orderId, status } });
     } catch (error) {
       console.error("Cập nhật trạng thái đơn hàng thất bại:", error);
     }
   };
 
-  // Hàm thêm đơn hàng mới vào state
+  const updatePaymentStatus = async (orderId: string, payment_status: string) => {
+    try {
+      await ins.patch(`/orders/payment/${orderId}`, { payment_status });
+      dispatch({ type: "UPDATE_PAYMENT_STATUS", payload: { orderId, payment_status } });
+    } catch (error) {
+      console.error("Cập nhật trạng thái đơn hàng thất bại:", error);
+    }
+  };
+
   const addOrder = (order: CartItem) => {
     dispatch({ type: "ADD_ORDER", payload: order });
   };
@@ -56,6 +61,7 @@ const OrderProvider = ({ children }: { children: ReactNode }) => {
         fetchOrder,
         updateOrderStatus,
         addOrder,
+        updatePaymentStatus
       }}
     >
       {children}

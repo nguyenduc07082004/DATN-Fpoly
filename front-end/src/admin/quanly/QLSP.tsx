@@ -17,6 +17,7 @@ const QLSP = () => {
     searchQuery,
   } = useContext(ProdContext);
 
+  console.log(currentProducts);
   return (
     <div>
       <p className="m-3">
@@ -50,11 +51,11 @@ const QLSP = () => {
           <tr className="d-flex">
             <th className="col-1">STT</th>
             <th className="col-2">Tên sản phẩm</th>
-            <th className="col-1">Giá(VND)</th>
             <th className="col-1">Ảnh</th>
             <th className="col-1">Số lượng</th>
             <th className="col-2">Loại</th>
-            <th className="col-4">Chức năng</th>
+            <th className="col-3">Mô tả</th>
+            <th className="col-2">Chức năng</th>
           </tr>
         </thead>
         <tbody className="text-center">
@@ -62,7 +63,6 @@ const QLSP = () => {
             <tr className="d-flex" key={i._id}>
               <td className="col-1">{indexOfFirstProduct + index + 1}</td>
               <td className="col-2">{i.title}</td>
-              <td className="col-1">{i.price}</td>
               <td className="col-1">
                 <img
                   src={`${baseURL}/images/` + i.image}
@@ -70,7 +70,9 @@ const QLSP = () => {
                   width="50%"
                 />
               </td>
-              <td className="col-1">{i.quantity}</td>
+              <td className="col-1">
+              {i.variants.reduce((total, variant) => total + (variant.quantity || 0), 0)}
+              </td>
               <td className="col-2">
                 {i.categories
                   ? Array.isArray(i.categories)
@@ -78,8 +80,8 @@ const QLSP = () => {
                     : i.categories.name
                   : "Không có danh mục"}
               </td>
-
-              <td className="col-4 d-flex">
+              <td className="col-3">{i.description}</td>
+              <td className="col-2 d-flex">
                 <button className="action-edit rounded">
                   <Link
                     className="text-decoration-none text-white"

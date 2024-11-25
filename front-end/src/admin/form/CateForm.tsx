@@ -1,4 +1,4 @@
-import { useContext, useEffect } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useParams } from "react-router-dom";
 import ins from "../../api";
@@ -6,31 +6,48 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { CategoryContext } from "../../api/contexts/CategoryContext";
 import { Category } from "../../interfaces/Category";
+import { generateSlug } from "../../utils/slugUtils"; 
 
 const cateSchema = z.object({
   name: z.string().min(6, { message: "Tên danh mục phải lớn hơn 6 ký tự" }),
   note: z.string().optional(),
+  slug: z.string().min(1, { message: "Slug không thể trống" }),
 });
 
 const CateForm = () => {
   const { onSubmitCategory } = useContext(CategoryContext);
   const { id } = useParams();
+  const [slug, setSlug] = useState<string>("");
   const {
     register,
     handleSubmit,
     formState: { errors },
     reset,
+    setValue,
   } = useForm<Category>({
     resolver: zodResolver(cateSchema),
   });
-  if (id) {
-    useEffect(() => {
+
+  // Lấy dữ liệu từ API khi có id
+  useEffect(() => {
+    if (id) {
       (async () => {
         const data = await ins.get(`/categories/${id}`);
         reset(data.data);
+        setSlug(data.data.slug); // Cập nhật slug nếu có
       })();
-    }, [id]);
-  }
+    }
+  }, [id, reset]);
+
+  // Khi tên thay đổi, tự động tạo slug
+  const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newName = e.target.value;
+    setValue("name", newName);
+    const newSlug = generateSlug(newName); // Sử dụng hàm generateSlug
+    setSlug(newSlug);
+    setValue("slug", newSlug); // Cập nhật slug trong form
+  };
+
   return (
     <div>
       <p className="m-3">
@@ -38,7 +55,7 @@ const CateForm = () => {
       </p>
       <form
         onSubmit={handleSubmit((data) =>
-          onSubmitCategory({ ...data, _id: id })
+          onSubmitCategory({ ...data, _id: id as string, status: "active" })
         )}
       >
         <div className=" m-5">
@@ -50,6 +67,7 @@ const CateForm = () => {
               type="text"
               placeholder="Tên danh mục"
               {...register("name", { required: true })}
+              onChange={handleNameChange}
             />
             {errors.name && <span>{errors.name.message?.toString()}</span>}
           </div>
@@ -57,16 +75,17 @@ const CateForm = () => {
 
         <div className=" m-5">
           <div className="form-group">
-            <label htmlFor="note">Ghi chú</label>
-            <textarea
+            <label htmlFor="slug">Slug</label>
+            <input
               className="form-control"
-              cols={100}
-              rows={3}
-              style={{ width: "1140px" }}
-              placeholder="Ghi chú"
-              {...register("note", { required: true })}
+              style={{ width: "1140px", height: "50px" }}
+              type="text"
+              placeholder="Slug"
+              {...register("slug", { required: true })}
+              value={slug}
+              readOnly
             />
-            {errors.note && <span>{errors.note.message}</span>}
+            {errors.slug && <span>{errors.slug.message}</span>}
           </div>
         </div>
 

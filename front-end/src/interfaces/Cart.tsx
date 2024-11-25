@@ -3,6 +3,7 @@ export interface Cart {
   userId: string; // ID của người dùng
   items: CartItem[]; // Danh sách các sản phẩm trong giỏ hàng
   totalPrice: number; // Tổng giá của giỏ hàng
+  totalQuantity: number; // Tổng số lượng trong giỏ hàng
   createdAt: Date; // Ngày tạo giỏ hàng
   updatedAt: Date; // Ngày cập nhật giỏ hàng
 }
@@ -15,4 +16,5 @@ export interface CartItem {
   quantity: number; // Số lượng sản phẩm trong giỏ
   storage: string; // Thông tin lưu trữ
   color: string; // Màu sắc sản phẩm
+  variantId: string;
 }

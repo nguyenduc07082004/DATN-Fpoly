@@ -1,7 +1,7 @@
 import { Products } from "../../interfaces/Products";
-import { User } from "../../interfaces/User";
-
 export type CartItem = {
+  storage: string;
+  color: string;
   product : Products;
   quantity: number;
   price: number;
@@ -14,7 +14,7 @@ type State = {
 };
 
 type CartAction =
-  | { type: "ADD_TO_CART"; payload: {price: number; product: Products; quantity: number }}
+  | { type: "ADD_TO_CART"; payload: {price: number; product: Products; quantity: number , variantId: string, selectedColor: string, selectedStorage: string} }
   | { type: "REMOVE_FROM_CART"; payload: { productId: string } }
   | { type: "SET_CART"; payload: { products: CartItem[]; totalPrice: number } }
   | { type: "CHECKOUT"; payload: any }; // Thêm loại hành động cho checkout

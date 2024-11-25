@@ -5,6 +5,7 @@ import { Link } from "react-router-dom";
 import { CategoryContext } from "../../api/contexts/CategoryContext";
 
 const QLDM = () => {
+  
   const {
     onDel,
     handleNextPage,
@@ -17,6 +18,7 @@ const QLDM = () => {
     searchQuery,
   } = useContext(CategoryContext);
 
+  
   return (
     <div>
       <p className="m-3">
@@ -50,7 +52,8 @@ const QLDM = () => {
           <tr className="d-flex">
             <th className="col-1">STT</th>
             <th className="col-3">Tên danh mục</th>
-            <th className="col-6">Ghi chú</th>
+            <th className="col-3">Slug</th>
+            <th className="col-3">Trạng thái</th>
             <th className="col-2">Chức năng</th>
           </tr>
         </thead>
@@ -59,8 +62,15 @@ const QLDM = () => {
             <tr className="d-flex" key={i._id}>
               <td className="col-1">{indexOfFirstProduct + index + 1}</td>
               <td className="col-3">{i.name}</td>
-              <td className="col-6 text-truncate" style={{ maxWidth: "800px" }}>
-                {i.note}
+              <td className="col-3 text-truncate" style={{ maxWidth: "800px" }}>
+                {i.slug}
+              </td>
+              <td className="col-3 text-truncate" style={{ maxWidth: "800px" }}>
+                {i.status === "active" ? (
+                <span style={{ color: "green" }}>✔️</span>
+                   ) : (
+                 <span style={{ color: "red" }}>❌</span>
+                )}
               </td>
               <td className="col-2">
                 <button className="action-edit rounded">

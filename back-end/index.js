@@ -7,8 +7,6 @@ import authRouter from "./src/routes/auth.js";
 import logger from "morgan";
 import bodyParser from "body-parser";
 import cookieParser from "cookie-parser";
-import path from "path";
-import { fileURLToPath } from "url";
 import { languageMiddleware } from "./src/middleware/languageMiddleware.js";
 
 dotenv.config();
@@ -28,8 +26,8 @@ app.use(
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(logger("dev"));
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json({ limit: '50mb' }));
+app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
 app.use(cookieParser());
 
 // Kết nối MongoDB
