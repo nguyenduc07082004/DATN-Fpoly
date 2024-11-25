@@ -1,15 +1,15 @@
 import { Schema, model } from "mongoose";
 
 const userSchema = new Schema({
-  username: { type: String, require: true },
-  email: { type: String, require: true },
-  password: { type: String, require: true },
-  fullName: { type: String, require: true },
-  address: { type: String, require: true },
-  phone: { type: Number, require: true },
-  role: { type: String, enum: ["admin", "user"], default: "user" },
+  first_name: { type: String, required: true },
+  last_name: { type: String, required: true },
+  email: { type: String, required: true, unique: true },
+  password: { type: String, required: true },
+  phone: { type: String },
+  address: { type: String },
+  role: { type: String, enum: ["user", "admin"], required: true, default: "user" },
+  created_at: { type: Date, default: Date.now },
+  updated_at: { type: Date, default: Date.now },
 });
 
 export default model("User", userSchema);
-
-// npm install express mongoose bcryptjs jsonwebtoken

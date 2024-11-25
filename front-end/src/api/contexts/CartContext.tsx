@@ -3,24 +3,22 @@ import { Products } from "../../interfaces/Products";
 import { User } from "../../interfaces/User";
 import cartReducer from "../reducers/CartReducer";
 import ins from "../index";
-import { colors } from "@mui/material";
 
 export type CartContextType = {
   state: {
-    userId: { user: User };
-    products: { product: Products; quantity: number }[];
+    userId: { user: User } | null;
+    products: { product: Products; quantity: number, price: number }[];
     totalPrice: number;
-    order: any; // Thêm phần order vào state
+    order: any;
   };
   dispatch: React.Dispatch<any>;
-  addToCart: (product: Products, quantity: number) => void;
+  addToCart: (product: Products, quantity: number, price: number) => void;
   checkout: () => void;
   removeFromCart: (productId: string) => void;
   fetchCart: () => void;
 };
-
 const initialState = {
-  userId: { user: null },
+  userId: null,
   products: [],
   totalPrice: 0,
   order: null, // Khởi tạo order là null
@@ -39,27 +37,38 @@ const CartProvider = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     fetchCart();
   }, []);
-  const addToCart = async (product: Products, quantity: number) => {
-    const res = await ins.post("/carts/add", {
-      colors,
-      productId: product._id,
-      quantity,
-    });
-    dispatch({
-      type: "ADD_TO_CART",
-      payload: { product: res.data.product, quantity },
-    });
-    fetchCart();
+  const addToCart = async (product: Products, quantity: number , price: number) => {
+    try {
+      const res = await ins.post("/carts/add", {
+        productId: product._id,   
+        quantity,                
+        price: price 
+      });
+  
+      dispatch({
+        type: "ADD_TO_CART",
+        payload: { 
+          product: res.data.product, 
+          quantity,                 
+          price: price   
+        },
+      });
+  
+      fetchCart(); 
+    } catch (error) {
+      console.error("Error adding to cart:", error);
+    }
   };
+
 
   const checkout = async () => {
     const res = await ins.post("/orders/checkout");
-    dispatch({ type: "CHECKOUT", payload: res.data }); // Lưu thông tin đơn hàng vào state
+    dispatch({ type: "CHECKOUT", payload: res.data });
   };
 
   const removeFromCart = async (productId: string) => {
     try {
-      const res = await ins.delete(`/carts/remove/${productId}`, {
+     await ins.delete(`/carts/remove/${productId}`, {
         data: { productId },
         headers: {
           Authorization: `Bearer ${token}`,

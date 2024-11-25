@@ -41,6 +41,11 @@ const Login: React.FC = () => {
     try {
       
         const { data } = await ins.post("/login", { email, password });
+        if (!data.success) {
+          setError(data.message);
+          setLoading(false);
+          return;
+        }
         contextLogin(data.token, data.user);
         navigate(data.user.role === "admin" ? "/admin" : "/");
       

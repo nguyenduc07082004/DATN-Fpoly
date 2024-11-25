@@ -1,5 +1,3 @@
-// src/components/Register.tsx
-
 import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import axios from "axios";
@@ -17,11 +15,13 @@ import { Visibility, VisibilityOff } from "@mui/icons-material";
 import "../css/Style.css";
 
 const Register: React.FC = () => {
-  const [fullName, setFullName] = useState("");
-  const [address, setAddress] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
+  const [address, setAddress] = useState("");
   const [password, setPassword] = useState("");
+  const [role, setRole] = useState("user"); 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [showPassword, setShowPassword] = useState(false);
@@ -32,7 +32,7 @@ const Register: React.FC = () => {
     setLoading(true);
     setError(null);
 
-    if (!fullName || !email || !phone || !password) {
+    if (!firstName || !lastName || !email || !phone || !password) {
       setError("Vui lòng điền đầy đủ thông tin.");
       setLoading(false);
       return;
@@ -40,11 +40,13 @@ const Register: React.FC = () => {
 
     try {
       const response = await axios.post("http://localhost:8000/register", {
-        fullName,
+        first_name: firstName,
+        last_name: lastName,
         email,
         phone,
-        password,
         address,
+        password,
+        role, 
       });
 
       if (response.status === 201) {
@@ -56,6 +58,7 @@ const Register: React.FC = () => {
     }
   };
 
+  console.log(firstName, lastName, email, phone, address, password, role); 
   return (
     <Container maxWidth="sm" sx={{ mt: 8 }}>
       <Box className="register-container">
@@ -67,13 +70,23 @@ const Register: React.FC = () => {
 
         <form onSubmit={handleRegister}>
           <TextField
-            label="Họ và tên"
+            label="Họ"
             type="text"
             fullWidth
             variant="outlined"
             sx={{ mb: 2 }}
-            value={fullName}
-            onChange={(e) => setFullName(e.target.value)}
+            value={firstName}
+            onChange={(e) => setFirstName(e.target.value)}
+            required
+          />
+          <TextField
+            label="Tên"
+            type="text"
+            fullWidth
+            variant="outlined"
+            sx={{ mb: 2 }}
+            value={lastName}
+            onChange={(e) => setLastName(e.target.value)}
             required
           />
           <TextField
