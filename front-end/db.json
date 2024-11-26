@@ -1,0 +1,112 @@
+{
+  "products": [
+    {
+      "id": "PR1",
+      "title": "iphone 16",
+      "price": 200,
+      "imageURL": "https://cdn2.cellphones.com.vn/insecure/rs:fill:358:358/q:90/plain/https://cellphones.com.vn/media/catalog/product/i/p/iphone-15-pro-max_3.png",
+      "categories": "Điện thoại",
+      "quantity": 11,
+      "description": "Hệ điều hàng:\niOS 18\nChip xử lý (CPU):\nApple A18 Pro 6 nhân\nTốc độ CPU:\nHãng không công bố\nChip đồ họa (GPU):\nApple GPU 6 nhân\nRAM:\n8 GB\nDung lượng lưu trữ:\n256 GB\nDung lượng còn lại (khả dụng) khoảng:\n241 GB"
+    },
+    {
+      "id": "pr2",
+      "title": "iPhone 15 ",
+      "price": 201,
+      "imageURL": "https://cdn2.cellphones.com.vn/insecure/rs:fill:358:358/q:90/plain/https://cellphones.com.vn/media/catalog/product/i/p/iphone-15-pro-max_3.png",
+      "categories": "Điện thoại",
+      "quantity": 13,
+      "description": "Hệ điều hành:\niOS 17\nChip xử lý (CPU):\nApple A17 Pro 6 nhân\nTốc độ CPU:\n3.78 GHz\nChip đồ họa (GPU):\nApple GPU 6 nhân\nRAM:\n8 GB\nDung lượng lưu trữ:\n256 GB\nDung lượng còn lại (khả dụng) khoảng:\n241 GB"
+    },
+    {
+      "id": "pr31",
+      "title": "Xiaomi Redmi Note 13",
+      "price": 300,
+      "imageURL": "https://cdn2.cellphones.com.vn/insecure/rs:fill:358:358/q:90/plain/https://cellphones.com.vn/media/catalog/product/i/p/iphone-15-pro-max_3.png",
+      "categories": "Điện thoại",
+      "quantity": 11,
+      "description": "Android 13\nChip xử lý (CPU):\nSnapdragon 685 8 nhân\nTốc độ CPU:\n2.8 GHz\nChip đồ họa (GPU):\nAdreno 610\nRAM:\n8 GB\nDung lượng lưu trữ:\n128 GB\nDung lượng còn lại (khả dụng) khoảng:\n104 GB\nThẻ nhớ:\nMicroSD, hỗ trợ tối đa 1 TB"
+    },
+    {
+      "title": "iphone 12",
+      "price": 2000,
+      "quantity": 13,
+      "imageURL": "https://cdn2.cellphones.com.vn/insecure/rs:fill:358:358/q:90/plain/https://cellphones.com.vn/media/catalog/product/i/p/iphone-15-pro-max_3.png",
+      "categories": "Điện thoại",
+      "description": "không có j để nói cả ",
+      "id": "43BuALv"
+    },
+    {
+      "title": "Xiaomi",
+      "price": 523,
+      "quantity": 25345,
+      "imageURL": "https://cdn.tgdd.vn/Products/Images/42/309831/xiaomi-redmi-note-13-vang-1-1-750x500.jpg",
+      "categories": "Laptop",
+      "description": "245334525234afdsssssssssssssssssssssssssssssssssssssssssssssssss",
+      "id": "cVkZboH"
+    },
+    {
+      "title": "realme C65s",
+      "price": 3000,
+      "quantity": 10,
+      "categories": "Điện thoại",
+      "description": "Android 14\nChip xử lý (CPU):\nUnisoc Tiger T612\nTốc độ CPU:\n1.8 GHz\nChip đồ họa (GPU):\nMali-G57\nRAM:\n6 GB\nDung lượng lưu trữ:\n128 GB\nDung lượng còn lại (khả dụng) khoảng:\n104 GB\nThẻ nhớ:\nMicroSD, hỗ trợ tối đa 2 TB",
+      "id": "vrphA7M"
+    }
+  ],
+  "categories": [
+    {
+      "id": "1",
+      "name": "Điện thoại"
+    },
+    {
+      "id": "2",
+      "name": "Máy tính bảng"
+    },
+    {
+      "id": "3",
+      "name": "Laptop"
+    },
+    {
+      "id": "4",
+      "name": "Phụ kiện máy tính"
+    },
+    {
+      "id": "5",
+      "name": "Phụ kiện laptop"
+    },
+    {
+      "id": "6",
+      "name": "Phụ kiện điện thoại"
+    },
+    {
+      "id": "7",
+      "name": "Phụ kiện máy tính bảng"
+    }
+  ],
+  "users": [
+    {
+      "email": "nguyenduc07082004@gmail.com",
+      "password": "$2a$10$.qytCPi5bnmbsQ61UlG1q.no8l0XZMlWWn9zWxUt.B6smvQlOwL.6",
+      "fullName": "duc",
+      "phone": "123456789",
+      "id": 1
+    },
+    {
+      "email": "sucvat3344@gmail.com",
+      "password": "$2a$10$sYDWQ8MPSeZo6jIHverap.la0Ii4/pgajpv/4/NMQEyABBZciNNq2",
+      "fullName": "thang",
+      "phone": "0975858169",
+      "address": "ha noi",
+      "id": 2
+    },
+    {
+      "email": "quangtvph39380@fpt.edu.vn",
+      "password": "$2a$10$DyLYL.KkBPKMumqi.rj7euSTQnJdM5kMGz20hmf8Y4Rgxvd/BfXPq",
+      "fullName": "tran vinh quang",
+      "phone": "0397598324",
+      "address": "yên thường",
+      "id": 3
+    }
+  ]
+}

@@ -1,0 +1,103 @@
+.nav-link:hover {
+  color: #fff;
+  background-color: #007bff;
+  border-color: #007bff;
+}
+.background {
+  background-color: #e1e0e0;
+}
+.content {
+  margin-top: 70px;
+}
+.search {
+  margin-left: 785px;
+}
+.tbl {
+  margin: auto;
+  width: 100%;
+}
+.action-edit {
+  background-color: #755cff;
+  width: 40%;
+  border: none;
+}
+.action-del {
+  margin-left: 2px;
+  background-color: #fe5757;
+  color: #fff;
+  width: 40%;
+  border: none;
+}
+.action-success {
+  margin-left: 2px;
+  background-color: #28a745;
+  color: #fff;
+  width: 40%;
+  border: none;
+}
+.action-details {
+  margin-left: 2px;
+  background-color: #ff9f43;
+  color: #fff;
+  width: 40%;
+  border: none;
+}
+.category,
+.btn1 {
+  margin-left: 100px;
+}
+.quantity {
+  margin-top: 15px;
+  margin-left: 100px;
+}
+.btn1 {
+  margin-top: 23px;
+}
+textarea {
+  resize: none;
+}
+.price {
+  margin-top: 15px;
+}
+h5 {
+  margin-top: 5px;
+}
+
+.add {
+  width: 70%;
+  margin-left: max(5vw, 25px);
+  margin-top: 50px;
+  color: #6d6d6d;
+  font-size: 16px;
+}
+.add form {
+  gap: 20px;
+}
+.add-img-upload img {
+  width: 120px;
+}
+.add-prodcut-name,
+.add-product-description {
+  width: max(40%, 280px);
+}
+.add-prodcut-name input,
+.add-product-description textarea {
+  padding: 10px;
+}
+.add-category-price {
+  display: flex;
+  gap: 30px;
+}
+.add-category-price select,
+.add-category-price input {
+  max-width: 120px;
+  padding: 10px;
+}
+.add-btn {
+  max-width: 120px;
+  border: none;
+  padding: 10px;
+  background-color: black;
+  color: white;
+  cursor: pointer;
+}
