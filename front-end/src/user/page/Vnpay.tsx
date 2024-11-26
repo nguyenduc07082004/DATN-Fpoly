@@ -102,7 +102,7 @@ const Vnpay = () => {
         <tbody>
           <tr>
             <th>Tên:</th>
-            <td>{JSON.parse(localStorage.getItem("user") || "{}").fullName}</td>
+            <td>{JSON.parse(localStorage.getItem("user") || "{}").first_name + " " + JSON.parse(localStorage.getItem("user") || "{}").last_name}</td>
           </tr>
           <tr>
             <th>Địa chỉ:</th>
@@ -129,8 +129,8 @@ const Vnpay = () => {
             <tr key={item.product._id}>
               <td>{item.product.title}</td>
               <td>{item.quantity}</td>
-              <td>{item.product.price}</td>
-              <td>{item.product.price * item.quantity}</td>
+              <td>{item.price}</td>
+              <td>{item.price * item.quantity}</td>
             </tr>
           ))}
         </tbody>

@@ -26,8 +26,6 @@ export const getProductById = async (req, res) => {
 // Thêm sản phẩm
 export const addProduct = async (req, res) => {
   const lang = req.lang;
-
-  console.log
   try {
     const { title, description, categories } = req.body;
     const image_filename = req.file ? req.file.filename : null;
@@ -57,12 +55,20 @@ export const updateProduct = async (req, res) => {
   try {
     const { title, description, categories, variants } = req.body;
 
-    const updatedProduct = await productService.updateProduct(req.params.id, {
+    let image = null;
+    if (req.file) {
+      image = req.file.filename; 
+    }
+
+    const updateData = {
       title,
       description,
       categories,
-      variants, // Cập nhật danh sách biến thể nếu có
-    });
+      variants,
+      image, 
+    };
+
+    const updatedProduct = await productService.updateProduct(req.params.id, updateData);
 
     if (!updatedProduct) {
       return res.status(404).json({
@@ -103,21 +109,44 @@ export const deleteProduct = async (req, res) => {
 
 export const createVariant = async (req, res) => {
   const lang = req.lang;
+
   try {
     const { productId, variantData } = req.body;
-    const createdVariant = await productService.createVariant(productId, variantData);
+
+    const images = req.files;  // Lấy ảnh từ req.files
+    // Kiểm tra productId và variantData
+    if (!productId || !variantData) {
+      return res.status(400).json({
+        message: getMessage(lang, "error", "MISSING_FIELDS"),
+      });
+    }
+
+    const createdVariant = await productService.createVariant(productId, variantData, images);
+
     if (!createdVariant) {
       return res.status(404).json({
         message: getMessage(lang, "error", "CREATE_VARIANT_FAIL"),
       });
     }
+
     res.status(201).json({
       message: getMessage(lang, "success", "CREATE_VARIANT_SUCCESS"),
       data: createdVariant,
-    });   
+    });
   } catch (error) {
     res.status(500).json({
       message: error.message || getMessage(lang, "error", "CREATE_VARIANT_FAIL"),
     });
   }
 };
+
+
+export const getProductsWithoutVariants = async (req, res) => {
+  try {
+    const products = await productService.getProductsWithPriceRange();
+    res.status(200).json(products);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+

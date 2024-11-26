@@ -6,7 +6,8 @@ import {
   getProductById,
   updateProduct,
   deleteProduct,
-  createVariant
+  createVariant,
+  getProductsWithoutVariants,
 } from "../controllers/ProductControllers.js";
 import multer from "multer";
 // Lấy danh sách sản phẩm (không cần xác thực)
@@ -24,6 +25,7 @@ const upload = multer({ storage: storage });
 
 ProductRouter.post("/add", upload.single("image"), addProduct);
 ProductRouter.get("/", getProducts);
+ProductRouter.get("/without-variants", getProductsWithoutVariants);
 
 ProductRouter.get(
   "/:id", //authMiddleware,
@@ -50,5 +52,8 @@ ProductRouter.delete(
   deleteProduct
 );
 
-ProductRouter.post("/create/variants", createVariant);
-export default ProductRouter;
+ProductRouter.post(
+  "/create/variants", 
+  upload.array("images", 10), 
+  createVariant
+);export default ProductRouter;

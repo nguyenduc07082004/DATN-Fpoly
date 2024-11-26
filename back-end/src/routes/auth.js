@@ -4,8 +4,9 @@ import CategoryRouter from "./CategoryRouter.js";
 import userRouter from "./userRouter.js";
 import { checkAuth } from "../middleware/checkAuth.js";
 import cartRouter from "./CartRouter.js";
-import OrderRouter from "./OrderRouter.js"; // Import OrderRouter
-import express from "express";
+import OrderRouter from "./OrderRouter.js"; 
+import CommentRouter from "./CommentRouter.js"
+import ReplyRouter from "./ReplyRouter.js"
 import router from "./Payment.js";
 
 const authRouter = Router();
@@ -16,5 +17,7 @@ authRouter.use("/", userRouter);
 authRouter.use("/carts", checkAuth, cartRouter);
 authRouter.use("/orders", checkAuth, OrderRouter);
 authRouter.use("/vnpay", checkAuth, router);
+authRouter.use("/comments" , CommentRouter)
+authRouter.use("/replies" , ReplyRouter)
 
 export default authRouter;

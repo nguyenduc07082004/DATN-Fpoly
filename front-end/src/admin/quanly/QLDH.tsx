@@ -1,15 +1,28 @@
-import React, { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import {
   OrderContext,
   OrderContextType,
 } from "../../api/contexts/OrdersContext";
-import OrderDetails from "../OrderDetails"; // Import OrderDetails
+import {
+  Modal,
+  Box,
+  Typography,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
+} from "@mui/material";
+import { baseURL } from "../../api";
 
 const QLDH = () => {
-  const { state, fetchOrder, updateOrderStatus } = useContext(
+  const { state, fetchOrder, updateOrderStatus , updatePaymentStatus } = useContext(
     OrderContext
   ) as OrderContextType;
-  const [expandedOrderId, setExpandedOrderId] = useState<string | null>(null);
+  const [selectedOrder, setSelectedOrder] = useState<any>(null);
+  const [isModalOpen, setModalOpen] = useState(false);
 
   useEffect(() => {
     fetchOrder();
@@ -24,8 +37,14 @@ const QLDH = () => {
     }
   };
 
-  const toggleExpand = (orderId: string) => {
-    setExpandedOrderId(expandedOrderId === orderId ? null : orderId);
+  const openModal = (order: any) => {
+    setSelectedOrder(order);
+    setModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setSelectedOrder(null);
+    setModalOpen(false);
   };
 
   if (!state || !Array.isArray(state.products)) {
@@ -33,6 +52,9 @@ const QLDH = () => {
   }
 
   const statusOptions = ["Pending", "In Delivery", "Delivered", "Cancelled"];
+  const handlePaymentStatusChange = async (orderId:string, newStatus:string) => {
+    await updatePaymentStatus(orderId, newStatus);
+  };
 
   return (
     <div className="order-management">
@@ -41,55 +63,167 @@ const QLDH = () => {
         <thead className="text-center">
           <tr>
             <th>#</th>
-            <th>Tên sản phẩm</th>
-            <th>Số lượng</th>
-            <th>Thành tiền</th>
+            <th>Mã đơn hàng</th>
+            <th>Người mua hàng</th>
+            <th>Địa chỉ giao hàng</th>
+            <th>Số điện thoại</th>
             <th>Trạng thái</th>
-            <th>Chi tiết</th>
+            <th>Thanh toán</th>
+            <th>Ngày đặt</th>
+            <th>Chức năng</th>
           </tr>
         </thead>
         <tbody className="text-center">
-          {state.products.map((order, orderIndex) => (
-            <React.Fragment key={order._id}>
-              <tr>
+          {state.products &&
+            state.products.map((order, orderIndex) => (
+              <tr key={order._id}>
                 <td>{orderIndex + 1}</td>
-                <td>
-                  {order?.products[0]?.product?.title || "Không có tiêu đề"}
-                  {order.products.length > 1 &&
-                    ` và ${order.products.length - 1} sản phẩm khác`}
-                </td>
-                <td>{order?.products[0]?.quantity || 0}</td>
-                <td>{order.totalPrice || 0}</td>
+                <td>{order._id}</td>
+                <td>{order.receiver_name}</td>
+                <td>{order.receiver_address}</td>
+                <td>{order.receiver_phone}</td>
                 <td>
                   <select
-                    value={order?.status}
+                    value={order.status}
                     onChange={(e) =>
                       handleStatusChange(order._id, e.target.value)
                     }
+                    disabled={
+                      order.status === "Delivered" ||
+                      order.status === "Cancelled"
+                    }
                   >
                     {statusOptions.map((status) => (
-                      <option key={status} value={status}>
+                      <option
+                        key={status}
+                        value={status}
+                        disabled={
+                          (order.status === "Pending" &&
+                            status !== "In Delivery" &&
+                            status !== "Cancelled") ||
+                          (order.status === "In Delivery" &&
+                            status === "Pending") ||
+                          order.status === "Delivered" ||
+                          order.status === "Cancelled"
+                        }
+                      >
                         {status}
                       </option>
                     ))}
                   </select>
                 </td>
                 <td>
+                  <select
+                    disabled = {order.status === "Cancelled"}
+                    value={order.payment_status}
+                    onChange={(e) =>
+                      handlePaymentStatusChange(order._id, e.target.value)
+                    }
+                  >
+                    <option value="unpaid">Chưa thanh toán</option>
+                    <option value="paid">Thanh toán</option>
+                  </select>
+                </td>
+                <td>{order.created_at.slice(0, 10)}</td>
+                <td>
                   <button
                     className="btn btn-sm btn-info"
-                    onClick={() => toggleExpand(order._id)}
+                    onClick={() => openModal(order)}
                   >
-                    {expandedOrderId === order._id ? "Ẩn" : "Xem"}
+                    Xem
                   </button>
                 </td>
               </tr>
-
-              {/* Sử dụng OrderDetails để hiển thị chi tiết đơn hàng */}
-              <OrderDetails order={order} expandedOrderId={expandedOrderId} />
-            </React.Fragment>
-          ))}
+            ))}
         </tbody>
       </table>
+
+      <Modal open={isModalOpen} onClose={closeModal}>
+        <Box
+          sx={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            width: "80%",
+            bgcolor: "background.paper",
+            border: "2px solid #000",
+            boxShadow: 24,
+            p: 4,
+            borderRadius: 2,
+          }}
+        >
+          <Typography variant="h6" mb={2}>
+            Chi tiết đơn hàng
+          </Typography>
+          {selectedOrder ? (
+            <>
+              <Typography>
+                <strong>Người mua:</strong> {selectedOrder.receiver_name}
+              </Typography>
+              <Typography>
+                <strong>Địa chỉ giao hàng:</strong>{" "}
+                {selectedOrder.receiver_address}
+              </Typography>
+              <Typography>
+                <strong>Số điện thoại:</strong> {selectedOrder.receiver_phone}
+              </Typography>
+              <Typography>
+                <strong>Ngày đặt hàng:</strong> {selectedOrder.created_at}
+              </Typography>
+
+              <TableContainer component={Paper} sx={{ mt: 2 }}>
+                <Table>
+                  <TableHead>
+                    <TableRow>
+                      <TableCell>#</TableCell>
+                      <TableCell>Sản phẩm</TableCell>
+                      <TableCell>Số lượng</TableCell>
+                      <TableCell>Màu sắc</TableCell>
+                      <TableCell>Dung lượng</TableCell>
+                      <TableCell>Ảnh</TableCell>
+                      <TableCell>Giá</TableCell>
+                      <TableCell>Thành tiền</TableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {selectedOrder.items.map((item: any, index: number) => (
+                      <TableRow key={item._id}>
+                        <TableCell>{index + 1}</TableCell>
+                        <TableCell>{item.product?.title}</TableCell>
+                        <TableCell>{item.quantity}</TableCell>
+                        <TableCell>{item.color}</TableCell>
+                        <TableCell>{item.storage}</TableCell>
+                        <TableCell>
+                          {item.product?.image ? (
+                            <img
+                              src={`${baseURL}/images/${item.product.image}`}
+                              alt={item.product?.title || "Sản phẩm"}
+                              style={{
+                                width: "50px",
+                                height: "50px",
+                                objectFit: "cover",
+                              }}
+                            />
+                          ) : (
+                            <span>Không có ảnh</span>
+                          )}
+                        </TableCell>
+                        <TableCell>{item.price.toLocaleString()} VNĐ</TableCell>
+                        <TableCell>
+                          {(item.price * item.quantity).toLocaleString()} VNĐ
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </TableContainer>
+            </>
+          ) : (
+            <Typography>Không có thông tin chi tiết đơn hàng.</Typography>
+          )}
+        </Box>
+      </Modal>
     </div>
   );
 };

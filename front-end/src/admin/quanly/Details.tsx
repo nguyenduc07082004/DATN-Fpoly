@@ -1,8 +1,9 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { Products } from "../../interfaces/Products";
 import ins from "../../api";
 import DescriptionModal from "../DesModal";
+import { baseURL } from "../../api";
 
 const Details = () => {
   const [showModal, setShowModal] = useState(false);
@@ -17,16 +18,18 @@ const Details = () => {
     setShowModal(false);
     setDescription("");
   };
+
   const { id } = useParams();
   const [product, setProduct] = useState<Products | null>(null);
+
   useEffect(() => {
     const getProduct = async () => {
       const { data } = await ins.get(`/products/${id}`);
       setProduct(data);
-      console.log(data);
     };
     getProduct();
-  }, []);
+  }, [id]);
+
   return (
     <div>
       <p className="m-3">
@@ -46,35 +49,37 @@ const Details = () => {
           </tr>
         </thead>
         <tbody className="text-center">
-          <tr className="d-flex" key={product?._id}>
-            <td className="col-2">{product?.title}</td>
-            <td className="col-1">{product?.price}</td>
-            <td className="col-1">{product?.quantity} </td>
-            <td className="col-2">
-              {product?.categories
-                ? Array.isArray(product?.categories)
-                  ? product.categories
-                      .map((category) => category.name)
-                      .join(", ")
-                  : product.categories.name
-                : "Không có danh mục"}
-            </td>
-            <td className="col-1">{product?.storage}</td>
-            <td className="col-1">{product?.color}</td>
-            <td
-              className="col-3 text-truncate"
-              style={{
-                maxWidth: "800px",
-                cursor: "pointer",
-              }}
-              onClick={() => handleShowModal(product?.description)}
-            >
-              {product?.description}
-            </td>
-            <td className="col-1">
-              <img src={product?.image} alt="error" width="50%" />
-            </td>
-          </tr>
+          {product?.variants?.map((variant, index) => (
+            <tr className="d-flex" key={variant._id || index}>
+              <td className="col-2">{product?.title}</td>
+              <td className="col-1">{variant.price}</td>
+              <td className="col-1">{variant.quantity}</td>
+              <td className="col-2">
+                {product?.categories
+                  ? Array.isArray(product?.categories)
+                    ? product.categories
+                        .map((category) => category.name)
+                        .join(", ")
+                    : product.categories.name
+                  : "Không có danh mục"}
+              </td>
+              <td className="col-1">{variant.storage}</td>
+              <td className="col-1">{variant.color}</td>
+              <td
+                className="col-3 text-truncate"
+                style={{
+                  maxWidth: "800px",
+                  cursor: "pointer",
+                }}
+                onClick={() => handleShowModal(product?.description)}
+              >
+                {product?.description}
+              </td>
+              <td className="col-1">
+                <img src={`${baseURL}/images/${variant?.variantImages[0]?.url}`} alt="error" width="50%" />
+              </td>
+            </tr>
+          ))}
         </tbody>
       </table>
       <DescriptionModal

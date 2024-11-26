@@ -12,9 +12,9 @@ export type CartContextType = {
     order: any;
   };
   dispatch: React.Dispatch<any>;
-  addToCart: (product: Products, quantity: number, price: number) => void;
+  addToCart: (product: Products, quantity: number, price: number , variantId: string, selectedColor: string, selectedStorage: string) => void;
   checkout: () => void;
-  removeFromCart: (productId: string) => void;
+  removeFromCart: (variantId: string) => void;
   fetchCart: () => void;
 };
 const initialState = {
@@ -37,24 +37,37 @@ const CartProvider = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     fetchCart();
   }, []);
-  const addToCart = async (product: Products, quantity: number , price: number) => {
+  const addToCart = async ({
+    productId,      
+    quantity,        
+    price,           
+    variantId,       
+    selectedColor,  
+    selectedStorage 
+  } : { productId: string; quantity: number; price: number; variantId: string; selectedColor: string; selectedStorage: string }) => {
     try {
       const res = await ins.post("/carts/add", {
-        productId: product._id,   
-        quantity,                
-        price: price 
+        productId,    
+        variantId,    
+        quantity,      
+        price,          
+        color: selectedColor,     
+        storage: selectedStorage  
       });
   
       dispatch({
         type: "ADD_TO_CART",
-        payload: { 
-          product: res.data.product, 
-          quantity,                 
-          price: price   
+        payload: {
+          product: res.data.product,  
+          variantId: variantId,      
+          quantity: quantity,         
+          price: price,               
+          selectedColor: selectedColor, 
+          selectedStorage: selectedStorage 
         },
       });
   
-      fetchCart(); 
+      fetchCart();
     } catch (error) {
       console.error("Error adding to cart:", error);
     }
@@ -66,19 +79,20 @@ const CartProvider = ({ children }: { children: ReactNode }) => {
     dispatch({ type: "CHECKOUT", payload: res.data });
   };
 
-  const removeFromCart = async (productId: string) => {
+  const removeFromCart = async (variantId: string) => {
     try {
-     await ins.delete(`/carts/remove/${productId}`, {
-        data: { productId },
+      await ins.delete(`/carts/remove/${variantId}`, {
         headers: {
-          Authorization: `Bearer ${token}`,
+          Authorization: `Bearer ${token}`, 
         },
       });
-      dispatch({ type: "REMOVE_FROM_CART", payload: { productId } });
+  
+      dispatch({ type: "REMOVE_FROM_CART", payload: { variantId } });
+  
+      fetchCart();
     } catch (error) {
       console.error("Error removing from cart:", error);
     }
-    fetchCart();
   };
 
   return (

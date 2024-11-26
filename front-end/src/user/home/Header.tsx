@@ -10,15 +10,34 @@ import { useContext } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCartShopping } from "@fortawesome/free-solid-svg-icons";
 import { CartContext, CartContextType } from "../../api/contexts/CartContext";
-
+import ins from "../../api";
+import { baseURL } from "../../api";
 const Header = () => {
   const { logout } = useAuth();
   const { user } = useContext(AuthContext) as AuthContextType;
   const { state } = useContext(CartContext) as CartContextType;
-  console.log(state);
 
-  // Calculate the total number of items in the cart
-  const cartItemCount = 0; // Replace with actual cart item count logic
+
+  const handleLogout = async () => {
+    try {
+      const response = await ins.post(`${baseURL}/logout`); 
+      if (response.status === 200) {
+        logout(); 
+        localStorage.removeItem("accessToken"); 
+        localStorage.removeItem("user"); 
+        alert("Đăng xuất thành công!"); 
+      }
+    } catch (error : any) {
+      if (error.response) {
+        console.error("Lỗi:", error.response.data.message);
+        alert(error.response.data.message || "Đã xảy ra lỗi khi đăng xuất.");
+      } else {
+        console.error("Lỗi không xác định:", error.message);
+        alert("Không thể kết nối đến server. Vui lòng thử lại.");
+      }
+    }
+  };
+  const cartItemCount = 0; 
 
   return (
     <header className="header">
@@ -177,7 +196,7 @@ const Header = () => {
                 <hr className="dropdown-divider" />
               </li>
               <li>
-                <Link onClick={() => logout()} className="dropdown-item" to="#">
+                <Link onClick={() => handleLogout()} className="dropdown-item" to="#">
                   Đăng xuất
                 </Link>
               </li>
