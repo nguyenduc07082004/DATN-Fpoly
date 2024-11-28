@@ -8,6 +8,19 @@ import {
   deleteCategory,
 } from "../controllers/CategoryControllers.js";
 
+import multer from "multer";
+// Lấy danh sách sản phẩm (không cần xác thực)
+
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, "./uploads");
+  },
+  filename: function (req, file, cb) {
+    cb(null, Date.now() + "-" + file.originalname);
+  },
+});
+
+const upload = multer({ storage: storage });
 // Lấy danh sách sản phẩm
 CategoryRouter.get("/", getCategory);
 CategoryRouter.get(
@@ -17,7 +30,7 @@ CategoryRouter.get(
 
 // Thêm sản phẩm
 CategoryRouter.post(
-  "/add", //authMiddleware,
+  "/add", upload.single("image"),
   addCategory
 );
 
@@ -28,7 +41,7 @@ CategoryRouter.get(
 
 // Cập nhật sản phẩm
 CategoryRouter.put(
-  "/edit/:id", //authMiddleware,
+  "/edit/:id", upload.single("image"),
   updateCategory
 );
 

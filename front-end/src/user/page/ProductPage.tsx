@@ -5,6 +5,7 @@ import ins from "../../api";
 import { CartContext } from "../../api/contexts/CartContext";
 const ProductPage = () => {
   const [products, setProducts] = useState<Products[]>([]);
+  console.log(products, " products");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const {addToCart} = useContext(CartContext)
@@ -77,7 +78,7 @@ const ProductPage = () => {
                 {product.title}
               </h3>
               <p style={{ fontSize: "16px", color: "#ff6600", marginBottom: "10px" }}>
-                {product.price.toLocaleString()} VND
+                {product.priceRange} VND
               </p>
               <button
               onClick={() => {
