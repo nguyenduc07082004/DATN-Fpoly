@@ -5,14 +5,14 @@ export const getCommentsWithReplies = async (req, res) => {
     const lang = req.lang || "en"; 
     try {
       const comments = await Comment.find()
-        .populate("userId", "firstName lastName email")
+        .populate("userId", "first_name last_name email")
         .populate("productId", "name price")
         .sort({ createdAt: -1 })
         .lean();
   
       for (let comment of comments) {
         const replies = await Reply.find({ commentId: comment._id })
-          .populate("userId", "firstName lastName email")
+          .populate("userId", "first_name last_name email")
           .sort({ createdAt: 1 });
   
         comment.replies = replies;
