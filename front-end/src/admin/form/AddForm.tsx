@@ -1,6 +1,7 @@
 import axios from "axios";
 import { useContext, useState, useEffect } from "react";
 import { CategoryContext } from "../../api/contexts/CategoryContext";
+import ins, { baseURL } from "../../api";
 
 const AddForm = () => {
   const [formData, setFormData] = useState({
@@ -58,8 +59,8 @@ const AddForm = () => {
     }
   
     try {
-      await axios.post(
-        `http://localhost:8000/products/add`, 
+      await ins.post(
+        `${baseURL}/products/add`, 
         formDataToSend,
         {
           headers: {

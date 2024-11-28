@@ -8,6 +8,7 @@ import { Products } from "../../interfaces/Products";
 import { Link } from "react-router-dom";
 import { baseURL } from "../../api";
 import ins from "../../api";
+import CategoryList from "../page/Category";
 const bannerImages = [banner1, banner2, banner3,];
 
 // Component Banner (Phần banner chính)
@@ -73,7 +74,6 @@ const ProductCard = ({ product }: { product: Products }) => {
   );
 };
 
-// Component ProductList (Danh sách sản phẩm)
 const ProductList = ({ products }: { products: Products[] }) => {
   return (
     <section className="product-list">
@@ -87,6 +87,7 @@ const ProductList = ({ products }: { products: Products[] }) => {
   );
 };
 
+
 // Component Deals (Khuyến mãi nổi bật)
 const Deals = () => {
   const [products, setProducts] = useState<Products[]>([]);
@@ -95,7 +96,6 @@ const Deals = () => {
     ins.get(`${baseURL}/products/without-variants`)
       .then((response) => {
         setProducts(response.data);
-        console.log(response.data,"réponse")
       })
       .catch((error) => {
         console.error("Đã xảy ra lỗi khi lấy dữ liệu sản phẩm: ", error);
@@ -116,6 +116,7 @@ const Home = () => {
     <div>
       <MainBanner />
       <Deals />
+      <CategoryList/>
     </div>
   );
 };

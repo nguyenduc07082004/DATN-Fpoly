@@ -4,7 +4,7 @@ import User from '../models/UserModels.js';
 import getMessage from '../utils/getMessage.js';
 
 export const addCommentAndRating = async (req, res) => {
-  const lang = req.lang || "en"; 
+  const lang = req.lang || "vi"; 
   const { productId, userId, rating, comment } = req.body;
 
   try {
