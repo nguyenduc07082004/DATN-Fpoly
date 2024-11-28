@@ -87,7 +87,6 @@ const AddForm = () => {
   return (
     <div>
       <h2 className="m-3">Thêm mới sản phẩm</h2>
-      <button className = "btn btn-primary m-3" onClick = {() => window.location.href = "/admin/qlsp/variants"}>Thêm mới biến thể</button>
       <form onSubmit={handleSubmit}>
         <div className="m-5 row">
           <div className="col-md-6 mb-3">
