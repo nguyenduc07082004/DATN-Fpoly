@@ -136,6 +136,7 @@ export const updateOrderStatus = async (req, res) => {
 
     console.log(order, "orders");
 
+    // Kiểm tra nếu trạng thái chuyển sang "Cancelled"
     if (status === "Cancelled" && order.status !== "Cancelled") {
       const updateVariantsPromises = order.items.map(async (item) => {
         const product = await Product.findById(item.product._id); 
@@ -162,7 +163,12 @@ export const updateOrderStatus = async (req, res) => {
       await Promise.all(updateVariantsPromises);
     }
 
-    order.status = status;
+    // Kiểm tra nếu trạng thái chuyển sang "Delivered" và payment_status chưa phải là "paid"
+    if (status === "Delivered" && order.payment_status !== "paid") {
+      order.payment_status = "paid"; // Cập nhật payment_status thành "paid"
+    }
+
+    order.status = status; // Cập nhật trạng thái đơn hàng
     await order.save();
 
     res.status(200).json({
