@@ -17,7 +17,6 @@ const QLSP = () => {
     searchQuery,
   } = useContext(ProdContext);
 
-  console.log(currentProducts);
   return (
     <div>
       <p className="m-3">
