@@ -11,6 +11,8 @@ import {
   CardActionArea,
   Card,
   CardMedia,
+  TextField,
+  Rating,
 } from "@mui/material";
 import { Products } from "../../interfaces/Products";
 import Logo from "../../assets/logoshop.jpg";
@@ -55,6 +57,7 @@ const colorOptions = [
 
 // Main ProductDetails Component
 const ProductDetails = () => {
+  const userId = JSON.parse(localStorage.getItem("user") || "{}")._id;
   const { productId } = useParams();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -70,6 +73,10 @@ const ProductDetails = () => {
   const [quantity, setQuantity] = useState(1);
   const [variantId, setVariantId] = useState<string>("");
   const { addToCart } = useContext(CartContext);
+  const [comments, setComments] = useState<any[]>([]);
+  const [avgRating, setAvgRating] = useState(0);
+  const [comment , setComment] = useState('');
+  const [rating, setRating] = useState(0);
 
   const handleAddToCart = async () => {
     const variant = availableStorages.find(v => v._id === variantId);
@@ -89,15 +96,9 @@ const ProductDetails = () => {
     }
   };
   
-
-  const handleQuantityChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setQuantity(Number(e.target.value));
-  };
-
   const handleColorChange = (color: string) => {
     setSelectedColor(color);
   
-    // Lọc các biến thể theo màu sắc
     const filteredVariants = product.variants.filter(
       (variant: Variant) => variant.color === color
     );
@@ -161,9 +162,53 @@ const ProductDetails = () => {
     });
   };
 
+  const getComments = async () => {
+    try {
+      const response = await ins.get(`${baseURL}/comments/replies/${productId}`);
+      setComments(response.data.comments);
+      setAvgRating(response.data.averageRating);
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  const handleCommentChange = (event : React.ChangeEvent<HTMLTextAreaElement>) => {
+    setComment(event.target.value); 
+  };
+
+  const handleRatingChange = (newValue : number) => {
+    setRating(newValue); 
+  };
+  const handleAddComment = async (event: React.MouseEvent<HTMLButtonElement>) => {
+    event.preventDefault(); 
+
+    if (!comment || rating === 0) {
+      alert("Vui lòng điền đầy đủ bình luận và chọn rating.");
+      return;
+    }
+
+    try {
+      const response = await ins.post(`${baseURL}/comments`, {
+        userId,
+        productId,
+        comment,
+        rating,
+      });
+
+      if (response.status === 201) {
+        alert('Bình luận của bạn đã được gửi!');
+        setComment(''); 
+        setRating(0);    
+        getComments();
+      } 
+    } catch (error) {
+      alert(error.response.data.message);
+    }
+  };
   const getData = async () => {
     getProductById();
     getProductWithoutsVariants();
+    getComments();
   };
 
   useEffect(() => {
@@ -322,7 +367,82 @@ const ProductDetails = () => {
       </Button>
     </Grid>
   </Grid>
+<Grid container spacing={3}>
+      <Grid item xs={12}>
+        <Box sx={{ borderBottom: '1px solid #ccc', paddingBottom: 2 }}>
+          <Typography variant="h5" gutterBottom>
+            Đánh giá : {product.title}
+          </Typography>
+          <Typography variant="body1">
+            Đánh giá: <Rating value = {avgRating} readOnly /> {`${avgRating} / 5`}
+          </Typography>
+        </Box>
+      </Grid>
 
+      {/* Bình luận */}
+      <Grid item xs={12}>
+        <Box sx={{ padding: 2, border: '1px solid #ccc', borderRadius: 1 }}>
+          <Typography variant="h6" gutterBottom>
+            Bình luận:
+          </Typography>
+          {comments.length > 0 && comments.map((comment) => (
+            <Box key={comment.id} sx={{ marginBottom: 2 }}>
+              <Typography variant="body2" sx={{ fontWeight: 'bold' }}>
+                {comment.userId.email}
+              </Typography>
+              <Rating value={comment.rating} readOnly size="small" sx={{ marginBottom: 1 }} />
+              <Typography variant="body2" sx={{ marginBottom: 1 }}>
+                {comment.comment}
+              </Typography>
+
+              {/* Phần trả lời */}
+              {comment.replies.map((reply, idx) => (
+                <Box key={idx} sx={{ marginLeft: 2, marginTop: 1 }}>
+                  <Typography variant="body2" sx={{ fontWeight: 'bold' }}>
+                    {reply.userId.first_name} {reply.userId.last_name}: 
+                  </Typography>
+                  <Typography variant="body2">
+                    {reply.reply}
+                  </Typography>
+                </Box>
+              ))}
+            </Box>
+          ))}
+        </Box>
+      </Grid>
+
+      {/* Thêm bình luận */}
+      <Grid item xs={12}>
+      <Box sx={{ padding: 2, border: '1px solid #ccc', borderRadius: 1 }}>
+        <Typography variant="h6" gutterBottom>
+          Thêm bình luận của bạn:
+        </Typography>
+        <Rating
+          value={rating}
+          onChange={(event, newValue: number) => handleRatingChange(newValue)}
+          sx={{ marginBottom: 2 }}
+        />
+        {/* TextField để nhập bình luận */}
+        <TextField
+          label="Bình luận"
+          variant="outlined"
+          fullWidth
+          multiline
+          rows={3}
+          value={comment}
+          onChange={handleCommentChange}
+          sx={{ marginBottom: 2 }}
+        />
+        {/* Nút gửi bình luận */}
+        <Button
+          onClick={handleAddComment}
+          variant="contained"
+        >
+          Gửi bình luận
+        </Button>
+      </Box>
+    </Grid>
+    </Grid>
   <Typography variant="h5" sx={{ mt: 5, mb: 3 }}>
     Sản phẩm gợi ý
   </Typography>
@@ -350,6 +470,8 @@ const ProductDetails = () => {
       </Grid>
     ))}
   </Grid>
+
+
 </Container>
 
     </>
