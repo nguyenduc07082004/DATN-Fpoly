@@ -225,7 +225,14 @@ export const updatePaymentStatus = async (req, res) => {
 export const getOrderByUserID = async (req, res) => {
   const userId = req.user._id;
   try {
-    const order = await Order.find({ userId }).populate("products.product");
+    const order = await Order.find({ user_id: userId })
+    .populate({
+      path: "items",
+      populate: {
+        path: "product", 
+        select: "name price variants", 
+      },
+    });
     if (!order) {
       return res.status(404).json({ message: "Đơn hàng không tồn tại" });
     }
