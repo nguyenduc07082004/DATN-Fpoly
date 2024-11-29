@@ -1,6 +1,7 @@
 import axios from "axios";
 import { useContext, useState, useEffect } from "react";
 import { CategoryContext } from "../../api/contexts/CategoryContext";
+import ins, { baseURL } from "../../api";
 
 const AddForm = () => {
   const [formData, setFormData] = useState({
@@ -58,8 +59,8 @@ const AddForm = () => {
     }
   
     try {
-      await axios.post(
-        `http://localhost:8000/products/add`, 
+      await ins.post(
+        `${baseURL}/products/add`, 
         formDataToSend,
         {
           headers: {
@@ -87,7 +88,6 @@ const AddForm = () => {
   return (
     <div>
       <h2 className="m-3">Thêm mới sản phẩm</h2>
-      <button className = "btn btn-primary m-3" onClick = {() => window.location.href = "/admin/qlsp/variants"}>Thêm mới biến thể</button>
       <form onSubmit={handleSubmit}>
         <div className="m-5 row">
           <div className="col-md-6 mb-3">

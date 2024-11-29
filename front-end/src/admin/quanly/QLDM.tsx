@@ -1,8 +1,9 @@
 import "../.././App.scss";
-import { useContext, useState } from "react";
+import { useContext } from "react";
 
 import { Link } from "react-router-dom";
 import { CategoryContext } from "../../api/contexts/CategoryContext";
+import { baseURL } from "../../api";
 
 const QLDM = () => {
   
@@ -18,7 +19,6 @@ const QLDM = () => {
     searchQuery,
   } = useContext(CategoryContext);
 
-  
   return (
     <div>
       <p className="m-3">
@@ -51,9 +51,10 @@ const QLDM = () => {
         <thead className="text-center">
           <tr className="d-flex">
             <th className="col-1">STT</th>
-            <th className="col-3">Tên danh mục</th>
+            <th className="col-2">Hình ảnh</th> {/* Cột mới cho hình ảnh */}
+            <th className="col-2">Tên danh mục</th>
             <th className="col-3">Slug</th>
-            <th className="col-3">Trạng thái</th>
+            <th className="col-2">Trạng thái</th>
             <th className="col-2">Chức năng</th>
           </tr>
         </thead>
@@ -61,15 +62,29 @@ const QLDM = () => {
           {currentProducts.map((i, index) => (
             <tr className="d-flex" key={i._id}>
               <td className="col-1">{indexOfFirstProduct + index + 1}</td>
-              <td className="col-3">{i.name}</td>
+              
+              {/* Cột hình ảnh */}
+              <td className="col-2">
+                {i.image ? (
+                  <img 
+                    src={`${baseURL}/images/${i.image}`} 
+                    alt={i.name} 
+                    style={{ width: '50px', height: '50px', objectFit: 'cover' }} 
+                  />
+                ) : (
+                  <span>Không có ảnh</span>
+                )}
+              </td>
+
+              <td className="col-2">{i.name}</td>
               <td className="col-3 text-truncate" style={{ maxWidth: "800px" }}>
                 {i.slug}
               </td>
-              <td className="col-3 text-truncate" style={{ maxWidth: "800px" }}>
+              <td className="col-2">
                 {i.status === "active" ? (
-                <span style={{ color: "green" }}>✔️</span>
-                   ) : (
-                 <span style={{ color: "red" }}>❌</span>
+                  <span style={{ color: "green" }}>✔️</span>
+                ) : (
+                  <span style={{ color: "red" }}>❌</span>
                 )}
               </td>
               <td className="col-2">

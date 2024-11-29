@@ -2,9 +2,10 @@ import Comment from '../models/CommentsModels.js';
 import Product from '../models/ProductModels.js';
 import User from '../models/UserModels.js';
 import getMessage from '../utils/getMessage.js';
+import Reply from '../models/ReplyModels.js';
 
 export const addCommentAndRating = async (req, res) => {
-  const lang = req.lang || "en"; 
+  const lang = req.lang || "vi"; 
   const { productId, userId, rating, comment } = req.body;
 
   try {
@@ -56,7 +57,7 @@ export const addCommentAndRating = async (req, res) => {
 export const getCommentsByProduct = async (productId, lang = "en") => {
   try {
     const comments = await Comment.find({ productId })
-      .populate("userId", "firstName lastName email") 
+      .populate("userId", "first_name last_name email") 
       .populate("productId", "name price") 
       .sort({ createdAt: -1 }); 
 
@@ -74,7 +75,7 @@ export const getCommentsByProduct = async (productId, lang = "en") => {
 export const getComments = async (req, res) => {
   const lang = req.lang || "en"; 
   try {
-    const comments = await Comment.find().populate("userId", "firstName lastName email").populate("productId", "name price").sort({ createdAt: -1 });
+    const comments = await Comment.find().populate("userId", "first_name last_name email").populate("productId", "name price").sort({ createdAt: -1 });
    res.status(200).json(comments)
   } catch (error) {
     console.error(error);
@@ -82,30 +83,32 @@ export const getComments = async (req, res) => {
   }
 };
 
+
 export const getCommentsWithReplies = async (req, res) => {
   const lang = req.lang || "en"; 
+  const { productId } = req.params;
+
   try {
-    const comments = await Comment.find()
-      .populate("userId", "firstName lastName email")
+    const comments = await Comment.find({ productId })
+      .populate("userId", "first_name last_name email")
       .populate("productId", "name price")
       .sort({ createdAt: -1 })
       .lean();
 
-    for (let comment of comments) {
-      const replies = await Reply.find({ commentId: comment._id })
-        .populate("userId", "firstName lastName email")
-        .sort({ createdAt: 1 });
+    const totalRating = comments.reduce((acc, comment) => acc + comment.rating, 0);
+    const averageRating = comments.length > 0 ? totalRating / comments.length : 0;
 
+   for (let comment of comments) {
+      const replies = await Reply.find({ commentId: comment._id })
+        .populate("userId", "first_name last_name email")
+        .sort({ createdAt: 1 });
       comment.replies = replies;
     }
 
-    return res.status(200).json({
-      success: true,
-      message: getMessage(lang, 'success', 'COMMENTS_FETCHED'),
-      data: comments,
-    });
+    res.status(200).json({ comments, averageRating });
   } catch (error) {
     console.error(error);
     return res.status(500).json({ success: false, message: getMessage(lang, 'error', 'SERVER_ERROR') });
   }
 };
+

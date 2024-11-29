@@ -8,7 +8,7 @@ import OrderRouter from "./OrderRouter.js";
 import CommentRouter from "./CommentRouter.js"
 import ReplyRouter from "./ReplyRouter.js"
 import router from "./Payment.js";
-
+import DashboardRouter from "./DashboardRouter.js";
 const authRouter = Router();
 
 authRouter.use("/products", ProductRouter);
@@ -19,5 +19,6 @@ authRouter.use("/orders", checkAuth, OrderRouter);
 authRouter.use("/vnpay", checkAuth, router);
 authRouter.use("/comments" , CommentRouter)
 authRouter.use("/replies" , ReplyRouter)
+authRouter.use('/dashboard' , DashboardRouter)
 
 export default authRouter;
