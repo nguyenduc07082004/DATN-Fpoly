@@ -12,11 +12,17 @@ import { faCartShopping } from "@fortawesome/free-solid-svg-icons";
 import { CartContext, CartContextType } from "../../api/contexts/CartContext";
 import ins from "../../api";
 import { baseURL } from "../../api";
+
 const Header = () => {
   const { logout } = useAuth();
   const { user } = useContext(AuthContext) as AuthContextType;
   const { state } = useContext(CartContext) as CartContextType;
-
+  
+  // Tính toán số lượng sản phẩm trong giỏ hàng
+  const totalProduct = state.products.reduce(
+    (acc, item) => acc + item.quantity,
+    0
+  );
 
   const handleLogout = async () => {
     try {
@@ -37,7 +43,6 @@ const Header = () => {
       }
     }
   };
-  const cartItemCount = 0; 
 
   return (
     <header className="header">
@@ -203,12 +208,12 @@ const Header = () => {
             </ul>
           </div>
         )}
-        <Link to="/cart" className="text-decoration-none cart-icon">
-          <FontAwesomeIcon icon={faCartShopping} />
-          {cartItemCount > 0 && (
-            <span className="cart-item-count">{cartItemCount}</span>
-          )}
-        </Link>
+     <Link to="/cart" className="text-decoration-none cart-icon">
+  <FontAwesomeIcon icon={faCartShopping} />
+  {totalProduct > 0 && (
+    <span className="cart-item-count">{totalProduct}</span>
+  )}
+</Link>
       </div>
     </header>
   );

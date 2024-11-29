@@ -15,22 +15,21 @@ import {
   Rating,
 } from "@mui/material";
 import { Products } from "../../interfaces/Products";
-import Logo from "../../assets/logoshop.jpg";
 import { CartContext } from "../../api/contexts/CartContext";
 import { baseURL } from "../../api";
 import ins from "../../api";
 import { Variant } from "../../interfaces/Products";
+import toastr from 'toastr';
+import 'toastr/build/toastr.min.css'
 
+const colorMapping = {
+  Đen: "#000000",    
+  Trắng: "#FFFFFF",  
+  Xanh: "#0000FF",   
+  Hồng: "#FFC0CB",  
+  
+};
 
-// Color options (cứng)
-const colorOptions = [
-  { _id: "1", color: "#000000", options: "Đen" },   
-  { _id: "2", color: "#ffffff", options: "Trắng" },  
-  { _id: "3", color: "#ff69b4", options: "Hồng" }, 
-  { _id: "4", color: "#0000ff", options: "Xanh" },   
-];
-
-// Main ProductDetails Component
 const ProductDetails = () => {
   const userId = JSON.parse(localStorage.getItem("user") || "{}")._id;
   const { productId } = useParams();
@@ -55,9 +54,9 @@ const ProductDetails = () => {
 
   const handleAddToCart = async () => {
     const variant = availableStorages.find(v => v._id === variantId);
-    
     if (variant) {
-      addToCart({
+      // Giả sử bạn gọi một hàm addToCart và nó trả về một Promise
+       addToCart({
         productId: product._id,
         variantId: variant._id,
         storage: variant.storage,
@@ -66,8 +65,9 @@ const ProductDetails = () => {
         selectedColor: selectedColor,
         selectedStorage: variant.storage
       });
+        toastr.success("Sản phẩm đã được thêm vào giỏ hàng!", "Thành công");
     } else {
-      console.error("Variant không hợp lệ");
+      toastr.error("Variant không hợp lệ", "Lỗi");
     }
   };
   
@@ -98,7 +98,7 @@ const ProductDetails = () => {
     setSelectedStorage(storage);
   
     const selectedVariant = product.variants.find(
-      (variant: Variant) => variant.storage === storage
+      (variant: Variant) => variant.storage === storage && variant.color === selectedColor
     );
   
     if (selectedVariant) {
@@ -229,54 +229,63 @@ const ProductDetails = () => {
       <Typography variant="h4">{product.title}</Typography>
       <Typography variant="body1">{product.description}</Typography>
 
-      <Box sx={{ mt: 3 }}>
-        <Typography variant="body1" sx={{ fontWeight: "bold" }}>
-          Chọn màu sắc:
-        </Typography>
-        <Box sx={{ mt: 2, display: "flex", gap: 2 }}>
-          {colorOptions.map((color) => (
-            <Button
-              key={color._id}
-              variant="contained"
-              sx={{
-                width: 50,
-                height: 50,
-                borderRadius: "50%",
-                backgroundColor: color.color,
-                padding: 0,
-                boxShadow: selectedColor === color.options ? "0px 0px 10px 2px rgba(0, 0, 0, 0.2)" : "none",
-                border: selectedColor === color.options ? "3px solid #fff" : "none",
-                transition: "all 0.3s ease",
-                '&:hover': {
-                  backgroundColor: color.color,
-                  boxShadow: "0px 0px 10px 2px rgba(0, 0, 0, 0.2)",
-                },
-                '&:active': {
-                  transform: "scale(0.95)",
-                },
-                position: "relative",
-              }}
-              onClick={() => handleColorChange(color.options)}
-            >
-              {selectedColor === color.options && (
-                <Box
-                  sx={{
-                    position: "absolute",
-                    top: "50%",
-                    left: "50%",
-                    transform: "translate(-50%, -50%)",
-                    fontSize: 20,
-                    fontWeight: "bold",
-                    color: "#FFD700",
-                  }}
-                >
-                  ✓
-                </Box>
-              )}
-            </Button>
-          ))}
-        </Box>
-      </Box>
+      <Box sx={{ mt: 2, display: "flex", gap: 2 }}>
+  {Array.from(
+    new Set(availableVariants.map((variant) => variant.color)) // Lấy tên màu từ DB
+  ).map((colorName) => {
+    const color = colorMapping[colorName] || "#000000"; // Lấy mã màu từ bảng ánh xạ
+
+    // Lọc ra các variant có màu cụ thể
+    const variantsWithColor = availableVariants.filter(
+      (variant) => variant.color === colorName
+    );
+
+    return (
+      <Button
+        key={colorName} // Sử dụng colorName làm key
+        variant="contained"
+        sx={{
+          width: 50,
+          height: 50,
+          borderRadius: "50%",
+          backgroundColor: color, // Sử dụng mã màu đã ánh xạ
+          padding: 0,
+          boxShadow:
+            selectedColor === color
+              ? "0px 0px 10px 2px rgba(0, 0, 0, 0.2)"
+              : "none",
+          border: selectedColor === color ? "3px solid #fff" : "none",
+          transition: "all 0.3s ease",
+          "&:hover": {
+            backgroundColor: color, // Màu sắc sẽ áp dụng khi hover
+            boxShadow: "0px 0px 10px 2px rgba(0, 0, 0, 0.2)",
+          },
+          "&:active": {
+            transform: "scale(0.95)",
+          },
+          position: "relative",
+        }}
+        onClick={() => handleColorChange(colorName)} // Gửi tên màu thay vì mã màu
+      >
+        {selectedColor === color && (
+          <Box
+            sx={{
+              position: "absolute",
+              top: "50%",
+              left: "50%",
+              transform: "translate(-50%, -50%)",
+              fontSize: 20,
+              fontWeight: "bold",
+              color: "#FFD700", // Màu dấu check
+            }}
+          >
+            ✓
+          </Box>
+        )}
+      </Button>
+    );
+  })}
+</Box>
 
       <Box sx={{ mt: 3 }}>
         <Typography variant="body1" sx={{ fontWeight: "bold" }}>

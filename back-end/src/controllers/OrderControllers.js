@@ -6,30 +6,33 @@ import OrderItem from "../models/OrderItemModels.js";
 export const checkout = async (req, res, next) => {
   try {
     const userId = req.user._id;
-    const cart = await Cart.findOne({ user_id: userId }).populate("products.product").populate("user_id");
+    // Lấy giỏ hàng của người dùng
+    const cart = await Cart.findOne({ user_id: userId })
+      .populate("products.product")
+      .populate("user_id");
 
     if (!cart || cart.products.length === 0) {
       return res.status(400).json({ message: "Giỏ hàng không tồn tại hoặc giỏ hàng trống" });
     }
 
-    const checkStockPromises = cart.products.map(async (item) => {
+    // Kiểm tra số lượng tồn kho của các sản phẩm trong giỏ hàng
+    for (const item of cart.products) {
       const product = item.product;
-
       const variant = product.variants.find(v => v._id.toString() === item.variantId.toString());
 
-      if (variant) {
-        if (variant.quantity < item.quantity) {
-          throw new Error(`Không đủ số lượng cho sản phẩm ${product.name} (Màu sắc: ${variant.color}). Số lượng tồn kho: ${variant.quantity}`);
-        }
+      if (variant && variant.quantity < item.quantity) {
+        return res.status(400).json({
+          message: `Không đủ số lượng cho sản phẩm ${product.name} (Màu sắc: ${variant.color}). Số lượng tồn kho: ${variant.quantity}`,
+        });
       }
-    });
+    }
 
-    await Promise.all(checkStockPromises);
-
+    // Tính tổng giá trị đơn hàng
     const totalPrice = cart.products.reduce((total, item) => {
       return total + item.price * item.quantity;
     }, 0);
 
+    // Tạo đơn hàng mới
     const order = new Order({
       user_id: userId,
       status: "Pending",
@@ -37,11 +40,12 @@ export const checkout = async (req, res, next) => {
       receiver_name: cart.user_id.first_name + " " + cart.user_id.last_name,
       receiver_phone: cart.user_id.phone,
       receiver_address: cart.user_id.address,
-      payment_status: "unpaid", 
+      payment_status: "unpaid",
     });
 
     const savedOrder = await order.save();
 
+    // Tạo các mục đơn hàng (order items)
     const orderItems = cart.products.map((item) => ({
       order_id: savedOrder._id,
       product: item.product._id,
@@ -57,22 +61,24 @@ export const checkout = async (req, res, next) => {
     savedOrder.items = savedOrderItems.map((item) => item._id);
     await savedOrder.save();
 
-    const updateVariantsPromises = cart.products.map(async (item) => {
+    // Cập nhật số lượng tồn kho cho các sản phẩm trong đơn hàng
+    for (const item of cart.products) {
       const product = item.product;
-      
-      product.variants.forEach((variant) => {
+
+      for (const variant of product.variants) {
         if (variant._id.toString() === item.variantId.toString()) {
           variant.quantity -= item.quantity;
+          break;
         }
-      });
+      }
 
-      await product.save();
-    });
+      await product.save(); // Lưu mỗi sản phẩm sau khi cập nhật tồn kho
+    }
 
-    await Promise.all(updateVariantsPromises);
-
+    // Xóa giỏ hàng sau khi đặt hàng thành công
     await Cart.findOneAndDelete({ user_id: userId });
 
+    // Trả về thông báo và thông tin đơn hàng
     res.status(201).json({
       message: "Đặt hàng thành công",
       order: savedOrder,
@@ -81,6 +87,7 @@ export const checkout = async (req, res, next) => {
     next(error);
   }
 };
+
 
 
 export const getOrderDetail = async (req, res) => {
@@ -224,15 +231,42 @@ export const updatePaymentStatus = async (req, res) => {
 
 export const getOrderByUserID = async (req, res) => {
   const userId = req.user._id;
+  const page = parseInt(req.query.page) || 1; 
+  const limit = parseInt(req.query.limit) || 5; 
+
   try {
-    const order = await Order.find({ userId }).populate("products.product");
-    if (!order) {
+    const skip = (page - 1) * limit;
+
+    const orders = await Order.find({ user_id: userId })
+      .sort({ created_at: -1 }) // Sort by created_at in descending order (latest first)
+      .skip(skip) 
+      .limit(limit)
+      .populate({
+        path: "items",
+        populate: {
+          path: "product",
+          select: "title description variants",
+        },
+      });
+
+    const totalOrders = await Order.countDocuments({ user_id: userId });
+
+    console.log("Total orders:", totalOrders);
+    const totalPages = Math.ceil(totalOrders / limit); 
+
+    if (!orders.length) {
       return res.status(404).json({ message: "Đơn hàng không tồn tại" });
     }
 
-    res.status(200).json(order);
+    res.status(200).json({
+      orders,
+      totalPages,
+      currentPage: page,
+      totalOrders,
+    });
   } catch (error) {
     console.error("Error getting order details:", error);
     res.status(500).json({ message: "Error getting order details", error });
   }
 };
+

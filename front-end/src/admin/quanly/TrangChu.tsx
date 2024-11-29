@@ -261,15 +261,15 @@ const TrangChu = () => {
                   </thead>
                   <tbody>
                     {/* Loop through each order */}
-                    {recentOrders.map((order) => (
+                    {recentOrders.length > 0 && recentOrders?.map((order) => (
                       <tr key={order._id}>
                         <td className="col-2">{order._id}</td>
                         <td className="col-2">{order.receiver_name}</td>
                         <td className="col-4">
                           {/* Display detailed item information */}
-                          {order.items.map((item, itemIndex) => (
+                          {order?.items?.map((item, itemIndex) => (
                             <div key={itemIndex}>
-                              {item.product.title} ({item.color}, {item.storage}
+                              {item?.product?.title} ({item?.color}, {item?.storage}
                               )
                             </div>
                           ))}
@@ -278,19 +278,19 @@ const TrangChu = () => {
                           {/* Show order status */}
                           <span
                             className={`badge ${
-                              order.status === "Completed"
+                              order?.status === "Completed"
                                 ? "bg-success"
-                                : order.status === "Pending"
+                                : order?.status === "Pending"
                                 ? "bg-warning"
-                                : order.status === "In Delivery"
+                                : order?.status === "In Delivery"
                                 ? "bg-info"
                                 : "bg-danger"
                             }`}
                           >
-                            {order.status}
+                            {order?.status}
                           </span>
                         </td>
-                        <td className="col-2">{order.total_price.toLocaleString("vi-VN")} VND</td>
+                        <td className="col-2">{order?.total_price.toLocaleString("vi-VN")} VND</td>
                       </tr>
                     ))}
                   </tbody>
