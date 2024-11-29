@@ -142,7 +142,6 @@ export const updateOrderStatus = async (req, res) => {
       return res.status(400).json({ message: "Danh sách sản phẩm trong đơn hàng không hợp lệ" });
     }
 
-    console.log(order, "orders");
 
     // Kiểm tra nếu trạng thái chuyển sang "Cancelled"
     if (status === "Cancelled" && order.status !== "Cancelled") {

@@ -3,9 +3,9 @@ const router = Router();
 import moment from "moment";
 import querystring from "qs";
 import crypto from "crypto";
-import CartModels from "../models/CartModels.js";
-import OrderModels from "../models/OrderModels.js";
-
+import Cart from "../models/CartModels.js";
+import Order from "../models/OrderModels.js";
+import OrderItem from "../models/OrderItemModels.js";
 const vnp_TmnCode = "1FDEBV99"; // Replace with your VNPay TmnCode
 const vnp_HashSecret = "HMD09FSOL18IL59STWAMEX0ZOIU4HENY"; // Replace with your VNPay HashSecret
 const vnp_Url = "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html"; // VNPay URL
@@ -64,26 +64,68 @@ router.post("/create_payment_url", async function (req, res, next) {
   vnpUrl += "?" + querystring.stringify(vnp_Params, { encode: false });
 
   res.status(200).json({ code: "00", data: vnpUrl });
-  const userId = req.user._id; // Lấy thông tin người dùng từ token
-  const cart = await CartModels.findOne({ userId }).populate(
+  const userId = req.user._id; 
+  const cart = await Cart.findOne({ user_id:userId }).populate(
     "products.product"
-  );
-  const order = new OrderModels({
-    userId,
-    products: cart.products.map((item) => ({
-      product: item.product._id,
-      quantity: item.quantity,
-    })),
-    payment: "Đã thanh toán",
-    totalPrice: amount,
-    status: "Pending", // Trạng thái mặc định khi đơn hàng mới được tạo
+  ).populate('user_id')
+  if (!cart || cart.products.length === 0) {
+    return res.status(400).json({ message: "Giỏ hàng không tồn tại hoặc giỏ hàng trống" });
+  }
+
+  const checkStockPromises = cart.products.map(async (item) => {
+    const product = item.product;
+    const variant = product.variants.find(v => v._id.toString() === item.variantId.toString());
+
+    if (variant && variant.quantity < item.quantity) {
+      throw new Error(`Không đủ số lượng cho sản phẩm ${product.name} (Màu sắc: ${variant.color}). Số lượng tồn kho: ${variant.quantity}`);
+    }
   });
+  const totalPrice = cart.products.reduce((total, item) => {
+    return total + item.price * item.quantity;
+  }, 0);
+
+  const order = new Order({
+    user_id: userId,
+    status: "Pending",
+    total_price: totalPrice,
+    receiver_name: cart.user_id.first_name + " " + cart.user_id.last_name,
+    receiver_phone: cart.user_id.phone,
+    receiver_address: cart.user_id.address,
+    payment_status: "paid",
+  });
+
+  const savedOrder = await order.save();
+
+  const orderItems = cart.products.map((item) => ({
+    order_id: savedOrder._id,
+    product: item.product._id,
+    variantId: item.variantId,
+    quantity: item.quantity,
+    price: item.price,
+    storage: item.storage,
+    color: item.color,
+  }));
+
+  const savedOrderItems = await OrderItem.insertMany(orderItems);
+
+  savedOrder.items = savedOrderItems.map((item) => item._id);
+  await savedOrder.save();
+
+  for (const item of cart.products) {
+    const product = item.product;
+    
+    const variant = product.variants.find(variant => variant._id.toString() === item.variantId.toString());
+    if (variant) {
+      variant.quantity -= item.quantity;
+      await product.save(); 
+    }
+  }
+
 
   // Lưu đơn hàng vào cơ sở dữ liệu
   await order.save();
+  await Cart.findOneAndDelete({ user_id: userId });
 
-  // Xóa giỏ hàng sau khi thanh toán
-  await CartModels.findOneAndDelete({ userId });
 });
 
 router.get("/vnpay_return", async function (req, res, next) {
