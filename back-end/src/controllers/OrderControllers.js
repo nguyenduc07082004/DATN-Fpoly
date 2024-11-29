@@ -102,7 +102,7 @@ export const getOrderDetail = async (req, res) => {
           path: "product variantId", 
           select: "title description image"
         }
-      })
+      }).sort({created_at:-1})
       .exec();
 
     if (!order || order.length === 0) {
