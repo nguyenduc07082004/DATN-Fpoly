@@ -150,3 +150,42 @@ export const getProductsWithoutVariants = async (req, res) => {
   }
 };
 
+export const getFilteredProducts = async (req, res) => {
+  try {
+    // Lấy các tham số từ request query
+    const { page = 1, limit = 10, searchTerm, minPrice, maxPrice, rating } = req.query;
+
+    // Xây dựng bộ lọc
+    const filters = {};
+
+    // Tìm kiếm tiêu đề sản phẩm
+    if (searchTerm) {
+      filters.title = { $regex: searchTerm, $options: "i" }; // Không phân biệt hoa thường
+    }
+
+    // Lọc theo giá
+    if (minPrice || maxPrice) {
+      filters["variants.price"] = {}; // Lọc trong variants.price
+      if (minPrice) filters["variants.price"].$gte = Number(minPrice);
+      if (maxPrice) filters["variants.price"].$lte = Number(maxPrice);
+    }
+
+    // Lọc theo đánh giá trung bình
+    if (rating) {
+      filters.averageRating = { $gte: Number(rating) };
+    }
+
+    // Gọi service để lấy dữ liệu
+    const result = await productService.getFilteredProductsService(filters, Number(page), Number(limit));
+
+    // Trả về phản hồi
+    return res.status(200).json({
+      success: true,
+      data: result,
+      message: "Filtered products fetched successfully",
+    });
+  } catch (error) {
+    console.error("Error in getFilteredProducts controller:", error);
+    return res.status(500).json({ success: false, error: "Internal Server Error" });
+  }
+};

@@ -20,7 +20,7 @@ const ProductPage = () => {
     setError(null);
 
     try {
-      const response = await ins.get(`${baseURL}/products`, {
+      const response = await ins.get(`${baseURL}/products/filters`, {
         params: { 
           page, 
           limit: 10, 
@@ -31,7 +31,7 @@ const ProductPage = () => {
         }
       });
       if (response.status >= 200 && response.status < 300) {
-        setProducts(response.data.products);
+        setProducts(response.data.data);
         setTotalPages(response.data.totalPages);
       } else {
         throw new Error(`Failed to fetch products: ${response.statusText}`);
