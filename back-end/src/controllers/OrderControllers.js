@@ -32,7 +32,7 @@ export const checkout = async (req, res, next) => {
 
     const order = new Order({
       user_id: userId,
-      status: "pending",
+      status: "Pending",
       total_price: totalPrice,
       receiver_name: cart.user_id.first_name + " " + cart.user_id.last_name,
       receiver_phone: cart.user_id.phone,
