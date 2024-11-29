@@ -96,7 +96,7 @@ const Header = () => {
           <li className="dropdown">
             <Link
               to="#"
-              className="dropdown-toggle text-decoration-none"
+              className="text-decoration-none dropdown-toggle"
               data-bs-toggle="dropdown"
               aria-expanded="false"
               style={{ color: "white" }}
@@ -168,7 +168,7 @@ const Header = () => {
               aria-expanded="false"
             >
               <strong>
-                {JSON.parse(localStorage.getItem("user") || "{}").fullName}
+                {JSON.parse(localStorage.getItem("user") || "{}").first_name}
               </strong>
             </Link>
             <ul

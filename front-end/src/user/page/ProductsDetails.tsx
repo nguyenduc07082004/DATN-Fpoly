@@ -19,31 +19,6 @@ import { baseURL } from "../../api";
 import ins from "../../api";
 import { Variant } from "../../interfaces/Products";
 
-// Component Header
-const Header = () => {
-  return (
-    <header className="header">
-      <div className="logo">
-        <img src={Logo} alt="logo" />
-      </div>
-      <nav>
-        <ul>
-          <li>Điện thoại</li>
-          <li>Laptop</li>
-          <li>Phụ kiện</li>
-          <li>Smartwatch</li>
-          <li>Đồng hồ</li>
-          <li>Máy cũ</li>
-          <li>Dịch vụ</li>
-        </ul>
-      </nav>
-      <div className="user-options">
-        <span>Đăng nhập</span>
-        <span>Giỏ hàng</span>
-      </div>
-    </header>
-  );
-};
 
 // Color options (cứng)
 const colorOptions = [
@@ -188,7 +163,6 @@ const ProductDetails = () => {
 
   return (
     <>
-    <Header />
     <Container maxWidth="lg" sx={{ mt: 4 }}>
   <Grid container spacing={4}>
     <Grid item xs={12} md={5}>
