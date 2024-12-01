@@ -12,14 +12,38 @@ import { faCartShopping } from "@fortawesome/free-solid-svg-icons";
 import { CartContext, CartContextType } from "../../api/contexts/CartContext";
 import ins from "../../api";
 import { baseURL } from "../../api";
-
+import io from "socket.io-client";
+import toastr from "toastr";
 const Header = () => {
   const { logout } = useAuth();
   const { user } = useContext(AuthContext) as AuthContextType;
   const { state } = useContext(CartContext) as CartContextType;
+  const socket = io(baseURL);
+
+  interface OrderStatusUpdateData {
+    userId: string;
+    orderId: string;
+    status: string;
+    message: string;
+  }
   
-  // Tính toán số lượng sản phẩm trong giỏ hàng
-  const totalProduct = state.products.reduce(
+  const debounceTimeouts: Record<string, NodeJS.Timeout> = {};
+  
+  socket.on("orderStatusUpdated", (data: OrderStatusUpdateData) => {
+    if (data.userId === user._id) {
+      const { orderId, status } = data;
+  
+      if (debounceTimeouts[orderId]) {
+        clearTimeout(debounceTimeouts[orderId]);
+      }
+  
+      debounceTimeouts[orderId] = setTimeout(() => {
+        toastr.success(data.message, "Thành công");
+      }, 2000); 
+    }
+  });
+  
+    const totalProduct = state.products.reduce(
     (acc, item) => acc + item.quantity,
     0
   );

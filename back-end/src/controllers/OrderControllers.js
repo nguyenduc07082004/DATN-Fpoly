@@ -3,6 +3,7 @@ import Cart from "../models/CartModels.js";
 import Product from "../models/ProductModels.js";
 import OrderItem from "../models/OrderItemModels.js";
 import Invoice from "../models/InvoiceModels.js";
+import {io } from "../../index.js"
 export const checkout = async (req, res, next) => {
   try {
     const userId = req.user._id;
@@ -14,11 +15,9 @@ export const checkout = async (req, res, next) => {
       return res.status(400).json({ message: "Giỏ hàng không tồn tại hoặc giỏ hàng trống" });
     }
 
-    // Kiểm tra số lượng tồn kho của các sản phẩm trong giỏ hàng
     for (const item of cart.products) {
       const product = item.product;
       const variant = product.variants.find(v => v._id.toString() === item.variantId.toString());
-      console.log(product);
       if (variant && variant.quantity < item.quantity) {
         return res.status(400).json({
           message: `Không đủ số lượng cho sản phẩm ${product.title} (Màu sắc: ${variant.color}). Số lượng tồn kho: ${variant.quantity}`,
@@ -26,12 +25,10 @@ export const checkout = async (req, res, next) => {
       }
     }
 
-    // Tính tổng giá trị đơn hàng
     const totalPrice = cart.products.reduce((total, item) => {
       return total + item.price * item.quantity;
     }, 0);
 
-    // Tạo đơn hàng mới
     const order = new Order({
       user_id: userId,
       status: "Pending",
@@ -44,7 +41,6 @@ export const checkout = async (req, res, next) => {
 
     const savedOrder = await order.save();
 
-    // Tạo các mục đơn hàng (order items)
     const orderItems = cart.products.map((item) => ({
       order_id: savedOrder._id,
       product: item.product._id,
@@ -60,7 +56,6 @@ export const checkout = async (req, res, next) => {
     savedOrder.items = savedOrderItems.map((item) => item._id);
     await savedOrder.save();
 
-    // Cập nhật số lượng tồn kho cho các sản phẩm trong đơn hàng
     for (const item of cart.products) {
       const product = item.product;
 
@@ -71,11 +66,15 @@ export const checkout = async (req, res, next) => {
         }
       }
 
-      await product.save(); // Lưu mỗi sản phẩm sau khi cập nhật tồn kho
+      await product.save(); 
     }
 
-    // Xóa giỏ hàng sau khi đặt hàng thành công
     await Cart.findOneAndDelete({ user_id: userId });
+
+    io.emit("orderCreated", {
+      message: `Bạn có đơn hàng mới vừa tạo`,
+      orderId: savedOrder._id,
+    });
 
     // Trả về thông báo và thông tin đơn hàng
     res.status(201).json({
@@ -86,6 +85,7 @@ export const checkout = async (req, res, next) => {
     next(error);
   }
 };
+
 
 
 
@@ -136,6 +136,7 @@ export const getOrderDetail = async (req, res) => {
   }
 
 }
+
 export const updateOrderStatus = async (req, res) => {
   const { orderId } = req.params;
   const { status } = req.body;
@@ -176,8 +177,16 @@ export const updateOrderStatus = async (req, res) => {
         .json({ message: "Danh sách sản phẩm trong đơn hàng không hợp lệ" });
     }
 
-    // Kiểm tra logic chuyển trạng thái hợp lệ
+    // Kiểm tra trạng thái cũ của đơn hàng
     const currentStatus = order.status;
+
+    // Kiểm tra xem trạng thái có thay đổi không
+    if (currentStatus === status) {
+      return res.status(400).json({
+        message: `Trạng thái đơn hàng đã là "${status}", không cần thay đổi`,
+      });
+    }
+
     const allowedTransitions = {
       Pending: ["Confirmed", "Cancelled"],
       Confirmed: ["In Delivery", "Cancelled"],
@@ -241,8 +250,20 @@ export const updateOrderStatus = async (req, res) => {
       await invoice.save();
     }
 
-    order.status = status; // Cập nhật trạng thái đơn hàng
+    // Cập nhật trạng thái đơn hàng
+    order.status = status;
     await order.save();
+
+    // Phát sự kiện qua Socket.io chỉ khi trạng thái thực sự thay đổi
+    // Giả sử bạn đã lưu trạng thái cũ trong bộ nhớ (ví dụ: `previousStatuses`)
+    if (io && io.emit) {
+      io.emit("orderStatusUpdated", {
+        message: `Trạng thái đơn hàng ${orderId} đã thay đổi từ "${currentStatus}" thành "${status}"`,
+        orderId: orderId,
+        status: status,
+        userId: req.user._id
+      });
+    }
 
     res.status(200).json({
       message: "Cập nhật trạng thái đơn hàng thành công",
@@ -256,6 +277,8 @@ export const updateOrderStatus = async (req, res) => {
     });
   }
 };
+
+
 
 export const updatePaymentStatus = async (req, res) => {
   const { orderId } = req.params;
