@@ -1,10 +1,11 @@
 import { Router } from "express";
 import {
   checkout,
-  getOrderDetail,
+  getOrders,
   updateOrderStatus,
   getOrderByUserID,
   updatePaymentStatus,
+  getOrderDetail
 } from "../controllers/OrderControllers.js"; // Đảm bảo nhập đúng đường dẫn
 import { checkAuth } from "../middleware/checkAuth.js";
 
@@ -14,8 +15,9 @@ const router = Router();
 router.post("/checkout", checkAuth, checkout);
 
 // Route để lấy chi tiết đơn hàng của người dùng đã xác thực
-router.get("/", checkAuth, getOrderDetail);
-router.get("/:id", checkAuth, getOrderByUserID);
+router.get("/", checkAuth, getOrders);
+router.get("/:id", getOrderDetail);
+router.get("/user/:id", checkAuth, getOrderByUserID);
 
 // Route để cập nhật trạng thái đơn hàng
 router.patch("/:orderId", checkAuth, updateOrderStatus);

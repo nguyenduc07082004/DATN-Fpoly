@@ -12,7 +12,7 @@ const OrderPlace = () => {
   const fetchOrderData = async (page: number) => {
     setIsLoading(true);
     try {
-      const res = await ins.get(`/orders/${userId}`, {
+      const res = await ins.get(`/orders/user/${userId}`, {
         params: { page, limit: 5 },
       });
       setOrderData(res.data.orders);

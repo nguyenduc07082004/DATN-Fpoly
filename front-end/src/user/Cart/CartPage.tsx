@@ -44,6 +44,7 @@ const Cart = () => {
     });
   };
   const handleCheckout = async () => {
+   try {
     if (!token) {
       alert("Vui lòng đăng nhập để thanh toán");
       navigate("/login");
@@ -52,10 +53,12 @@ const Cart = () => {
         // Chuyển hướng đến trang VNPAY
         navigate("/vnpay");
       } else {
-        alert(`Thanh toán thành công với phương thức: ${paymentMethod}`);
         await checkout();
       }
     }
+   } catch (error : any) {
+    alert(error.response.data.message);
+   }
   };
 
   return (
