@@ -4,15 +4,16 @@ import { useParams, Link } from "react-router-dom";
 import { baseURL } from "../../api";
 import { orderStatusColors } from "../../utils/colorUtils";
 import ins from "../../api";
+
 const OrderDetail = () => {
-  const { id } = useParams(); 
+  const { id } = useParams();
   const [order, setOrder] = useState<any>(null);
   const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
     const fetchOrderDetail = async () => {
       try {
-        const response = await ins.get(`${baseURL}/orders/${id}`); 
+        const response = await ins.get(`${baseURL}/orders/${id}`);
         const data = response.data;
         setOrder(data);
       } catch (error) {
@@ -32,6 +33,11 @@ const OrderDetail = () => {
   if (!order) {
     return <div>Không có dữ liệu cho đơn hàng này.</div>;
   }
+
+  const handlePrintInvoice = () => {
+    // Đây là nơi bạn có thể xử lý in hóa đơn, ví dụ như mở cửa sổ in
+    window.print(); // Hoặc một phương thức khác tùy vào cách bạn muốn in hóa đơn
+  };
 
   return (
     <div>
@@ -129,6 +135,7 @@ const OrderDetail = () => {
           ))}
         </tbody>
       </table>
+
       <h3>Thông tin thanh toán</h3>
       <table className="table">
         <tbody>
@@ -157,11 +164,10 @@ const OrderDetail = () => {
               {order.payment_status === "paid"
                 ? "Đã thanh toán"
                 : "Chưa thanh toán"}
-            </td>{" "}
+            </td>
           </tr>
         </tbody>
       </table>
-
       <div className="d-flex justify-content-center align-items-center my-4">
         <button className="btn btn-secondary mx-2">
           <Link to="/admin/qldh" className="text-decoration-none text-dark">

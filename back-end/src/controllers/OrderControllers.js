@@ -235,6 +235,7 @@ export const updateOrderStatus = async (req, res) => {
 
     if (status === "Delivered") {
       const invoice = new Invoice({
+        userId: order.user_id,
         orderId: order._id,
         orderItems: order.items.map(item => ({
           productId: item.product._id,

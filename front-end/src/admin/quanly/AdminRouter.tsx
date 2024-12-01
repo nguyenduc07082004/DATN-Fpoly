@@ -19,7 +19,7 @@ import EditForm from "../form/EditForm";
 import VariantsForm from "../form/VariantsForm";
 import OrderDetails from "./OrderDetails";
 import EditVariantsForm from "../form/EditVariant";
-
+import Invoice from "./Invoice"
 function Dashboard() {
   const { user } = useContext(AuthContext) as AuthContextType;
 
@@ -54,6 +54,8 @@ function Dashboard() {
           <Route path="/qldm" element={<QLDM />} />
           <Route path="qldm/add" element={<CateForm />} />
           <Route path="/qldm/edit/:id" element={<CateForm />} />
+          {/* QLHD */}
+          <Route path="/qlhd" element={<Invoice />} />
         </Routes>
       </div>
     </div>
