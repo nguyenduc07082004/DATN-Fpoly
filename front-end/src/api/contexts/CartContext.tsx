@@ -77,6 +77,7 @@ const CartProvider = ({ children }: { children: ReactNode }) => {
   const checkout = async () => {
     const res = await ins.post("/orders/checkout");
     dispatch({ type: "CHECKOUT", payload: res.data });
+    return res;
   };
 
   const removeFromCart = async (variantId: string) => {

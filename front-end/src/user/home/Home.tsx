@@ -53,6 +53,8 @@ const MainBanner = () => {
 
 // Component ProductCard (Khung sản phẩm)
 const ProductCard = ({ product }: { product: Products }) => {
+  console.log(product,"dasodasok")
+
   return (
     <Link
       className="text-decoration-none text-white"
@@ -67,8 +69,8 @@ const ProductCard = ({ product }: { product: Products }) => {
           />
         </div>
         <h3 className="product-title">{product.title}</h3>
-        <p className="price-range">{product.priceRange} VNĐ</p>
-        <button className="buy-button">Mua ngay</button>
+        <p className="price-range fw-bold">{product.default_price.toLocaleString('vi' , { style: 'currency', currency: 'VND' })}</p>
+        <button className="buy-button">Xem chi tiết</button>
       </div>
     </Link>
   );
@@ -93,7 +95,7 @@ const Deals = () => {
   const [products, setProducts] = useState<Products[]>([]);
 
   useEffect(() => {
-    ins.get(`${baseURL}/products/without-variants`)
+    ins.get(`${baseURL}/products`)
       .then((response) => {
         setProducts(response.data);
       })

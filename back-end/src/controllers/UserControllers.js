@@ -203,3 +203,23 @@ export const getCurrentUser = async (req, res) => {
     res.status(500).json({ message: getMessage(lang, 'error', 'SERVER_ERROR'), error });
   }
 };
+
+
+export const updateUser = async (req, res) => {
+  const lang = req.lang || "en";
+  const { id } = req.params;
+  const { first_name,last_name, phone } = req.body;
+  try {
+    const user = await UserModels.findById(id);
+    if (!user) return res.status(404).json({ message: getMessage(lang, 'error', 'NOT_FOUND') });
+
+    user.first_name = first_name;
+    user.last_name = last_name;
+    user.phone = phone;
+   const updatedUser = await user.save();
+
+    res.status(200).json({ message: getMessage(lang, 'success', 'UPDATE_SUCCESS') , user:updatedUser });
+  } catch (error) {
+    res.status(500).json({ message: getMessage(lang, 'error', 'SERVER_ERROR'), error });
+  }
+};

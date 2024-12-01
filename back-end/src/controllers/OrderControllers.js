@@ -117,7 +117,6 @@ export const getOrders = async (req, res) => {
 
 export const getOrderDetail = async (req, res) => {
   const { id } = req.params;
-  console.log(id,"id")
   try {
     const order = await Order.findById(id)
       .populate({
@@ -258,9 +257,6 @@ export const updateOrderStatus = async (req, res) => {
   }
 };
 
-
-
-
 export const updatePaymentStatus = async (req, res) => {
   const { orderId } = req.params;
   const { payment_status } = req.body; 
@@ -292,7 +288,6 @@ export const updatePaymentStatus = async (req, res) => {
     res.status(500).json({ message: "Error updating order status", error });
   }
 };
-
 
 export const getOrderByUserID = async (req, res) => {
   const userId = req.user._id;
@@ -334,3 +329,27 @@ export const getOrderByUserID = async (req, res) => {
   }
 };
 
+export const updateInfoOrder = async (req, res) => {
+  const { id } = req.params;
+  const { receiver_address , receiver_name, receiver_phone } = req.body;
+
+  try {
+    const order = await Order.findById(id); 
+    if (!order) {
+      return res.status(404).json({ message: "Đơn hàng không tồn tại" });
+    }
+
+    order.receiver_address = receiver_address;
+    order.receiver_name = receiver_name;
+    order.receiver_phone = receiver_phone;
+    await order.save();
+
+    res.status(200).json({
+      message: "Cập nhật thống tin đơn hàng thành công",
+      order,
+    });
+  } catch (error) {
+    console.error("Error updating order info:", error);
+    res.status(500).json({ message: "Error updating order info", error });
+  }
+};

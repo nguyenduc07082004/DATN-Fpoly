@@ -7,7 +7,8 @@ import {
   getUser,
   getUserById,
   getCurrentUser,
-  logout , blockUser
+  logout , blockUser , 
+  updateUser
 } from "../controllers/UserControllers.js";
 import { verifyToken } from "../middleware/authMiddleware.js";
 import { checkAuth } from "../middleware/checkAuth.js";
@@ -20,7 +21,7 @@ UserRouter.post('/users/block', checkAuth, blockUser);
 // router.use(checkAuth, checkIsAdmin);
 UserRouter.get("/users", getUser);
 UserRouter.get("/users/:id", getUserById);
-
 UserRouter.get("/me", verifyToken, getCurrentUser);
+UserRouter.put("/users/:id", updateUser);
 
 export default UserRouter;

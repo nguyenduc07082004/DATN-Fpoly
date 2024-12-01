@@ -159,43 +159,39 @@ export const getProductsWithoutVariants = async (req, res) => {
 
 export const getFilteredProducts = async (req, res) => {
   try {
-    // Lấy các tham số từ request query
-    const { page = 1, limit = 10, searchTerm, minPrice, maxPrice, rating } = req.query;
+    const { page = '1', limit = '10', searchTerm = '', rating = '0', category = '', min_price = '', max_price = '' } = req.query;
 
-    // Xây dựng bộ lọc
-    const filters = {};
+    // Tạo filters cho việc lọc
+    const filters = {
+      searchTerm,
+      rating: Number(rating),
+      categories: category,
+      min_price,
+      max_price
+    };
 
-    // Tìm kiếm tiêu đề sản phẩm
-    if (searchTerm) {
-      filters.title = { $regex: searchTerm, $options: "i" }; // Không phân biệt hoa thường
-    }
+    const pagination = {
+      page: Number(page),
+      limit: Number(limit)
+    };
 
-    // Lọc theo giá
-    if (minPrice || maxPrice) {
-      filters["variants.price"] = {}; // Lọc trong variants.price
-      if (minPrice) filters["variants.price"].$gte = Number(minPrice);
-      if (maxPrice) filters["variants.price"].$lte = Number(maxPrice);
-    }
+    // Lấy danh sách sản phẩm từ service
+    const { products, totalCount, totalPages } = await productService.getFilteredProductsService(filters, pagination);
 
-    // Lọc theo đánh giá trung bình
-    if (rating) {
-      filters.averageRating = { $gte: Number(rating) };
-    }
-
-    // Gọi service để lấy dữ liệu
-    const result = await productService.getFilteredProductsService(filters, Number(page), Number(limit));
-
-    // Trả về phản hồi
-    return res.status(200).json({
-      success: true,
-      data: result,
-      message: "Filtered products fetched successfully",
+    // Trả về kết quả
+    res.status(200).json({
+      products,
+      totalCount,
+      totalPages,
+      currentPage: page
     });
   } catch (error) {
-    console.error("Error in getFilteredProducts controller:", error);
-    return res.status(500).json({ success: false, error: "Internal Server Error" });
+    res.status(500).json({ message: error.message });
   }
 };
+
+
+
 
 export const getVariantByProductId = async (req, res) => {
   try {
@@ -341,21 +337,6 @@ export const updateVariant = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 export const deleteVariant = async (req, res) => {

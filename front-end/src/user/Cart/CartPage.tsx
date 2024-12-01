@@ -1,9 +1,9 @@
-import React, { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { CartContext, CartContextType } from "../../api/contexts/CartContext";
 import { CartItem } from "../../api/reducers/CartReducer";
 import { useNavigate } from "react-router-dom";
 import { FaMinusCircle, FaPlusCircle } from "react-icons/fa";
-
+import Swal from "sweetalert2";
 const Cart = () => {
   const { state, removeFromCart, checkout, addToCart, fetchCart } = useContext(
     CartContext
@@ -53,11 +53,26 @@ const Cart = () => {
         // Chuyển hướng đến trang VNPAY
         navigate("/vnpay");
       } else {
-        await checkout();
+       const res =  await checkout();
+       if (res.status === 201) {
+        Swal.fire({
+          icon: 'success',
+          title: 'Thanh toán đơn hàng thành công',
+          showConfirmButton: true,
+          confirmButtonText: 'OK',
+          timer: 1500
+        }).then(() => {
+          navigate("/checkout");
+        })
+      }
       }
     }
    } catch (error : any) {
-    alert(error.response.data.message);
+    Swal.fire({
+      icon: 'error',
+      title: 'Oops...',
+      text: error.response.data.message,
+    });
    }
   };
 

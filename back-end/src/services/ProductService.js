@@ -3,6 +3,7 @@ import VariantImage from "../models/VariantImageModels.js"; // Import model Vari
 import Comment from "../models/CommentsModels.js";
 import path from "path";
 import fs from "fs";
+import mongoose from "mongoose";
 // Lấy danh sách sản phẩm
 export const getAllProducts = async () => {
   try {
@@ -184,78 +185,70 @@ export const createVariant = async (productId, variantData, files) => {
 
 
 
-export const getFilteredProductsService = async (filters, page = 1, pageSize = 10) => {
+export const getFilteredProductsService = async (filters, pagination) => {
   try {
-    const skip = (page - 1) * pageSize;
+    const { searchTerm, rating, categories, min_price, max_price } = filters;
     console.log("Filters:", filters);
-    // Chuẩn bị điều kiện lọc từ `filters`
-    const matchFilters = {};
+    const { page, limit } = pagination;
 
-    if (filters.minPrice || filters.maxPrice) {
-      matchFilters['variants.price'] = {};
-      if (filters.minPrice) matchFilters['variants.price'].$gte = Number(filters.minPrice);
-      if (filters.maxPrice) matchFilters['variants.price'].$lte = Number(filters.maxPrice);
-    }
-    if (filters.searchTerm) {
-      matchFilters.title = { $regex: filters.searchTerm, $options: "i" }; // Tìm kiếm không phân biệt hoa thường
+    const query = {};
+
+    // Lọc theo từ khóa tìm kiếm (searchTerm)
+    if (searchTerm) {
+      query.title = { $regex: searchTerm, $options: 'i' }; 
     }
 
-    // Lấy sản phẩm
-    const products = await Product.aggregate([
-      // Lọc sản phẩm theo điều kiện
-      { $unwind: "$variants" },
-      { $match: matchFilters },
-      {
-        $group: {
-          _id: "$_id", // Nhóm theo sản phẩm
-          title: { $first: "$title" }, // Lấy tên sản phẩm
-          image: { $first: "$image" }, // Lấy hình ảnh
-          minPrice: { $min: "$variants.price" }, // Giá thấp nhất
-          maxPrice: { $max: "$variants.price" }, // Giá cao nhất
-        },
-      },
-      {
-        $project: {
-          _id: 1,
-          title: 1,
-          image: 1,
-          priceRange: {
-            $concat: [
-              { $toString: "$minPrice" },
-              " - ",
-              { $toString: "$maxPrice" },
-            ],
-          },
-        },
-      },
-      { $skip: skip }, // Bỏ qua sản phẩm của các trang trước
-      { $limit: pageSize }, // Giới hạn số sản phẩm trả về
-    ]);
+    // Lọc theo danh mục (categories)
+    if (categories) {
+      query.categories = new mongoose.Types.ObjectId(categories); 
+    }
 
+    // Lọc theo giá
+    if (min_price && max_price) {
+      query.default_price = { $gte: Number(min_price), $lte: Number(max_price) };
+    } else if (min_price) {
+      query.default_price = { $gte: Number(min_price) };
+    } else if (max_price) {
+      query.default_price = { $lte: Number(max_price) };
+    }
 
-    // Thêm bình luận và đánh giá
-    const productsWithComments = await Promise.all(
-      products.map(async (product) => {
-        const comments = await Comment.find({ productId: product._id })
-          .populate("userId", "first_name last_name email") // Lấy thông tin người dùng
-          .sort({ createdAt: -1 }) // Sắp xếp bình luận mới nhất trước
-          .lean();
+    // Tính tổng số sản phẩm (total count)
+    const totalCount = await Product.countDocuments(query);
 
-        const totalRating = comments.reduce((sum, comment) => sum + (comment.rating || 0), 0);
-        const averageRating = comments.length > 0 ? totalRating / comments.length : 0;
+    // Tính toán số trang (total pages)
+    const totalPages = Math.ceil(totalCount / limit);
 
-        return {
-          ...product,
-          comments,
-          averageRating: Math.round(averageRating * 10) / 10, // Làm tròn tới 1 chữ số
-        };
-      })
-    );
+    // Lấy các sản phẩm với phân trang
+    const products = await Product.find(query)
+      .populate("variants")
+      .skip((page - 1) * limit)
+      .limit(limit)
+      .lean();
 
-    return productsWithComments;
+    // Tính điểm trung bình của sản phẩm từ các bình luận
+    for (let product of products) {
+      const ratings = await Comment.aggregate([
+        { $match: { productId: product._id } },
+        { $group: { _id: null, averageRating: { $avg: "$rating" } } }
+      ]);
+
+      product.averageRating = ratings.length > 0 ? ratings[0].averageRating : 0;
+    }
+
+    // Lọc theo đánh giá
+    const filteredProducts = products.filter(product => product.averageRating >= rating);
+
+    return {
+      products: filteredProducts,
+      totalCount,
+      totalPages
+    };
   } catch (error) {
     throw new Error("Error fetching products: " + error.message);
   }
 };
+
+
+
 
 
