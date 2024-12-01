@@ -101,8 +101,7 @@ export const getOrders = async (req, res) => {
           path: "product variantId", 
           select: "title description image"
         }
-      })
-      .sort({ createdAt: -1 })
+      }).sort({created_at:-1})
       .exec();
 
     if (!order || order.length === 0) {
