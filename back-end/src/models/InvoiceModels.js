@@ -2,6 +2,11 @@ import { Schema, model } from "mongoose";
 
 const invoiceSchema = new Schema(
   {
+    userId: {
+      type: Schema.Types.ObjectId,
+      ref: "User", 
+      required: true,
+    },
     orderId: {
       type: Schema.Types.ObjectId,
       ref: "Order", 
