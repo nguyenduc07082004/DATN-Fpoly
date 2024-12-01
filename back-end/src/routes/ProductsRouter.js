@@ -8,7 +8,10 @@ import {
   deleteProduct,
   createVariant,
   getProductsWithoutVariants,
-  getFilteredProducts
+  getFilteredProducts,
+  getVariantByProductId,
+  deleteVariant,
+  updateVariant
 } from "../controllers/ProductControllers.js";
 import multer from "multer";
 // Lấy danh sách sản phẩm (không cần xác thực)
@@ -32,10 +35,11 @@ ProductRouter.get(
   "/:id", //authMiddleware,
   getProductById
 );
-
+ProductRouter.get("/:product_id/variants/:variant_id", getVariantByProductId);
+ProductRouter.put("/:productId/variants/:variantId",upload.array("images", 3), updateVariant);
 ProductRouter.post(
   "/create/variants", 
-  upload.array("images", 10), 
+  upload.array("images", 3), 
   createVariant
 );
 
@@ -51,6 +55,8 @@ ProductRouter.delete(
   "/:id", //authMiddleware,
   deleteProduct
 );
+ProductRouter.delete("/:product_id/variants/:variant_id", deleteVariant);
+
 
 
 

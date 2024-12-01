@@ -17,6 +17,8 @@ import Details from "./Details";
 import AddForm from "../form/AddForm";
 import EditForm from "../form/EditForm";
 import VariantsForm from "../form/VariantsForm";
+import OrderDetails from "./OrderDetails";
+import EditVariantsForm from "../form/EditVariant";
 
 function Dashboard() {
   const { user } = useContext(AuthContext) as AuthContextType;
@@ -39,14 +41,15 @@ function Dashboard() {
           <Route path="/" element={<TrangChu />} />
           <Route path="/qlsp" element={<QLSP />} />
           <Route path="qlsp/add" element={<AddForm />} />
-          <Route path="/qlsp/variants" element={<VariantsForm />} />
           <Route path="/qlsp/edit/:id" element={<EditForm />} />
           <Route path="/qltk" element={<QLTK />} />
           <Route path="/qlbl" element={<QLBL />} />
           <Route path="/qldh" element={<QLDH />} />
+          <Route path="/qldh/:id" element={<OrderDetails />} />
           <Route path="/tk" element={<TK />} />
           <Route path="/details/:id" element={<Details />} />
-
+          <Route path="/details/:id/variant/add" element={<VariantsForm />} />
+          <Route path="/details/:id/variant/edit/:variantId" element={<EditVariantsForm />} />
           {/* QLDM */}
           <Route path="/qldm" element={<QLDM />} />
           <Route path="qldm/add" element={<CateForm />} />

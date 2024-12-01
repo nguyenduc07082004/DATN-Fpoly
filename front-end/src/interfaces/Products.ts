@@ -20,6 +20,7 @@ export interface Products {
   description: string; 
   variants: Variant[];
   priceRange : number;
+  default_price: number
 }
 export interface CartItem extends Products {
   quantity: number;

@@ -2,11 +2,10 @@ import Order from "../models/OrderModels.js";
 import Cart from "../models/CartModels.js";
 import Product from "../models/ProductModels.js";
 import OrderItem from "../models/OrderItemModels.js";
-
+import Invoice from "../models/InvoiceModels.js";
 export const checkout = async (req, res, next) => {
   try {
     const userId = req.user._id;
-    // Lấy giỏ hàng của người dùng
     const cart = await Cart.findOne({ user_id: userId })
       .populate("products.product")
       .populate("user_id");
@@ -19,10 +18,10 @@ export const checkout = async (req, res, next) => {
     for (const item of cart.products) {
       const product = item.product;
       const variant = product.variants.find(v => v._id.toString() === item.variantId.toString());
-
+      console.log(product);
       if (variant && variant.quantity < item.quantity) {
         return res.status(400).json({
-          message: `Không đủ số lượng cho sản phẩm ${product.name} (Màu sắc: ${variant.color}). Số lượng tồn kho: ${variant.quantity}`,
+          message: `Không đủ số lượng cho sản phẩm ${product.title} (Màu sắc: ${variant.color}). Số lượng tồn kho: ${variant.quantity}`,
         });
       }
     }
@@ -90,7 +89,7 @@ export const checkout = async (req, res, next) => {
 
 
 
-export const getOrderDetail = async (req, res) => {
+export const getOrders = async (req, res) => {
   if (!req.user) {
     return res.status(401).json({ message: "User not authenticated" });
   }
@@ -116,12 +115,39 @@ export const getOrderDetail = async (req, res) => {
   }
 };
 
+export const getOrderDetail = async (req, res) => {
+  const { id } = req.params;
+  console.log(id,"id")
+  try {
+    const order = await Order.findById(id)
+      .populate({
+        path: "items",
+        populate: {
+          path: "product variantId",
+          select: "title description image variants",
+        },
+      })
+      .exec();
+    if (!order) {
+      return res.status(404).json({ message: "Đơn hàng không tồn tại" });
+    }
+    res.status(200).json(order);
+  } catch (error) {
+    console.log(error)
+  }
 
+}
 export const updateOrderStatus = async (req, res) => {
   const { orderId } = req.params;
   const { status } = req.body;
 
-  const validStatuses = ["Pending", "In Delivery", "Delivered", "Cancelled"];
+  const validStatuses = [
+    "Pending",
+    "In Delivery",
+    "Confirmed",
+    "Delivered",
+    "Cancelled",
+  ];
 
   if (!validStatuses.includes(status)) {
     return res.status(400).json({
@@ -146,21 +172,39 @@ export const updateOrderStatus = async (req, res) => {
     }
 
     if (!Array.isArray(order.items)) {
-      return res.status(400).json({ message: "Danh sách sản phẩm trong đơn hàng không hợp lệ" });
+      return res
+        .status(400)
+        .json({ message: "Danh sách sản phẩm trong đơn hàng không hợp lệ" });
     }
 
+    // Kiểm tra logic chuyển trạng thái hợp lệ
+    const currentStatus = order.status;
+    const allowedTransitions = {
+      Pending: ["Confirmed", "Cancelled"],
+      Confirmed: ["In Delivery", "Cancelled"],
+      "In Delivery": ["Delivered"],
+      Delivered: [],
+      Cancelled: [],
+    };
 
-    // Kiểm tra nếu trạng thái chuyển sang "Cancelled"
-    if (status === "Cancelled" && order.status !== "Cancelled") {
+    if (!allowedTransitions[currentStatus].includes(status)) {
+      return res.status(400).json({
+        message: `Không thể chuyển trạng thái từ "${currentStatus}" sang "${status}"`,
+      });
+    }
+
+    // Xử lý các trạng thái đặc biệt
+    if (status === "Cancelled" && currentStatus !== "Cancelled") {
       const updateVariantsPromises = order.items.map(async (item) => {
-        const product = await Product.findById(item.product._id); 
-
+        const product = await Product.findById(item.product._id);
         if (!product) {
-          throw new Error(`Không tìm thấy sản phẩm với ID ${item.product._id}`);
+          throw new Error(
+            `Không tìm thấy sản phẩm với ID ${item.product._id}`
+          );
         }
-
         const variant = product.variants.find(
-          (variant) => variant._id.toString() === item.variantId.toString()
+          (variant) =>
+            variant._id.toString() === item.variantId.toString()
         );
 
         if (!variant) {
@@ -177,9 +221,25 @@ export const updateOrderStatus = async (req, res) => {
       await Promise.all(updateVariantsPromises);
     }
 
-    // Kiểm tra nếu trạng thái chuyển sang "Delivered" và payment_status chưa phải là "paid"
     if (status === "Delivered" && order.payment_status !== "paid") {
-      order.payment_status = "paid"; // Cập nhật payment_status thành "paid"
+      order.payment_status = "paid"; 
+    }
+
+    if (status === "Delivered") {
+      const invoice = new Invoice({
+        orderId: order._id,
+        orderItems: order.items.map(item => ({
+          productId: item.product._id,
+          variantId: item.variantId,
+          quantity: item.quantity,
+          price: item.price,
+          storage: item.storage,
+          color: item.color
+        })),
+        totalAmount: order.total_price
+      });
+
+      await invoice.save();
     }
 
     order.status = status; // Cập nhật trạng thái đơn hàng
@@ -191,9 +251,14 @@ export const updateOrderStatus = async (req, res) => {
     });
   } catch (error) {
     console.error("Error updating order status:", error);
-    res.status(500).json({ message: "Error updating order status", error: error.message });
+    res.status(500).json({
+      message: "Error updating order status",
+      error: error.message,
+    });
   }
 };
+
+
 
 
 export const updatePaymentStatus = async (req, res) => {
@@ -251,7 +316,6 @@ export const getOrderByUserID = async (req, res) => {
 
     const totalOrders = await Order.countDocuments({ user_id: userId });
 
-    console.log("Total orders:", totalOrders);
     const totalPages = Math.ceil(totalOrders / limit); 
 
     if (!orders.length) {

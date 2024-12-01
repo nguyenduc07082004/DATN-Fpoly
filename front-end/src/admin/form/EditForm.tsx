@@ -3,17 +3,19 @@ import { useContext, useState, useEffect } from "react";
 import { CategoryContext } from "../../api/contexts/CategoryContext";
 import { useParams } from "react-router-dom";
 import { baseURL } from "../../api";
+
 const EditForm = () => {
   const [formData, setFormData] = useState({
     title: "",
     categories: "", 
     description: "",
+    default_price: "", 
   });
 
   const { dataDM } = useContext(CategoryContext); 
   const [image, setImage] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
-  const { id } = useParams(); // Get the product ID from the URL
+  const { id } = useParams(); 
 
   useEffect(() => {
     const fetchProductData = async () => {
@@ -24,6 +26,7 @@ const EditForm = () => {
           title: product.title,
           categories: product.categories._id,
           description: product.description,
+          default_price: product.default_price, 
         });
         setImagePreview(`${baseURL}/images/${product.image}`);
       } catch (error) {
@@ -33,7 +36,6 @@ const EditForm = () => {
     fetchProductData();
   }, [id]);
 
-  // Handle input change for form fields
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({
@@ -42,7 +44,6 @@ const EditForm = () => {
     }));
   };
 
-  // Handle category change
   const handleCategoryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setFormData((prevData) => ({
       ...prevData,
@@ -50,7 +51,6 @@ const EditForm = () => {
     }));
   };
 
-  // Handle image change
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
       const selectedImage = e.target.files[0];
@@ -59,22 +59,19 @@ const EditForm = () => {
     }
   };
 
-  // Handle form submission
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!formData.title || !formData.categories) {
+    if (!formData.title || !formData.categories || !formData.default_price) {
       alert("Vui lòng điền đầy đủ thông tin sản phẩm.");
       return;
     }
 
-    // Prepare FormData to send
     const formDataToSend = new FormData();
     formDataToSend.append("title", formData.title);
     formDataToSend.append("categories", formData.categories);
     formDataToSend.append("description", formData.description);
-
-    // Append image if selected
+    formDataToSend.append("default_price", formData.default_price);
     if (image) {
       formDataToSend.append("image", image);
     }
@@ -90,7 +87,7 @@ const EditForm = () => {
         }
       );
       alert("Sản phẩm đã được cập nhật thành công!");
-      window.location.href = "/admin/qlsp"; // Redirect to product list
+      window.location.href = "/admin/qlsp"; 
     } catch (error) {
       console.error("Error updating product:", error);
       alert("Có lỗi xảy ra khi cập nhật sản phẩm.");
@@ -130,6 +127,21 @@ const EditForm = () => {
                 </option>
               ))}
             </select>
+          </div>
+        </div>
+
+        <div className="m-5 row">
+          <div className="col-md-6 mb-3">
+            <label htmlFor="default_price">Giá sản phẩm</label>
+            <input
+              className="form-control"
+              type="number"
+              placeholder="Giá sản phẩm"
+              name="default_price"
+              value={formData.default_price}
+              onChange={handleInputChange}
+              required
+            />
           </div>
         </div>
 

@@ -53,7 +53,8 @@ const QLSP = () => {
             <th className="col-1">Ảnh</th>
             <th className="col-1">Số lượng</th>
             <th className="col-2">Loại</th>
-            <th className="col-3">Mô tả</th>
+            <th className="col-2">Mô tả</th>
+            <th className="col-1">Giá</th>
             <th className="col-2">Chức năng</th>
           </tr>
         </thead>
@@ -70,7 +71,10 @@ const QLSP = () => {
                 />
               </td>
               <td className="col-1">
-              {i.variants.reduce((total, variant) => total + (variant.quantity || 0), 0)}
+                {i.variants.reduce(
+                  (total, variant) => total + (variant.quantity || 0),
+                  0
+                )}
               </td>
               <td className="col-2">
                 {i.categories
@@ -79,7 +83,11 @@ const QLSP = () => {
                     : i.categories.name
                   : "Không có danh mục"}
               </td>
-              <td className="col-3">{i.description}</td>
+              <td className="col-2">{i.description}</td>
+              <td className="col-1">
+                {i.default_price ? `${i.default_price.toLocaleString('vi' , { style: 'currency', currency: 'VND' })}` : "Chưa có giá"}
+              </td>
+
               <td className="col-2 d-flex">
                 <button className="action-edit rounded">
                   <Link
