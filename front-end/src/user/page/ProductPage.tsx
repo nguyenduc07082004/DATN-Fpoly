@@ -2,37 +2,41 @@ import { useEffect, useState } from "react";
 import { Products } from "../../interfaces/Products";
 import { baseURL } from "../../api";
 import ins from "../../api";
-import Pagination from "./Pagination"; // Import Pagination component
+import Pagination from "./Pagination"; 
+import { Link } from "react-router-dom";
 
 const ProductPage = () => {
   const [products, setProducts] = useState<Products[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [searchTerm, setSearchTerm] = useState(""); // Keep search term in state
-  const [priceRange, setPriceRange] = useState<[number, number]>([5000, 10000]); // Initial range 5000 to 10000
+  const [categories, setCategories] = useState<string[]>([]);
+  const [selectedCategory, setSelectedCategory] = useState(""); 
+  const [searchTerm, setSearchTerm] = useState("");
+  const [priceRange, setPriceRange] = useState<[number, number]>([0, 1000000000]); 
   const [rating, setRating] = useState<number>(0);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
 
-  // Function to fetch products
   const fetchProducts = async (page: number) => {
     setLoading(true);
     setError(null);
 
     try {
       const response = await ins.get(`${baseURL}/products/filters`, {
-        params: { 
-          page, 
-          limit: 10, 
-          searchTerm, 
-          minPrice: priceRange[0], 
-          maxPrice: priceRange[1], 
-          rating 
-        }
+        params: {
+          page,
+          limit: 10,
+          searchTerm,
+          rating,
+          category: selectedCategory,
+          min_price: priceRange[0],
+          max_price: priceRange[1],
+        },
       });
+
       if (response.status >= 200 && response.status < 300) {
-        setProducts(response.data.data);
-        setTotalPages(response.data.totalPages);
+        setProducts(response.data.products); 
+        setTotalPages(response.data.totalPages); 
       } else {
         throw new Error(`Failed to fetch products: ${response.statusText}`);
       }
@@ -43,19 +47,31 @@ const ProductPage = () => {
     }
   };
 
-  // Fetch products when the component mounts or when the page number changes
   useEffect(() => {
-    fetchProducts(currentPage); 
+    fetchProducts(currentPage);
   }, [currentPage]);
 
-  // Handle form submit to fetch products based on filters
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const response = await ins.get(`${baseURL}/categories`);
+        if (response.status >= 200 && response.status < 300) {
+          setCategories(response.data); 
+        }
+      } catch (error) {
+        console.error("Failed to fetch categories", error);
+      }
+    };
+
+    fetchCategories();
+  }, []);
+
   const handleSearchSubmit = (e: React.FormEvent) => {
-    e.preventDefault(); // Prevent form from reloading the page
-    setCurrentPage(1); // Reset to first page when submitting a new search
-    fetchProducts(1); // Fetch products with the current search and filters
+    e.preventDefault();
+    setCurrentPage(1);
+    fetchProducts(1);
   };
 
-  // Handle page change
   const handlePageChange = (newPage: number) => {
     if (newPage >= 1 && newPage <= totalPages) {
       setCurrentPage(newPage);
@@ -73,7 +89,6 @@ const ProductPage = () => {
   return (
     <div className="container-fluid my-4">
       <div className="row d-flex">
-        {/* Search and Filter Sidebar */}
         <div className="col-md-3 d-flex flex-column">
           <div className="filter-box p-4 bg-light shadow rounded h-100">
             <h5 className="mb-3 text-center">Tìm kiếm sản phẩm</h5>
@@ -88,27 +103,54 @@ const ProductPage = () => {
                 />
               </div>
 
+              <h5 className="mt-4">Lọc theo danh mục</h5>
+              <div className="mb-3">
+                <select
+                  className="form-control"
+                  value={selectedCategory}
+                  onChange={(e) => setSelectedCategory(e.target.value)}
+                >
+                  <option value="">Tất cả danh mục</option>
+                  {categories.length > 0 &&
+                    categories.map((category) => (
+                      <option key={category} value={category._id}>
+                        {category.name}
+                      </option>
+                    ))}
+                </select>
+              </div>
+
               <h5 className="mt-4">Lọc theo giá</h5>
               <div className="mb-3">
                 <input
                   type="range"
                   min="0"
-                  max="10000000"
+                  max="100000000"
                   value={priceRange[0]}
-                  onChange={(e) => setPriceRange([Number(e.target.value), priceRange[1]])}
+                  onChange={(e) =>
+                    setPriceRange([Number(e.target.value), priceRange[1]])
+                  }
                   className="form-range"
                 />
                 <input
                   type="range"
                   min="0"
-                  max="10000000"
+                  max="100000000"
                   value={priceRange[1]}
-                  onChange={(e) => setPriceRange([priceRange[0], Number(e.target.value)])}
+                  onChange={(e) =>
+                    setPriceRange([priceRange[0], Number(e.target.value)])
+                  }
                   className="form-range"
                 />
                 <div className="d-flex justify-content-between">
-                  <span>{`${priceRange[0]} VND`}</span>
-                  <span>{`${priceRange[1]} VND`}</span>
+                  <span>{`${priceRange[0].toLocaleString("vi", {
+                    style: "currency",
+                    currency: "VND",
+                  })}`}</span>
+                  <span>{`${priceRange[1].toLocaleString("vi", {
+                    style: "currency",
+                    currency: "VND",
+                  })}`}</span>
                 </div>
               </div>
 
@@ -120,51 +162,58 @@ const ProductPage = () => {
                   className="form-control"
                 >
                   <option value={0}>Tất cả đánh giá</option>
-                  <option value={1}>1 Sao</option>
-                  <option value={2}>2 Sao</option>
-                  <option value={3}>3 Sao</option>
-                  <option value={4}>4 Sao</option>
-                  <option value={5}>5 Sao</option>
+                  <option value={1}>1 ⭐ trở lên</option>
+                  <option value={2}>2 ⭐ trở lên</option>
+                  <option value={3}>3 ⭐ trở lên</option>
+                  <option value={4}>4 ⭐ trở lên</option>
+                  <option value={5}>5 ⭐</option>
                 </select>
               </div>
-
-              <button type="submit" className="btn btn-primary w-100 mt-3">
+              <button type="submit" className="btn btn-primary w-100">
                 Tìm kiếm
               </button>
             </form>
           </div>
         </div>
 
-        {/* Product Grid */}
         <div className="col-md-9">
-          <h1 className="text-center mb-4">Tất cả sản phẩm</h1>
-
           <div className="row">
-            {products.length > 0 ? (
-              products.map((product) => (
-                <div className="col-md-3 mb-4" key={product._id}>
-                  <div className="card shadow-sm">
+            {products?.length === 0 ? (
+              <div className="col-12 text-center">
+                <p>Không có sản phẩm nào</p>
+              </div>
+            ) : (
+              products?.map((product) => (
+                <div key={product._id} className="col-md-4 mb-4">
+                  <div className="card">
                     <img
-                      src={`${baseURL}/images/` + product.image}
+                      src={`${baseURL}/images/${product.image}`}
                       alt={product.title}
                       className="card-img-top"
                     />
                     <div className="card-body">
-                      <h5 className="card-title">{product.title}</h5>
-                      <p className="card-text">{product.priceRange} VND</p>
-                      <div className="rating">
-                        <span>{product.averageRating} ⭐</span>
+                      <h5 className="card-title fw-bold">{product.title}</h5>
+                      <p className="card-text">{product.description}</p>
+                      <h6 className="text-success fw-bold">{`${product.default_price.toLocaleString(
+                        "vi",
+                        { style: "currency", currency: "VND" }
+                      )}`}</h6>
+                      <div>
+                        <strong>Đánh giá:</strong>
+                        <p>{product.averageRating} / 5⭐</p>
                       </div>
-                      <button className="btn btn-warning w-100">Xem chi tiết</button>
                     </div>
+                    <Link
+                      to={`/products/${product._id}`}
+                      className="btn btn-primary"
+                    >
+                      Chi tiết
+                    </Link>
                   </div>
                 </div>
               ))
-            ) : (
-              <div className="col-12 text-center">No products found</div>
             )}
           </div>
-
           <Pagination
             currentPage={currentPage}
             totalPages={totalPages}

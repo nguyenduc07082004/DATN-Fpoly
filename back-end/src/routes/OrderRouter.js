@@ -5,7 +5,8 @@ import {
   updateOrderStatus,
   getOrderByUserID,
   updatePaymentStatus,
-  getOrderDetail
+  getOrderDetail,
+  updateInfoOrder
 } from "../controllers/OrderControllers.js"; // Đảm bảo nhập đúng đường dẫn
 import { checkAuth } from "../middleware/checkAuth.js";
 
@@ -20,9 +21,10 @@ router.get("/:id", getOrderDetail);
 router.get("/user/:id", checkAuth, getOrderByUserID);
 
 // Route để cập nhật trạng thái đơn hàng
-router.patch("/:orderId", checkAuth, updateOrderStatus);
-
 router.patch("/payment/:orderId", checkAuth, updatePaymentStatus);
+router.patch("/:orderId", updateOrderStatus);
+router.put("/:id", updateInfoOrder);
+
 
 // router.patch("/:orderId", getOrderById);
 

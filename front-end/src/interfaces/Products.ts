@@ -21,6 +21,7 @@ export interface Products {
   variants: Variant[];
   priceRange : number;
   default_price: number
+  averageRating: number;
 }
 export interface CartItem extends Products {
   quantity: number;

@@ -181,13 +181,8 @@ const Header = () => {
               aria-labelledby="dropdownUser1"
             >
               <li>
-                <Link className="dropdown-item" to="#">
+                <Link className="dropdown-item" to="/profile">
                   Tài khoản
-                </Link>
-              </li>
-              <li>
-                <Link className="dropdown-item" to="#">
-                  Cài đặt
                 </Link>
               </li>
               {user?.role === "admin" && (

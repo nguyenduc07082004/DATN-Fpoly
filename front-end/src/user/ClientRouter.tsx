@@ -13,6 +13,7 @@ import Cart from "./Cart/CartPage";
 import VnpayPayment from "./page/Vnpay";
 import CheckOut from "./page/CheckOut";
 import OrderPlace from "./page/OrderPlace";
+import Profile from "./page/Profile";
 const Client = () => {
   return (
     <div>
@@ -28,6 +29,7 @@ const Client = () => {
         <Route path="/cart" element={<Cart />} />
         <Route path="/user/:id" element={<FromUser />} />
         <Route path="/vnpay" element={<VnpayPayment />} />
+        <Route path="/profile" element={<Profile />} />
         <Route path="/checkout" element={<CheckOut />} />
         <Route path="/orderplace" element={<OrderPlace />} />
       </Routes>

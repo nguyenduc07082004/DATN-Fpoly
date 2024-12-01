@@ -21,7 +21,7 @@ import ins from "../../api";
 import { Variant } from "../../interfaces/Products";
 import toastr from 'toastr';
 import 'toastr/build/toastr.min.css'
-
+import Swal from "sweetalert2";
 const colorMapping = {
   Đen: "#000000",    
   Trắng: "#FFFFFF",  
@@ -53,21 +53,37 @@ const ProductDetails = () => {
   const [rating, setRating] = useState(0);
 
   const handleAddToCart = async () => {
-    const variant = availableStorages.find(v => v._id === variantId);
-    if (variant) {
-      // Giả sử bạn gọi một hàm addToCart và nó trả về một Promise
-       addToCart({
-        productId: product._id,
-        variantId: variant._id,
-        storage: variant.storage,
-        price: variant.price,
-        quantity: quantity,
-        selectedColor: selectedColor,
-        selectedStorage: variant.storage
+    if (!userId) {
+      Swal.fire({
+        icon: 'warning',
+        title: 'Vui lòng đăng nhập',
+        text: 'Vui lòng đăng nhập trước khi thêm sản phẩm vào giỏ hàng.',
+        confirmButtonText: 'Đăng nhập',
+        cancelButtonText: 'Đăng ký',
+        showCancelButton: true
+      }).then((result) => {
+        if (result.isConfirmed) {
+          window.location.href = '/login'; 
+        } else {
+          window.location.href = '/register'; 
+        }
       });
-        toastr.success("Sản phẩm đã được thêm vào giỏ hàng!", "Thành công");
     } else {
-      toastr.error("Variant không hợp lệ", "Lỗi");
+      const variant = availableStorages.find(v => v._id === variantId);
+      if (variant) {
+        addToCart({
+          productId: product._id,
+          variantId: variant._id,
+          storage: variant.storage,
+          price: variant.price,
+          quantity: quantity,
+          selectedColor: selectedColor,
+          selectedStorage: variant.storage
+        });
+        toastr.success("Sản phẩm đã được thêm vào giỏ hàng!", "Thành công");
+      } else {
+        toastr.error("Variant không hợp lệ", "Lỗi");
+      }
     }
   };
   
