@@ -188,7 +188,6 @@ export const createVariant = async (productId, variantData, files) => {
 export const getFilteredProductsService = async (filters, pagination) => {
   try {
     const { searchTerm, rating, categories, min_price, max_price } = filters;
-    console.log("Filters:", filters);
     const { page, limit } = pagination;
 
     const query = {};

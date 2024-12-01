@@ -1,8 +1,20 @@
 import { Link } from "react-router-dom";
 import ".././App.scss";
 import { useAuth } from "../api/contexts/AuthContext";
+import { io } from "socket.io-client";
+import { baseURL } from "../api";
+import toastr from "toastr";
 const AdminSidebar = () => {
   const { logout } = useAuth();
+  const socket = io(baseURL);
+  let hasShownMessage = JSON.parse(localStorage.getItem('hasShownMessage') || '{}')
+  // Khi nhận sự kiện
+  socket.on("orderCreated", (data) => {
+      toastr.success(data.message, "Thành công");
+      hasShownMessage[data.orderId] = true;
+  
+      localStorage.setItem('hasShownMessage', JSON.stringify(hasShownMessage));
+  });
   return (
     <div>
       <div
