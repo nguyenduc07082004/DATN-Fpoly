@@ -143,8 +143,8 @@ const Cart = () => {
                   className="text-primary"
                 />
               </td>
-              <td>{product.price}</td>
-              <td>{product.price * product?.quantity}</td>
+              <td>{product.price.toLocaleString('vi' , { style: 'currency', currency: 'VND' })}</td>
+              <td>{(product.price * product?.quantity).toLocaleString('vi' , { style: 'currency', currency: 'VND' })}</td>
               <td>
                 <button
                   onClick={() =>
@@ -159,7 +159,7 @@ const Cart = () => {
           ))}
           <tr>
             <td colSpan={7}>Tổng tiền</td>
-            <td>{state.totalPrice}</td>
+            <td>{state.totalPrice.toLocaleString('vi' , { style: 'currency', currency: 'VND' })}</td>
             <td>
               <button onClick={handleCheckout} className="btn btn-success">
                 Thanh toán
