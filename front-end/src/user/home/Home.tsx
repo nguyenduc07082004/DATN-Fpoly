@@ -1,97 +1,136 @@
-import { useState, useEffect } from "react";
-import "../css/Style.css";
-
+import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
+import { Products } from '../../interfaces/Products'; // Import kiểu Products
+import { baseURL } from '../../api';
+import ins from '../../api';
 import banner1 from "../../assets/banner.jpg";
 import banner2 from "../../assets/banner1.jpg";
 import banner3 from "../../assets/banner 2.jpg";
-import { Products } from "../../interfaces/Products";
-import { Link } from "react-router-dom";
-import { baseURL } from "../../api";
-import ins from "../../api";
-import CategoryList from "../page/Category";
-const bannerImages = [banner1, banner2, banner3,];
 
-// Component Banner (Phần banner chính)
-const MainBanner = () => {
+// Banner Component
+const MainBanner: React.FC = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
+  const bannerImages = [banner1, banner2, banner3];
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setCurrentIndex((prevIndex) =>
-        prevIndex === bannerImages.length - 1 ? 0 : prevIndex + 1
-      );
-    }, 3000); // Đổi ảnh mỗi 3 giây
+      setCurrentIndex((prevIndex) => prevIndex === bannerImages.length - 1 ? 0 : prevIndex + 1);
+    }, 3000);
     return () => clearInterval(interval);
   }, []);
 
-  const handlePrev = () => {
-    setCurrentIndex((prevIndex) =>
-      prevIndex === 0 ? bannerImages.length - 1 : prevIndex - 1
-    );
-  };
-
-  const handleNext = () => {
-    setCurrentIndex((prevIndex) =>
-      prevIndex === bannerImages.length - 1 ? 0 : prevIndex + 1
-    );
-  };
-
   return (
-    <div className="banner">
-      <img src={bannerImages[currentIndex]} alt={`Banner ${currentIndex + 1}`} />
-      <div className="banner-controls">
-        <button className="banner-button left" onClick={handlePrev}>
-          &#8592;
-        </button>
-        <button className="banner-button right" onClick={handleNext}>
-          &#8594;
-        </button>
+    <div id="mainBanner" className="carousel slide" data-bs-ride="carousel">
+      <div className="carousel-inner">
+        {bannerImages.map((image, index) => (
+          <div className={`carousel-item ${index === currentIndex ? 'active' : ''}`} key={index}>
+            <img src={image} className="d-block w-100" alt={`Banner ${index + 1}`} />
+          </div>
+        ))}
+      </div>
+      <button className="carousel-control-prev" type="button" data-bs-target="#mainBanner" data-bs-slide="prev">
+        <span className="carousel-control-prev-icon" aria-hidden="true"></span>
+        <span className="visually-hidden">Previous</span>
+      </button>
+      <button className="carousel-control-next" type="button" data-bs-target="#mainBanner" data-bs-slide="next">
+        <span className="carousel-control-next-icon" aria-hidden="true"></span>
+        <span className="visually-hidden">Next</span>
+      </button>
+    </div>
+  );
+};
+
+// Product Card Component
+const ProductCard: React.FC<{ product: Products }> = ({ product }) => {
+  return (
+    <div className="col">
+      <div className="card">
+        <img src={`${baseURL}/images/${product.image}`} className="card-img-top" alt={product.title} />
+        <div className="card-body">
+          <h5 className="card-title">{product.title}</h5>
+          <p className="card-text">{product.default_price.toLocaleString('vi', { style: 'currency', currency: 'VND' })}</p>
+          <Link to={`/products/${product._id}`} className="btn btn-primary">Xem chi tiết</Link>
+        </div>
       </div>
     </div>
   );
 };
 
-// Component ProductCard (Khung sản phẩm)
-const ProductCard = ({ product }: { product: Products }) => {
-  console.log(product,"dasodasok")
-
+// Product List Component
+const ProductList: React.FC<{ products: Products[] }> = ({ products }) => {
   return (
-    <Link
-      className="text-decoration-none text-white"
-      to={`/products/${product._id}`}
-    >
-      <div className="product-card">
-        <div className="product-image">
-          <img
-            src={`${baseURL}/images/` + product.image}
-            alt={product.title}
-            className="image"
-          />
+    <div className="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-3">
+      {products.length > 0 ? (
+        products.map((product) => (
+          <ProductCard key={product._id} product={product} />
+        ))
+      ) : (
+        <div className="col-12">
+          <p className="text-center">Không có sản phẩm nào</p>
         </div>
-        <h3 className="product-title">{product.title}</h3>
-        <p className="price-range fw-bold">{product.default_price.toLocaleString('vi' , { style: 'currency', currency: 'VND' })}</p>
-        <button className="buy-button">Xem chi tiết</button>
-      </div>
-    </Link>
+      )}
+    </div>
   );
 };
 
-const ProductList = ({ products }: { products: Products[] }) => {
+
+// Categories Component
+const Categories: React.FC = () => {
+  const [categories, setCategories] = useState<string[]>([]);
+  const [selectedCategory, setSelectedCategory] = useState<string>();
+  const [products, setProducts] = useState<Products[]>([]);
+
+
+  const fetchCategories = async () => {
+    try {
+      const response = await ins.get(`${baseURL}/categories`);
+      if (response.status >= 200 && response.status < 300) {
+        setCategories(response.data);
+      }
+    } catch (err) {
+      console.error((err as Error).message);
+    }
+  }
+  const fetchProducts = async () => {
+    try {
+      const response = await ins.get(`${baseURL}/products/filters` , {params: {category: selectedCategory}});
+      if (response.status >= 200 && response.status < 300) {
+        setProducts(response.data.products);
+        console.log(response.data.products)
+      }
+    } catch (err) {
+      console.error((err as Error).message);
+    }
+  }
+  useEffect(() => {
+   fetchCategories();
+   fetchProducts();
+  }, [selectedCategory]);
+
   return (
-    <section className="product-list">
-      <h2>Sản phẩm nổi bật</h2>
-      <div className="product-grid">
-        {products.map((product) => (
-          <ProductCard key={product._id} product={product} />
+    <section className="mt-5">
+      <h2>Danh mục sản phẩm</h2>
+      <div className="btn-group" role="group" aria-label="Categories">
+        {categories.length > 0 && categories.map((category) => (
+          <button 
+            key={category._id} 
+            type="button" 
+            className={`btn ${category._id === selectedCategory ? 'btn-primary' : 'btn-outline-primary'}`} 
+            onClick={() => setSelectedCategory(category._id)}
+          >
+            {category.name}
+          </button>
         ))}
       </div>
+      <h3 className="mt-4">
+        <ProductList products={products} />
+      </h3>
     </section>
   );
 };
 
-
-// Component Deals (Khuyến mãi nổi bật)
-const Deals = () => {
+// Deals Component
+const Deals: React.FC = () => {
   const [products, setProducts] = useState<Products[]>([]);
 
   useEffect(() => {
@@ -105,20 +144,20 @@ const Deals = () => {
   }, []);
 
   return (
-    <section className="deals">
+    <section className="mt-5">
       <h2>Khuyến mãi Online</h2>
       <ProductList products={products} />
     </section>
   );
 };
 
-// Trang chủ chính
-const Home = () => {
+// Home Page Component
+const Home: React.FC = () => {
   return (
     <div>
       <MainBanner />
+      <Categories />
       <Deals />
-      <CategoryList/>
     </div>
   );
 };
