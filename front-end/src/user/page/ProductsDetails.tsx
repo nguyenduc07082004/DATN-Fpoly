@@ -319,6 +319,7 @@ const ProductDetails = () => {
                 <Button
                   key={storage}
                   variant="contained"
+                  disabled={quantity === 0}
                   onClick={() => handleStorageChange(storage)}
                   sx={{
                     padding: "8px 20px",

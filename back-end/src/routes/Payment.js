@@ -9,7 +9,7 @@ import OrderItem from "../models/OrderItemModels.js";
 const vnp_TmnCode = "1FDEBV99"; // Replace with your VNPay TmnCode
 const vnp_HashSecret = "HMD09FSOL18IL59STWAMEX0ZOIU4HENY"; // Replace with your VNPay HashSecret
 const vnp_Url = "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html"; // VNPay URL
-const vnp_ReturnUrl = "http://localhost:5173/checkout";
+const vnp_ReturnUrl = "http://localhost:8000/vnpay/vnpay_return";
 
 router.post("/create_payment_url", async function (req, res, next) {
   process.env.TZ = "Asia/Ho_Chi_Minh";
@@ -31,8 +31,8 @@ router.post("/create_payment_url", async function (req, res, next) {
   let orderId = moment(date).format("DDHHmmss");
   let amount = req.body.amount;
   let bankCode = req.body.bankCode;
-
   let locale = req.body.language;
+  let userId = req.body.userId;
   if (locale === null || locale === "") {
     locale = "vn";
   }
@@ -44,7 +44,7 @@ router.post("/create_payment_url", async function (req, res, next) {
   vnp_Params["vnp_Locale"] = locale;
   vnp_Params["vnp_CurrCode"] = currCode;
   vnp_Params["vnp_TxnRef"] = orderId;
-  vnp_Params["vnp_OrderInfo"] = "Thanh toan cho ma GD:" + orderId;
+  vnp_Params["vnp_OrderInfo"] = userId;
   vnp_Params["vnp_OrderType"] = "other";
   vnp_Params["vnp_Amount"] = amount * 100;
   vnp_Params["vnp_ReturnUrl"] = returnUrl;
@@ -63,136 +63,115 @@ router.post("/create_payment_url", async function (req, res, next) {
   vnp_Params["vnp_SecureHash"] = signed;
   vnpUrl += "?" + querystring.stringify(vnp_Params, { encode: false });
 
+  // Return the payment URL to initiate payment
   res.status(200).json({ code: "00", data: vnpUrl });
-  const userId = req.user._id; 
-  const cart = await Cart.findOne({ user_id:userId }).populate(
-    "products.product"
-  ).populate('user_id')
-  if (!cart || cart.products.length === 0) {
-    return res.status(400).json({ message: "Giỏ hàng không tồn tại hoặc giỏ hàng trống" });
-  }
 
-  const checkStockPromises = cart.products.map(async (item) => {
-    const product = item.product;
-    const variant = product.variants.find(v => v._id.toString() === item.variantId.toString());
-
-    if (variant && variant.quantity < item.quantity) {
-      throw new Error(`Không đủ số lượng cho sản phẩm ${product.name} (Màu sắc: ${variant.color}). Số lượng tồn kho: ${variant.quantity}`);
-    }
-  });
-  const totalPrice = cart.products.reduce((total, item) => {
-    return total + item.price * item.quantity;
-  }, 0);
-
-  const order = new Order({
-    user_id: userId,
-    status: "Pending",
-    total_price: totalPrice,
-    receiver_name: cart.user_id.first_name + " " + cart.user_id.last_name,
-    receiver_phone: cart.user_id.phone,
-    receiver_address: cart.user_id.address,
-    payment_status: "paid",
-  });
-
-  const savedOrder = await order.save();
-
-  const orderItems = cart.products.map((item) => ({
-    order_id: savedOrder._id,
-    product: item.product._id,
-    variantId: item.variantId,
-    quantity: item.quantity,
-    price: item.price,
-    storage: item.storage,
-    color: item.color,
-  }));
-
-  const savedOrderItems = await OrderItem.insertMany(orderItems);
-
-  savedOrder.items = savedOrderItems.map((item) => item._id);
-  await savedOrder.save();
-
-  for (const item of cart.products) {
-    const product = item.product;
-    
-    const variant = product.variants.find(variant => variant._id.toString() === item.variantId.toString());
-    if (variant) {
-      variant.quantity -= item.quantity;
-      await product.save(); 
-    }
-  }
-
-
-  // Lưu đơn hàng vào cơ sở dữ liệu
-  await order.save();
-  await Cart.findOneAndDelete({ user_id: userId });
+  // Process the cart and order only after the payment is successful (on VNPay's return)
+  // You will need to handle this in a separate route, where VNPay returns the payment result
 
 });
 
-router.get("/vnpay_return", async function (req, res, next) {
-  // let vnp_Params = req.query;
+router.get('/vnpay_return', async function (req, res, next) {
+  var vnp_Params = req.query;
+  const vnp_UserId = vnp_Params['vnp_OrderInfo'];
+  var secureHash = vnp_Params['vnp_SecureHash'];
 
-  // let secureHash = vnp_Params["vnp_SecureHash"];
+  delete vnp_Params['vnp_SecureHash'];
+  delete vnp_Params['vnp_SecureHashType'];
 
-  // delete vnp_Params["vnp_SecureHash"];
-  // delete vnp_Params["vnp_SecureHashType"];
+  vnp_Params = sortObject(vnp_Params);
 
-  // vnp_Params = sortObject(vnp_Params);
+  var tmnCode = vnp_TmnCode;
+  var secretKey = vnp_HashSecret;
 
-  // let tmnCode = vnp_TmnCode;
-  // let secretKey = vnp_HashSecret;
+  var signData = querystring.stringify(vnp_Params, { encode: false });
+  var hmac = crypto.createHmac("sha512", secretKey);
+  var signed = hmac.update(Buffer.from(signData, 'utf-8')).digest("hex");
 
-  // let signData = querystring.stringify(vnp_Params, { encode: false });
+  if (secureHash === signed) {
+      const userId = vnp_UserId
+      // Lấy giỏ hàng của người dùng
+      const cart = await Cart.findOne({ user_id: userId }).populate("products.product").populate("user_id");
 
-  // let hmac = crypto.createHmac("sha512", secretKey);
-  // let signed = hmac.update(new Buffer(signData, "utf-8")).digest("hex");
+      // Kiểm tra nếu giỏ hàng không tồn tại hoặc giỏ hàng trống
+      if (!cart || cart.products.length === 0) {
+          return res.status(400).json({ message: "Giỏ hàng không tồn tại hoặc giỏ hàng trống." });
+      }
 
-  // if (secureHash === signed) {
-  //   //Kiem tra xem du lieu trong db co hop le hay khong va thong bao ket qua
+      // Kiểm tra số lượng sản phẩm trong kho
+      const checkStockPromises = cart.products.map(async (item) => {
+          const product = item.product;
+          const variant = product.variants.find(v => v._id.toString() === item.variantId.toString());
 
-  //   res.render("success", { code: vnp_Params["vnp_ResponseCode"] });
-  // } else {
-  //   res.render("success", { code: "97" });
-  // }
-  try {
-    const userId = req.user._id; // Lấy thông tin người dùng từ token
-    const cart = await CartModels.findOne({ userId }).populate(
-      "products.product"
-    );
+          if (variant && variant.quantity < item.quantity) {
+              throw new Error(`Không đủ số lượng cho sản phẩm ${product.name} (Màu sắc: ${variant.color}). Số lượng tồn kho: ${variant.quantity}`);
+          }
+      });
 
-    if (!cart) {
-      return res.status(400).json({ message: "Giỏ hàng không tồn tại" });
-    }
+      try {
+          await Promise.all(checkStockPromises);
 
-    // Tính tổng giá trị của đơn hàng
-    const totalPrice = cart.products.reduce((total, item) => {
-      return total + item.product.price * item.quantity;
-    }, 0);
+          // Tính tổng giá trị giỏ hàng
+          const totalPrice = cart.products.reduce((total, item) => total + item.price * item.quantity, 0);
 
-    // Tạo đơn hàng mới
-    const order = new OrderModels({
-      userId,
-      products: cart.products.map((item) => ({
-        product: item.product._id,
-        quantity: item.quantity,
-      })),
-      totalPrice,
-      status: "Pending", // Trạng thái mặc định khi đơn hàng mới được tạo
-    });
+          // Tạo một đơn hàng mới
+          const order = new Order({
+              user_id: userId,
+              status: "Confirmed", 
+              total_price: totalPrice,
+              receiver_name: cart.user_id.first_name + " " + cart.user_id.last_name,
+              receiver_phone: cart.user_id.phone,
+              receiver_address: cart.user_id.address,
+              payment_status: "paid", 
+          });
 
-    // Lưu đơn hàng vào cơ sở dữ liệu
-    await order.save();
+          // Lưu đơn hàng vào cơ sở dữ liệu
+          const savedOrder = await order.save();
 
-    // Xóa giỏ hàng sau khi thanh toán
-    await CartModels.findOneAndDelete({ userId });
+          // Tạo danh sách các sản phẩm trong đơn hàng
+          const orderItems = cart.products.map((item) => ({
+              order_id: savedOrder._id,
+              product: item.product._id,
+              variantId: item.variantId,
+              quantity: item.quantity,
+              price: item.price,
+              storage: item.storage,
+              color: item.color,
+          }));
 
-    res.status(201).json({
-      message: "Đặt hàng thành công",
-      order,
-    });
-  } catch (error) {
-    next(error);
+          // Lưu các sản phẩm vào cơ sở dữ liệu
+          const savedOrderItems = await OrderItem.insertMany(orderItems);
+
+          // Cập nhật đơn hàng với các sản phẩm đã lưu
+          savedOrder.items = savedOrderItems.map((item) => item._id);
+          await savedOrder.save();
+
+          // Cập nhật số lượng sản phẩm trong kho sau khi xác nhận đơn hàng
+          for (const item of cart.products) {
+              const product = item.product;
+              const variant = product.variants.find(variant => variant._id.toString() === item.variantId.toString());
+              if (variant) {
+                  variant.quantity -= item.quantity;
+                  await product.save();
+              }
+          }
+
+          // Xóa giỏ hàng
+          await Cart.findOneAndDelete({ user_id: userId });
+
+          res.redirect('http://localhost:5173/checkout')
+      } catch (error) {
+          // Nếu có lỗi liên quan đến số lượng kho, trả về thông báo lỗi
+          res.status(400).json({ message: error.message });
+      }
+
+  } else {
+      res.json({ code: '97' });
   }
 });
+
+
+
 
 function sortObject(obj) {
   let sorted = {};

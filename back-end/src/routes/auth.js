@@ -17,7 +17,7 @@ authRouter.use("/categories", CategoryRouter);
 authRouter.use("/", userRouter);
 authRouter.use("/carts", checkAuth, cartRouter);
 authRouter.use("/orders", checkAuth, OrderRouter);
-authRouter.use("/vnpay", checkAuth, router);
+authRouter.use("/vnpay", router);
 authRouter.use("/comments" , CommentRouter) 
 authRouter.use("/replies" , ReplyRouter)
 authRouter.use('/dashboard' , DashboardRouter)

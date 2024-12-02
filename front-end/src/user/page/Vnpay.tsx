@@ -7,11 +7,13 @@ import axios from "axios";
 import { QRCodeSVG } from "qrcode.react";
 import vnpayLogo from "../../assets/vnpay.jpg";
 import ins from "../../api";
+import { AuthContext } from "../../api/contexts/AuthContext";
 
 const Vnpay = () => {
   const token = localStorage.getItem("accessToken"); // Lấy token từ localStorage
   const { checkout } = useContext(CartContext);
   const { state: cartState } = useContext(CartContext);
+  const {user } = useContext(AuthContext);
   // const { dispatch: orderDispatch } = useContext(OrderContext);
   const navigate = useNavigate();
   const [paymentUrl, setPaymentUrl] = useState("");
@@ -31,6 +33,7 @@ const Vnpay = () => {
         orderDescription: "Payment for order",
         bankCode: "",
         language: "vn",
+        userId:user._id ,
       });
 
       window.location.href = response.data.data;
@@ -129,13 +132,13 @@ const Vnpay = () => {
             <tr key={item.product._id}>
               <td>{item.product.title}</td>
               <td>{item.quantity}</td>
-              <td>{item.price}</td>
-              <td>{item.price * item.quantity}</td>
+              <td>{item.price.toLocaleString("vi" , { style: "currency", currency: "VND" })}</td>
+              <td>{(item.price * item.quantity).toLocaleString("vi" , { style: "currency", currency: "VND" })}</td>
             </tr>
           ))}
         </tbody>
       </table>
-      <h4>Tổng giá trị giỏ hàng: {cartState.totalPrice} VND</h4>
+      <h4>Tổng giá trị giỏ hàng: {cartState.totalPrice.toLocaleString("vi" , { style: "currency", currency: "VND" })}</h4>
 
       <div className="my-4 text-center">
         <h3>
