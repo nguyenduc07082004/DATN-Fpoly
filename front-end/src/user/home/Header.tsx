@@ -122,54 +122,6 @@ const Header = () => {
               Đơn hàng
             </Link>
           </li>
-          <li className="dropdown">
-            <Link
-              to="#"
-              className="text-decoration-none dropdown-toggle"
-              data-bs-toggle="dropdown"
-              aria-expanded="false"
-              style={{ color: "white" }}
-            >
-              Thiết bị
-            </Link>
-            <ul className="dropdown-menu">
-              <li>
-                <Link to="/products/phone" className="dropdown-item">
-                  Điện thoại
-                </Link>
-              </li>
-              <li>
-                <Link to="/products/laptop" className="dropdown-item">
-                  Laptop
-                </Link>
-              </li>
-              <li>
-                <Link to="/products/accessory" className="dropdown-item">
-                  Phụ kiện
-                </Link>
-              </li>
-              <li>
-                <Link to="/products/smartwatch" className="dropdown-item">
-                  Smartwatch
-                </Link>
-              </li>
-              <li>
-                <Link to="/products/watch" className="dropdown-item">
-                  Đồng hồ
-                </Link>
-              </li>
-              <li>
-                <Link to="/products/used" className="dropdown-item">
-                  Máy cũ
-                </Link>
-              </li>
-              <li>
-                <Link to="/services" className="dropdown-item">
-                  Dịch vụ
-                </Link>
-              </li>
-            </ul>
-          </li>
         </ul>
       </nav>
       <div className="user-options">

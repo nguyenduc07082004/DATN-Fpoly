@@ -58,7 +58,7 @@ const QLTK = () => {
       <p className="m-3">
         <b className="h2">Quản lý tài khoản</b>
       </p>
-      <div className="d-flex py-4 mx-5">
+      <div className="mx-5 py-4 d-flex">
         <div className="search">
           Search
           <input
@@ -80,7 +80,7 @@ const QLTK = () => {
             <th className="col-1">Trạng thái</th>
             <th className="col-1">SĐT</th>
             <th className="col-3">Địa chỉ</th>
-            <th className="col-2">Chức năng</th>
+            <th className="col-2">Trạng thái người dùng</th>
           </tr>
         </thead>
         <tbody className="text-center">
@@ -106,11 +106,11 @@ const QLTK = () => {
         </tbody>
       </table>
 
-      <div className="d-flex justify-content-center align-items-center my-4">
+      <div className="my-4 d-flex justify-content-center align-items-center">
         <button
           disabled={currentPage === 1}
           onClick={handlePrevPage}
-          className="btn btn-primary mx-2"
+          className="mx-2 btn btn-primary"
         >
           Trang trước
         </button>
@@ -120,7 +120,7 @@ const QLTK = () => {
         <button
           disabled={currentPage === totalPages}
           onClick={handleNextPage}
-          className="btn btn-primary mx-2"
+          className="mx-2 btn btn-primary"
         >
           Trang sau
         </button>
