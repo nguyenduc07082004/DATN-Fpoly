@@ -24,43 +24,42 @@ const IntroPage: React.FC = () => {
               </Box>
               <div className="content-page rte">
                 <p>
-                  Dola Phone là một cửa hàng độc lập chuyên cung cấp các sản
-                  phẩm công nghệ của hãng Apple huyền thoại. Với niềm đam mê về
-                  công nghệ và sự tận tụy trong dịch vụ khách hàng, chúng tôi tự
-                  hào là người bạn đồng hành tin cậy cho những người yêu thích
-                  các sản phẩm của Apple.
+                  Chào mừng bạn đến với Smart Shop, nền tảng mua sắm trực tuyến
+                  hàng đầu chuyên cung cấp các dòng sản phẩm điện thoại thông
+                  minh từ các thương hiệu nổi tiếng. Với niềm đam mê công nghệ
+                  và cam kết mang lại trải nghiệm mua sắm tốt nhất, chúng tôi tự
+                  hào là người bạn đồng hành đáng tin cậy cho mọi khách hàng yêu
+                  thích công nghệ.
                 </p>
                 <p>
-                  Đến với Dola Phone, bạn sẽ được trải nghiệm một không gian mua
-                  sắm thân thiện và chuyên nghiệp. Chúng tôi tự hào về đội ngũ
-                  nhân viên giàu kinh nghiệm và am hiểu sâu về các sản phẩm của
-                  Apple, luôn sẵn sàng tư vấn và hỗ trợ bạn tìm hiểu về từng sản
-                  phẩm một, từ điện thoại thông minh iPhone, máy tính bảng iPad
-                  cho đến laptop Macbook, đảm bảo bạn sẽ tìm thấy được sự lựa
-                  chọn hoàn hảo.
+                  Tại Smart Shop, bạn sẽ tìm thấy một giao diện mua sắm thân
+                  thiện, hiện đại và dễ sử dụng. Trang web của chúng tôi cung
+                  cấp thông tin chi tiết về từng sản phẩm, từ các dòng điện
+                  thoại phổ biến như iPhone, Samsung, Xiaomi đảm bảo bạn dễ dàng
+                  tìm được sản phẩm phù hợp với nhu cầu.
                 </p>
                 <p>
-                  Với cam kết mang đến sự hài lòng tuyệt đối cho khách hàng,
-                  Dola Phone chú trọng vào chất lượng sản phẩm và dịch vụ tốt
-                  nhất. Chúng tôi cam kết chỉ cung cấp các sản phẩm chính hãng
-                  từ Apple, đảm bảo chất lượng và hiệu suất tối ưu của từng
-                  thiết bị.
+                  Chúng tôi cam kết: Sản phẩm chính hãng: Tất cả các sản phẩm
+                  tại Smart Shop đều được nhập khẩu từ các nhà phân phối uy tín,
+                  đảm bảo chất lượng và hiệu suất tối ưu. Giá cả cạnh tranh: Đưa
+                  đến khách hàng mức giá hợp lý nhất cùng nhiều chương trình
+                  khuyến mãi hấp dẫn. Hỗ trợ tận tâm: Đội ngũ nhân viên tư vấn
+                  chuyên nghiệp sẵn sàng giải đáp mọi thắc mắc và hỗ trợ bạn lựa
+                  chọn sản phẩm phù hợp. Giao hàng nhanh chóng: Dịch vụ vận
+                  chuyển toàn quốc, đảm bảo sản phẩm đến tay bạn trong thời gian
+                  sớm nhất.
                 </p>
                 <p>
-                  Hơn nữa, Dola Phone cũng tự hào là một địa chỉ tin cậy để bạn
-                  bảo dưỡng và sửa chữa các sản phẩm của Apple. Đội ngũ kỹ thuật
-                  viên giàu kinh nghiệm của chúng tôi sẽ nhanh chóng và chính
-                  xác khắc phục các vấn đề kỹ thuật của thiết bị của bạn, đảm
-                  bảo rằng bạn luôn có được trải nghiệm tốt nhất từ các sản phẩm
-                  Apple yêu thích của mình.
+                  Ngoài ra, Smart Shop còn cung cấp các dịch vụ bảo hành và sửa
+                  chữa với đội ngũ kỹ thuật viên giàu kinh nghiệm, giúp bạn an
+                  tâm trong suốt quá trình sử dụng sản phẩm.
                 </p>
                 <p>
-                  Với sứ mệnh là cung cấp sự xuất sắc và dịch vụ chất lượng,
-                  Dola Phone mong muốn trở thành địa chỉ mua sắm lý tưởng cho
-                  những người yêu công nghệ và đam mê các sản phẩm của Apple.
-                  Hãy đến với chúng tôi để khám phá thế giới công nghệ đẳng cấp
-                  và tận hưởng sự phục vụ tận tâm từ đội ngũ chuyên gia của
-                  chúng tôi.
+                  Với sứ mệnh mang đến sự hài lòng tối đa cho khách hàng, Smart
+                  Shop không ngừng cải tiến chất lượng sản phẩm và dịch vụ. Hãy
+                  truy cập trang web của chúng tôi ngay hôm nay để khám phá thế
+                  giới công nghệ đẳng cấp và tận hưởng trải nghiệm mua sắm trực
+                  tuyến tuyệt vời!
                 </p>
               </div>
             </Box>
