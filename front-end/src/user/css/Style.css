@@ -37,6 +37,8 @@
 .cart-container {
         display: flex;
         justify-content: center;
+        align-items: center;
+        min-height: 100vh; 
         gap: 50px;
         padding: 20px;
         margin: auto;
@@ -113,7 +115,6 @@
         border-radius: 8px;
         padding: 8px;
 }
-
 .quantity-control{
         display: flex;
         gap: 10px;
