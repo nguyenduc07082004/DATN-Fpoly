@@ -54,7 +54,7 @@ const QLBL = () => {
       <table className="table">
   <thead>
     <tr>
-      <th>Tên sản phẩm</th>
+      <th>Sản phẩm bình lua</th>
       <th>Bình luận</th>
       <th>Ngày bình luận</th>
       <th>Người bình luận</th>
@@ -72,7 +72,7 @@ const QLBL = () => {
           <td>{comment.productId?._id}</td> 
           <td>{comment.comment}</td>
           <td>{new Date(comment.createdAt).toLocaleString()}</td>
-          <td>{comment.userId?._id}</td>
+          <td>{comment.userId?.last_name}</td>
           <td>
             <Button variant="outlined" onClick={() => openModal(comment)}>
               Trả lời

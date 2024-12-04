@@ -102,7 +102,6 @@ const OrderDetail = () => {
           <tr>
             <th className="col-1">STT</th>
             <th className="col-2">Tên sản phẩm</th>
-            <th className="col-2">Mô tả</th>
             <th className="col-2">Dung lượng / Màu</th>
             <th className="col-1">Số lượng</th>
             <th className="col-2">Giá</th>
@@ -114,7 +113,6 @@ const OrderDetail = () => {
             <tr key={index}>
               <td>{index + 1}</td>
               <td>{item.product.title}</td>
-              <td>{item.product.description}</td>
               <td>
                 {item.color} / {item.storage}
               </td>
@@ -125,7 +123,7 @@ const OrderDetail = () => {
                   currency: "VND",
                 })}
               </td>
-              <td className="fw-bold text-danger">
+              <td className="text-danger fw-bold">
                 {(item.quantity * item.price).toLocaleString("vi", {
                   style: "currency",
                   currency: "VND",
@@ -168,8 +166,8 @@ const OrderDetail = () => {
           </tr>
         </tbody>
       </table>
-      <div className="d-flex justify-content-center align-items-center my-4">
-        <button className="btn btn-secondary mx-2">
+      <div className="my-4 d-flex justify-content-center align-items-center">
+        <button className="mx-2 btn btn-secondary">
           <Link to="/admin/qldh" className="text-decoration-none text-dark">
             Quay lại
           </Link>

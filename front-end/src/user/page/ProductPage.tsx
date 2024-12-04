@@ -83,15 +83,15 @@ const ProductPage = () => {
   }
 
   if (error) {
-    return <div className="text-center py-4 text-danger">Error: {error}</div>;
+    return <div className="text-center text-danger py-4">Error: {error}</div>;
   }
 
   return (
     <div className="container-fluid my-4">
       <div className="row d-flex">
-        <div className="col-md-3 d-flex flex-column">
-          <div className="filter-box p-4 bg-light shadow rounded h-100">
-            <h5 className="mb-3 text-center">Tìm kiếm sản phẩm</h5>
+        <div className="flex-column col-md-3 d-flex">
+          <div className="bg-light rounded h-100 shadow p-4 filter-box">
+            <h5 className="text-center mb-3">Tìm kiếm sản phẩm</h5>
             <form onSubmit={handleSearchSubmit}>
               <div className="mb-3">
                 <input
@@ -169,7 +169,7 @@ const ProductPage = () => {
                   <option value={5}>5 ⭐</option>
                 </select>
               </div>
-              <button type="submit" className="btn btn-primary w-100">
+              <button type="submit" className="w-100 btn btn-primary">
                 Tìm kiếm
               </button>
             </form>
@@ -179,12 +179,12 @@ const ProductPage = () => {
         <div className="col-md-9">
           <div className="row">
             {products?.length === 0 ? (
-              <div className="col-12 text-center">
+              <div className="text-center col-12">
                 <p>Không có sản phẩm nào</p>
               </div>
             ) : (
               products?.map((product) => (
-                <div key={product._id} className="col-md-4 mb-4">
+                <div key={product._id} className="mb-4 col-md-4">
                   <div className="card">
                     <img
                       src={`${baseURL}/images/${product.image}`}
@@ -193,7 +193,6 @@ const ProductPage = () => {
                     />
                     <div className="card-body">
                       <h5 className="card-title fw-bold">{product.title}</h5>
-                      <p className="card-text">{product.description}</p>
                       <h6 className="text-success fw-bold">{`${product.default_price.toLocaleString(
                         "vi",
                         { style: "currency", currency: "VND" }

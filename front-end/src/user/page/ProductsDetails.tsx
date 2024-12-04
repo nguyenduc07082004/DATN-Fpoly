@@ -243,7 +243,7 @@ const ProductDetails = () => {
 
     <Grid item xs={12} md={7}>
       <Typography variant="h4">{product.title}</Typography>
-      <Typography variant="body1">{product.description}</Typography>
+    
 
       <Box sx={{ mt: 2, display: "flex", gap: 2 }}>
   {Array.from(
@@ -356,7 +356,7 @@ const ProductDetails = () => {
           </Typography>
         </Box>
       )}
-
+  <Typography variant="body1">{product.description}</Typography>
       <Button
         variant="contained"
         onClick={handleAddToCart}
