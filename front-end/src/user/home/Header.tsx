@@ -26,38 +26,38 @@ const Header = () => {
     status: string;
     message: string;
   }
-  
+
   const debounceTimeouts: Record<string, NodeJS.Timeout> = {};
-  
+
   socket.on("orderStatusUpdated", (data: OrderStatusUpdateData) => {
     if (data.userId === user._id) {
       const { orderId, status } = data;
-  
+
       if (debounceTimeouts[orderId]) {
         clearTimeout(debounceTimeouts[orderId]);
       }
-  
+
       debounceTimeouts[orderId] = setTimeout(() => {
         toastr.success(data.message, "Thành công");
-      }, 2000); 
+      }, 2000);
     }
   });
-  
-    const totalProduct = state.products.reduce(
+
+  const totalProduct = state.products.reduce(
     (acc, item) => acc + item.quantity,
     0
   );
 
   const handleLogout = async () => {
     try {
-      const response = await ins.post(`${baseURL}/logout`); 
+      const response = await ins.post(`${baseURL}/logout`);
       if (response.status === 200) {
-        logout(); 
-        localStorage.removeItem("accessToken"); 
-        localStorage.removeItem("user"); 
-        alert("Đăng xuất thành công!"); 
+        logout();
+        localStorage.removeItem("accessToken");
+        localStorage.removeItem("user");
+        alert("Đăng xuất thành công!");
       }
-    } catch (error : any) {
+    } catch (error: any) {
       if (error.response) {
         console.error("Lỗi:", error.response.data.message);
         alert(error.response.data.message || "Đã xảy ra lỗi khi đăng xuất.");
@@ -97,7 +97,7 @@ const Header = () => {
           </li>
           <li>
             <Link
-              to="/about"
+              to="/introPage"
               className="text-decoration-none"
               style={{ color: "white" }}
             >
@@ -106,7 +106,7 @@ const Header = () => {
           </li>
           <li>
             <Link
-              to="/contact"
+              to="/contactPage"
               className="text-decoration-none"
               style={{ color: "white" }}
             >
@@ -220,19 +220,23 @@ const Header = () => {
                 <hr className="dropdown-divider" />
               </li>
               <li>
-                <Link onClick={() => handleLogout()} className="dropdown-item" to="#">
+                <Link
+                  onClick={() => handleLogout()}
+                  className="dropdown-item"
+                  to="#"
+                >
                   Đăng xuất
                 </Link>
               </li>
             </ul>
           </div>
         )}
-     <Link to="/cart" className="text-decoration-none cart-icon">
-  <FontAwesomeIcon icon={faCartShopping} />
-  {totalProduct > 0 && (
-    <span className="cart-item-count">{totalProduct}</span>
-  )}
-</Link>
+        <Link to="/cart" className="text-decoration-none cart-icon">
+          <FontAwesomeIcon icon={faCartShopping} />
+          {totalProduct > 0 && (
+            <span className="cart-item-count">{totalProduct}</span>
+          )}
+        </Link>
       </div>
     </header>
   );

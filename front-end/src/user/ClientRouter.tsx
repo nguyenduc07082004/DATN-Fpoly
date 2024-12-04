@@ -14,6 +14,9 @@ import VnpayPayment from "./page/Vnpay";
 import CheckOut from "./page/CheckOut";
 import OrderPlace from "./page/OrderPlace";
 import Profile from "./page/Profile";
+import ContactPage from "./page/ContactPage";
+import IntroPage from "./page/IntroPage";
+
 const Client = () => {
   return (
     <div>
@@ -32,6 +35,8 @@ const Client = () => {
         <Route path="/profile" element={<Profile />} />
         <Route path="/checkout" element={<CheckOut />} />
         <Route path="/orderplace" element={<OrderPlace />} />
+        <Route path="/contactPage" element={<ContactPage />} />
+        <Route path="/introPage" element={<IntroPage />} />
       </Routes>
       <Footer />
     </div>
