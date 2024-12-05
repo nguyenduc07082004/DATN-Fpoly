@@ -7,6 +7,8 @@ const orderSchema = new Schema({
   receiver_name: { type: String, required: true },
   receiver_phone: { type: String, required: true },
   receiver_address: { type: String, required: true },
+  voucher: {type : String, required: false},
+  discount_value: {type: Number, required: false},
   payment_status: { type: String, enum: ["unpaid", "paid"], required: true },
   items: [{ type: Schema.Types.ObjectId, ref: "OrderItem" }],  
   created_at: { type: Date, default: Date.now },

@@ -6,6 +6,7 @@ import crypto from "crypto";
 import Cart from "../models/CartModels.js";
 import Order from "../models/OrderModels.js";
 import OrderItem from "../models/OrderItemModels.js";
+import Voucher from "../models/VoucherModels.js"
 const vnp_TmnCode = "1FDEBV99"; // Replace with your VNPay TmnCode
 const vnp_HashSecret = "HMD09FSOL18IL59STWAMEX0ZOIU4HENY"; // Replace with your VNPay HashSecret
 const vnp_Url = "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html"; // VNPay URL
@@ -33,6 +34,7 @@ router.post("/create_payment_url", async function (req, res, next) {
   let bankCode = req.body.bankCode;
   let locale = req.body.language;
   let userId = req.body.userId;
+  let discountCode = req.body.discountCode
   if (locale === null || locale === "") {
     locale = "vn";
   }
@@ -44,7 +46,7 @@ router.post("/create_payment_url", async function (req, res, next) {
   vnp_Params["vnp_Locale"] = locale;
   vnp_Params["vnp_CurrCode"] = currCode;
   vnp_Params["vnp_TxnRef"] = orderId;
-  vnp_Params["vnp_OrderInfo"] = userId;
+  vnp_Params["vnp_OrderInfo"] = `${userId}|${discountCode}`;
   vnp_Params["vnp_OrderType"] = "other";
   vnp_Params["vnp_Amount"] = amount * 100;
   vnp_Params["vnp_ReturnUrl"] = returnUrl;
@@ -73,7 +75,9 @@ router.post("/create_payment_url", async function (req, res, next) {
 
 router.get('/vnpay_return', async function (req, res, next) {
   var vnp_Params = req.query;
-  const vnp_UserId = vnp_Params['vnp_OrderInfo'];
+  const vnp_OrderInfo = vnp_Params['vnp_OrderInfo'];
+  const [userId, discountCode] = vnp_OrderInfo.split("|"); // Tách userId và discountCode
+
   var secureHash = vnp_Params['vnp_SecureHash'];
 
   delete vnp_Params['vnp_SecureHash'];
@@ -89,9 +93,9 @@ router.get('/vnpay_return', async function (req, res, next) {
   var signed = hmac.update(Buffer.from(signData, 'utf-8')).digest("hex");
 
   if (secureHash === signed) {
-      const userId = vnp_UserId
+      const user_id = userId
       // Lấy giỏ hàng của người dùng
-      const cart = await Cart.findOne({ user_id: userId }).populate("products.product").populate("user_id");
+      const cart = await Cart.findOne({ user_id: user_id }).populate("products.product").populate("user_id");
 
       // Kiểm tra nếu giỏ hàng không tồn tại hoặc giỏ hàng trống
       if (!cart || cart.products.length === 0) {
@@ -112,22 +116,37 @@ router.get('/vnpay_return', async function (req, res, next) {
           await Promise.all(checkStockPromises);
 
           // Tính tổng giá trị giỏ hàng
-          const totalPrice = cart.products.reduce((total, item) => total + item.price * item.quantity, 0);
-
+          let totalPrice = cart.products.reduce((total, item) => total + item.price * item.quantity, 0);
+          if (discountCode) {
+            const discount = await Voucher.findOne({ code: discountCode });
+            if (discount) {
+              const discountPercent = Number(discount.discount); // Đảm bảo discount.discount là số
+              const value = (Number(totalPrice) * discountPercent) / 100;
+          
+              totalPrice = totalPrice - value;
+            } else {
+              console.log("Voucher not found or invalid");
+            }
+          }
           // Tạo một đơn hàng mới
           const order = new Order({
-              user_id: userId,
+              user_id: user_id,
               status: "Confirmed", 
               total_price: totalPrice,
               receiver_name: cart.user_id.first_name + " " + cart.user_id.last_name,
               receiver_phone: cart.user_id.phone,
               receiver_address: cart.user_id.address,
               payment_status: "paid", 
+              voucher: discountCode,
+              discount_value:cart.products.reduce((total, item) => total + item.price * item.quantity, 0) - totalPrice
           });
+
+
 
           // Lưu đơn hàng vào cơ sở dữ liệu
           const savedOrder = await order.save();
 
+          await Voucher.findOneAndUpdate({ code: discountCode }, { is_used: true } , {user_id: userId})
           // Tạo danh sách các sản phẩm trong đơn hàng
           const orderItems = cart.products.map((item) => ({
               order_id: savedOrder._id,

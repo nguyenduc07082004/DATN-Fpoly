@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { UserContext } from "../../api/contexts/UserContext";
 import { CartContext } from "../../api/contexts/CartContext";
 import { OrderContext } from "../../api/contexts/OrdersContext";
@@ -11,29 +11,41 @@ import { AuthContext } from "../../api/contexts/AuthContext";
 
 const Vnpay = () => {
   const token = localStorage.getItem("accessToken"); // Lấy token từ localStorage
+  const discountCode = sessionStorage.getItem("discountCode") || "";
+  const discountValue = sessionStorage.getItem("discountValue") || "";
   const { checkout } = useContext(CartContext);
   const { state: cartState } = useContext(CartContext);
   const {user } = useContext(AuthContext);
   // const { dispatch: orderDispatch } = useContext(OrderContext);
   const navigate = useNavigate();
   const [paymentUrl, setPaymentUrl] = useState("");
-  console.log(cartState.totalPrice);
-
+  const [totalPrice , setTotalPrice] = useState(0);
   // Kiểm tra nếu không có token, yêu cầu người dùng đăng nhập
   if (!token) {
     alert("Vui lòng đăng nhập để thanh toán");
     navigate("/login");
   }
 
+  useEffect(() => {
+    if (cartState.totalPrice) {
+      setTotalPrice(cartState.totalPrice);
+    }
+    if (discountCode && discountValue) {
+      setTotalPrice(
+        cartState.totalPrice - (Number(discountValue) / 100) * cartState.totalPrice
+      );
+    }
+  },[])
   const handleCreatePayment = async () => {
     try {
       const response = await ins.post("/vnpay/create_payment_url", {
         orderType: "billpayment",
-        amount: cartState.totalPrice,
+        amount: totalPrice,
         orderDescription: "Payment for order",
         bankCode: "",
         language: "vn",
-        userId:user._id ,
+        userId:user._id,
+        discountCode: discountCode
       });
 
       window.location.href = response.data.data;
@@ -86,7 +98,13 @@ const Vnpay = () => {
           ))}
         </tbody>
       </table>
-      <h4>Tổng giá trị giỏ hàng: {cartState.totalPrice.toLocaleString("vi" , { style: "currency", currency: "VND" })}</h4>
+      {discountCode && discountValue && (
+        <div>
+          <h4>Mã giảm giá: {discountCode}</h4>
+          <h4>Giá trị giảm giá : {discountValue}%</h4>
+        </div>
+      )}
+      <h4>Tổng giá trị giỏ hàng: {totalPrice.toLocaleString("vi" , { style: "currency", currency: "VND" })}</h4>
 
       <div className="my-4 text-center">
         <h3>
