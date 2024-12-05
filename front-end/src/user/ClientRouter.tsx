@@ -24,7 +24,6 @@ const Client = () => {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/other" element={<ProductPage />} />{" "}
-        {/* Thay đổi theo trang khác */}
         <Route path="/products" element={<ProductList />} />
         <Route path="/products/:productId" element={<ProductsDetails />} />
         <Route path="/login" element={<Login />} />

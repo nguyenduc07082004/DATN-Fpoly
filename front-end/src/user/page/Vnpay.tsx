@@ -41,58 +41,6 @@ const Vnpay = () => {
       console.error("Error creating payment:", error);
     }
   };
-  // const handlePayment = async () => {
-  //   if (!token) {
-  //     alert("Vui lòng đăng nhập để thanh toán");
-  //     navigate("/login");
-  //     return;
-  //   }
-
-  //   const order = {
-  //     userId: userState.user[0]?.id,
-  //     products: cartState.products.map((item) => ({
-  //       productId: item.product._id,
-  //       quantity: item.quantity,
-  //     })),
-  //     totalPrice: cartState.totalPrice,
-  //     status: "Đang chuẩn bị hàng",
-  //   };
-
-  //   try {
-  //     const response = await axios.post(
-  //       "http://localhost:8000/orders/checkout",
-  //       order,
-  //       {
-  //         headers: { Authorization: `Bearer ${token}` }, // Gửi token qua header nếu cần
-  //       }
-  //     );
-  //     if (response.status === 201) {
-  //       orderDispatch({ type: "ADD_ORDER", payload: response.data.order });
-  //       const clearCartResponse = await axios.delete(
-  //         `http://localhost:8000/carts/remove/${userState.user[0]?.id}`
-  //       );
-  //       if (clearCartResponse.status === 200) {
-  //         cartDispatch({ type: "CLEAR_CART" });
-  //       }
-  //       navigate("/order-success");
-  //     }
-  //   } catch (error) {
-  //     console.error("Lỗi khi tạo đơn hàng:", error);
-  //     alert("Có lỗi xảy ra khi thanh toán. Vui lòng thử lại.");
-  //   }
-  // };
-
-  // if (!userState.user) {
-  //   return (
-  //     <div>
-  //       Không có thông tin người dùng. <a href="/login">Đăng nhập</a>
-  //     </div>
-  //   );
-  // }
-
-  // if (!cartState.products || cartState.products.length === 0) {
-  //   return <div>Không có sản phẩm trong giỏ hàng</div>;
-  // }
 
   return (
     <div className="container">
