@@ -20,6 +20,7 @@ import VariantsForm from "../form/VariantsForm";
 import OrderDetails from "./OrderDetails";
 import EditVariantsForm from "../form/EditVariant";
 import Invoice from "./Invoice"
+import QLVC from "./QLVC";
 function Dashboard() {
   const { user } = useContext(AuthContext) as AuthContextType;
 
@@ -45,6 +46,7 @@ function Dashboard() {
           <Route path="/qltk" element={<QLTK />} />
           <Route path="/qlbl" element={<QLBL />} />
           <Route path="/qldh" element={<QLDH />} />
+          <Route path="/qlvc" element={<QLVC />} />
           <Route path="/qldh/:id" element={<OrderDetails />} />
           <Route path="/tk" element={<TK />} />
           <Route path="/details/:id" element={<Details />} />

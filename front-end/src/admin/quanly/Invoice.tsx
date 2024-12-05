@@ -77,7 +77,7 @@ const printInvoice = () => {
 
   return (
     <div>
-      <h2>Invoice Management</h2>
+      <h2>Quản lý hoá đơn</h2>
       <table className="table">
         <thead>
           <tr>
