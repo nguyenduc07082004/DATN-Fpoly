@@ -223,7 +223,7 @@ const ProductDetails = () => {
   }
 
   return (
-    <>
+    <div className="container-xl bg-white rounded shadow-sm p-4">
     <Container maxWidth="lg" sx={{ mt: 4 }}>
   <Grid container spacing={4}>
     <Grid item xs={12} md={5}>
@@ -474,7 +474,7 @@ const ProductDetails = () => {
 
 </Container>
 
-    </>
+    </div>
   );
 };
 

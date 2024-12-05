@@ -87,7 +87,7 @@ const ProductPage = () => {
   }
 
   return (
-    <div className="container-fluid my-4">
+    <div className="container-fluid bg-white  rounded shadow-sm my-4 p-4">
       <div className="row d-flex">
         <div className="flex-column col-md-3 d-flex">
           <div className="bg-light rounded h-100 shadow p-4 filter-box">
