@@ -1,3 +1,4 @@
+<<<<<<< Updated upstream
 import { useState, useEffect } from "react";
 import "../css/Style.css";
 
@@ -9,10 +10,25 @@ import { Link } from "react-router-dom";
 import { baseURL } from "../../api";
 import ins from "../../api";
 const bannerImages = [banner1, banner2, banner3,];
+=======
+import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
+import { Products } from '../../interfaces/Products'; // Import kiểu Products
+import { baseURL } from '../../api';
+import ins from '../../api';
+import banner1 from "../../assets/Sliding-Preord.webp";
+import banner2 from "../../assets/sliding-home-iphone-16-pro-km-moi.webp";
+import banner3 from "../../assets/home-oppo-find-x8-gia-moi-20-11.webp";
+import banner4 from "../../assets/samsung-s24-ultra-home-20-11.webp";
+>>>>>>> Stashed changes
 
 // Component Banner (Phần banner chính)
 const MainBanner = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
+<<<<<<< Updated upstream
+=======
+  const bannerImages = [banner1, banner2, banner3, banner4];
+>>>>>>> Stashed changes
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -106,6 +122,19 @@ const Deals = () => {
     <section className="deals">
       <h2>Khuyến mãi Online</h2>
       <ProductList products={products} />
+      
+      {/* Phần video */}
+      <div className="mt-4">
+        <h3>Video khuyến mãi</h3>
+        <div className="embed-responsive embed-responsive-16by9">
+          <iframe
+            className="embed-responsive-item"
+            src="https://www.youtube.com/embed/VIDEO_ID"
+            title="Video Khuyến Mãi"
+            allowFullScreen
+          ></iframe>
+        </div>
+      </div>
     </section>
   );
 };
