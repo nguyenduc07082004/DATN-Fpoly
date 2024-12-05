@@ -1,9 +1,9 @@
 import { useState, useEffect } from "react";
 import "../css/Style.css";
 
-import banner1 from "../../assets/banner.jpg";
-import banner2 from "../../assets/banner1.jpg";
-import banner3 from "../../assets/banner 2.jpg";
+import banner1 from "../../assets/home-oppo-find-x8-gia-moi-20-11.webp";
+import banner2 from "../../assets//Sliding-Preord.webp";
+import banner3 from "../../assets/samsung-s24-ultra-home-20-11.webp";
 import { Products } from "../../interfaces/Products";
 import { Link } from "react-router-dom";
 import { baseURL } from "../../api";
@@ -78,7 +78,7 @@ const ProductList: React.FC<{ products: Products[] }> = ({ products }) => {
 
 // Categories Component
 const Categories: React.FC = () => {
-  const [categories, setCategories] = useState<string[]>([]);
+  const [categories, setCategories] = useState<{ _id: string, name: string }[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<string>();
   const [products, setProducts] = useState<Products[]>([]);
 
@@ -87,7 +87,7 @@ const Categories: React.FC = () => {
     try {
       const response = await ins.get(`${baseURL}/categories`);
       if (response.status >= 200 && response.status < 300) {
-        setCategories(response.data);
+        setCategories(response.data.map((category: any) => ({ _id: category._id, name: category.name })));
       }
     } catch (err) {
       console.error((err as Error).message);
