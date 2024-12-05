@@ -3,6 +3,7 @@ import Cart from "../models/CartModels.js";
 import Product from "../models/ProductModels.js";
 import OrderItem from "../models/OrderItemModels.js";
 import Invoice from "../models/InvoiceModels.js";
+import Voucher from "../models/VoucherModels.js";
 import {io } from "../../index.js"
 export const checkout = async (req, res, next) => {
   try {
@@ -15,6 +16,7 @@ export const checkout = async (req, res, next) => {
       return res.status(400).json({ message: "Giỏ hàng không tồn tại hoặc giỏ hàng trống" });
     }
 
+    // Check stock availability
     for (const item of cart.products) {
       const product = item.product;
       const variant = product.variants.find(v => v._id.toString() === item.variantId.toString());
@@ -24,11 +26,27 @@ export const checkout = async (req, res, next) => {
         });
       }
     }
-
-    const totalPrice = cart.products.reduce((total, item) => {
+    let totalPrice = cart.products.reduce((total, item) => {
       return total + item.price * item.quantity;
     }, 0);
-
+    
+    
+    if (req.body.discountCode.discountCode) {
+      const discount = await Voucher.findOne({ code: req.body.discountCode.discountCode });
+    
+      if (discount) {
+        console.log("Voucher found:", discount);
+    
+        const discountPercent = Number(discount.discount); // Đảm bảo discount.discount là số
+        const value = (Number(totalPrice) * discountPercent) / 100;
+    
+        totalPrice = totalPrice - value;
+      } else {
+        console.log("Voucher not found or invalid");
+      }
+    }
+    
+    // Create the order
     const order = new Order({
       user_id: userId,
       status: "Pending",
@@ -37,10 +55,19 @@ export const checkout = async (req, res, next) => {
       receiver_phone: cart.user_id.phone,
       receiver_address: cart.user_id.address,
       payment_status: "unpaid",
+      voucher: req.body.discountCode.discountCode,
+      discount_value: cart.total_price - totalPrice
     });
 
     const savedOrder = await order.save();
 
+    await Voucher.findOneAndUpdate(
+      { code: req.body.discountCode.discountCode },
+      { is_used: true },
+      { user_id: userId }
+    )
+   
+    // Create order items
     const orderItems = cart.products.map((item) => ({
       order_id: savedOrder._id,
       product: item.product._id,
@@ -56,6 +83,7 @@ export const checkout = async (req, res, next) => {
     savedOrder.items = savedOrderItems.map((item) => item._id);
     await savedOrder.save();
 
+    // Update stock for each product variant
     for (const item of cart.products) {
       const product = item.product;
 
@@ -69,14 +97,16 @@ export const checkout = async (req, res, next) => {
       await product.save(); 
     }
 
+    // Clear the cart
     await Cart.findOneAndDelete({ user_id: userId });
 
+    // Notify the user via socket
     io.emit("orderCreated", {
       message: `Bạn có đơn hàng mới vừa tạo`,
       orderId: savedOrder._id,
     });
 
-    // Trả về thông báo và thông tin đơn hàng
+    // Return success response with order information
     res.status(201).json({
       message: "Đặt hàng thành công",
       order: savedOrder,
@@ -85,6 +115,7 @@ export const checkout = async (req, res, next) => {
     next(error);
   }
 };
+
 
 
 

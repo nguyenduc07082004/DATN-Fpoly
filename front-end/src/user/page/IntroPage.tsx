@@ -3,12 +3,13 @@ import { Container, Typography, Box } from "@mui/material";
 
 const IntroPage: React.FC = () => {
   return (
+    <div className="container-xl bg-white rounded shadow-sm p-4">
     <section className="page">
       <Container
         maxWidth="lg"
         sx={{ paddingTop: "15px", marginBottom: "20px" }}
       >
-        <Box className="pg_page padding-top-15 block-background">
+        <Box className="pg_page block-background padding-top-15">
           <Box className="row">
             <Box className="col-12">
               <Box className="page-title category-title">
@@ -67,6 +68,7 @@ const IntroPage: React.FC = () => {
         </Box>
       </Container>
     </section>
+    </div>
   );
 };
 

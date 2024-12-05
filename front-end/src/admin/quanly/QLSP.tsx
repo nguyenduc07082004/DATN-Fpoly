@@ -83,7 +83,12 @@ const QLSP = () => {
                   : "Không có danh mục"}
               </td>
               <td className="col-1">
-                {i.default_price ? `${i.default_price.toLocaleString('vi' , { style: 'currency', currency: 'VND' })}` : "Chưa có giá"}
+                {i.default_price
+                  ? `${i.default_price.toLocaleString("vi", {
+                      style: "currency",
+                      currency: "VND",
+                    })}`
+                  : "Chưa có giá"}
               </td>
 
               <td className="col-2 d-flex">

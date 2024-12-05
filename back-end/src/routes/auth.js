@@ -10,6 +10,7 @@ import ReplyRouter from "./ReplyRouter.js"
 import router from "./Payment.js";
 import DashboardRouter from "./DashboardRouter.js";
 import InvoiceRouter from "./InvoiceRouter.js";
+import VoucherRouter from "./VoucherRouter.js"
 const authRouter = Router();
 
 authRouter.use("/products", ProductRouter);
@@ -22,5 +23,6 @@ authRouter.use("/comments" , CommentRouter)
 authRouter.use("/replies" , ReplyRouter)
 authRouter.use('/dashboard' , DashboardRouter)
 authRouter.use('/invoice' , InvoiceRouter)
+authRouter.use('/vouchers' , VoucherRouter)
 
 export default authRouter;

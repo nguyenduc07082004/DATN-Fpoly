@@ -22,11 +22,12 @@ const MainBanner: React.FC = () => {
   }, []);
 
   return (
+    
     <div id="mainBanner" className="carousel slide" data-bs-ride="carousel">
       <div className="carousel-inner">
         {bannerImages.map((image, index) => (
           <div className={`carousel-item ${index === currentIndex ? 'active' : ''}`} key={index}>
-            <img src={image} className="d-block w-100" alt={`Banner ${index + 1}`} />
+            <img src={image} className="w-100 d-block" alt={`Banner ${index + 1}`} />
           </div>
         ))}
       </div>
@@ -169,7 +170,7 @@ const Deals: React.FC = () => {
 // Home Page Component
 const Home: React.FC = () => {
   return (
-    <div>
+    <div className="container-xl bg-white rounded shadow-sm p-4">
       <MainBanner />
       <Categories />
       <Deals />
