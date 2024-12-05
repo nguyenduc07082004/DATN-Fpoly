@@ -46,16 +46,24 @@ const Details = () => {
       confirmButtonText: "Xóa",
       cancelButtonText: "Hủy",
     });
-  
+
     if (result.isConfirmed) {
       try {
         await ins.delete(`/products/${id}/variants/${variantId}`);
-        await Swal.fire("Đã xóa!", "Biến thể đã được xóa thành công.", "success");
+        await Swal.fire(
+          "Đã xóa!",
+          "Biến thể đã được xóa thành công.",
+          "success"
+        );
         // Cập nhật danh sách sản phẩm sau khi xóa
         fetchProduct();
       } catch (error) {
         console.error("Lỗi khi xóa biến thể:", error);
-        Swal.fire("Lỗi!", "Đã xảy ra lỗi khi xóa biến thể. Vui lòng thử lại!", "error");
+        Swal.fire(
+          "Lỗi!",
+          "Đã xảy ra lỗi khi xóa biến thể. Vui lòng thử lại!",
+          "error"
+        );
       }
     }
   };
@@ -67,7 +75,9 @@ const Details = () => {
       </p>
       <button
         className="btn btn-primary m-3"
-        onClick={() => (window.location.href = `/admin/details/${id}/variant/add`)}
+        onClick={() =>
+          (window.location.href = `/admin/details/${id}/variant/add`)
+        }
       >
         Thêm mới biến thể
       </button>
@@ -94,7 +104,9 @@ const Details = () => {
               <td className="col-1">
                 {product?.categories
                   ? Array.isArray(product?.categories)
-                    ? product.categories.map((category) => category.name).join(", ")
+                    ? product.categories
+                        .map((category) => category.name)
+                        .join(", ")
                     : product.categories.name
                   : "Không có danh mục"}
               </td>
