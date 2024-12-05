@@ -1,16 +1,18 @@
-import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import { Products } from '../../interfaces/Products'; // Import kiểu Products
-import { baseURL } from '../../api';
-import ins from '../../api';
+import { useState, useEffect } from "react";
+import "../css/Style.css";
+
 import banner1 from "../../assets/banner.jpg";
 import banner2 from "../../assets/banner1.jpg";
 import banner3 from "../../assets/banner 2.jpg";
+import { Products } from "../../interfaces/Products";
+import { Link } from "react-router-dom";
+import { baseURL } from "../../api";
+import ins from "../../api";
+const bannerImages = [banner1, banner2, banner3,];
 
 // Banner Component
 const MainBanner: React.FC = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
-  const bannerImages = [banner1, banner2, banner3];
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -147,6 +149,19 @@ const Deals: React.FC = () => {
     <section className="mt-5">
       <h2>Khuyến mãi Online</h2>
       <ProductList products={products} />
+      
+      {/* Phần video */}
+      <div className="mt-4">
+        <h3>Video khuyến mãi</h3>
+        <div className="embed-responsive embed-responsive-16by9">
+          <iframe
+            className="embed-responsive-item"
+            src="https://www.youtube.com/embed/VIDEO_ID"
+            title="Video Khuyến Mãi"
+            allowFullScreen
+          ></iframe>
+        </div>
+      </div>
     </section>
   );
 };
