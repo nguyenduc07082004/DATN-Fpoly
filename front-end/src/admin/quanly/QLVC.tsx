@@ -231,7 +231,7 @@ const VoucherManagement: React.FC = () => {
       </Typography>
       <Grid container spacing={3}>
         {vouchers.length === 0 ? (
-          <Typography variant="body1" gutterBottom>
+          <Typography variant="body1" sx={{ mt: 5, ml: 5 }} gutterBottom>
             Chưa có mã giảm giá
           </Typography>
         ) : (
