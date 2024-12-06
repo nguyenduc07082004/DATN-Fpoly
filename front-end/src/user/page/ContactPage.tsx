@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { LocationOn, Phone, Email, Fax } from "@mui/icons-material";
+import Logo from "../../assets/logoshop.jpg"; // Đảm bảo rằng đường dẫn logo chính xác
 import {
   TextField,
   Button,
@@ -31,9 +32,9 @@ interface MapItem {
 
 const ContactPage: React.FC = () => {
   const [shop] = useState<Shop>({
-    Logo: "shop-logo.png",
+    Logo: Logo, // Đảm bảo logo đã được import chính xác
     Name: "Smart Shop",
-    Address: "Trinh Van Bo , Nam Tu Liem , Ha Noi ",
+    Address: "123 Đường Lê Văn Lương, Quận Thanh Xuân, Hà Nội", // Địa chỉ cụ thể
     Phone: "012345678",
     Hotline: "012345678",
     Fax: "0123456789",
@@ -99,7 +100,7 @@ const ContactPage: React.FC = () => {
                   src={shop.Logo}
                   alt="Shop Logo"
                   style={{
-                    maxWidth: "100%",
+                    maxWidth: "150px", // Đảm bảo logo không bị phóng đại
                     height: "auto",
                     borderRadius: "8px",
                     marginBottom: "16px",
@@ -280,22 +281,23 @@ const ContactPage: React.FC = () => {
       </Typography>
 
       <Box
-        sx={{
-          marginTop: 3,
-          marginBottom: 3,
-          borderRadius: 2,
-          overflow: "hidden",
-        }}
-      >
-        <iframe
-          src="https://www.google.com/maps/embed?pb=..."
-          width="100%"
-          height="400"
-          style={{ border: 0, borderRadius: "10px" }}
-          allowFullScreen=""
-          loading="lazy"
-        ></iframe>
-      </Box>
+  sx={{
+    marginTop: 3,
+    marginBottom: 3,
+    borderRadius: 2,
+    overflow: "hidden",
+  }}
+>
+  <iframe
+    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d7447.553202766915!2d105.74160529143377!3d21.04162292244345!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x313455e940879933%3A0xcf10b34e9f1a03df!2zVHLGsOG7nW5nIENhbyDEkeG6s25nIEZQVCBQb2x5dGVjaG5pYw!5e0!3m2!1svi!2s!4v1733497341143!5m2!1svi!2s"
+    width="100%"
+    height="400"
+    style={{ border: 0, borderRadius: "10px" }}
+    allowFullScreen
+    loading="lazy"
+    referrerPolicy="no-referrer-when-downgrade"
+  ></iframe>
+</Box>
 
       {/* Location List Section */}
     </Container>
