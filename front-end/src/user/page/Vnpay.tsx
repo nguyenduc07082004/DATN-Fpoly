@@ -35,8 +35,14 @@ const Vnpay = () => {
         cartState.totalPrice - (Number(discountValue) / 100) * cartState.totalPrice
       );
     }
-  },[])
+  },[]);
   const handleCreatePayment = async () => {
+    // Hộp thoại xác nhận
+    const isConfirmed = window.confirm("Bạn có chắc muốn thanh toán? nếu bạn thanh toán bạn buộc phải thanh toán nếu bạn hủy trong giai đoạn thanh toán đơn sẽ được chuyển tự động đưa về phương thức COD");
+    if (!isConfirmed) {
+      return; // Nếu người dùng không đồng ý, kết thúc hàm
+    }
+  
     try {
       const response = await ins.post("/vnpay/create_payment_url", {
         orderType: "billpayment",
@@ -44,22 +50,28 @@ const Vnpay = () => {
         orderDescription: "Payment for order",
         bankCode: "",
         language: "vn",
-        userId:user._id,
-        discountCode: discountCode
+        userId: user._id,
+        discountCode: discountCode,
       });
-
+  
+      // Chuyển hướng đến URL thanh toán
       window.location.href = response.data.data;
     } catch (error) {
       console.error("Error creating payment:", error);
     }
   };
+  const handleDeadPayment = async () => {
+    // Hộp thoại xác nhận
+    const isConfirmed = window.confirm("Bạn có chắc muốn hủy đơn? ");
+  if (!isConfirmed) {
+    return; // Nếu người dùng không đồng ý, kết thúc hàm
+  }
+  navigate("/cart");
+  };
 
   return (
     <div className="container">
-      <h1 className="my-4 text-center">Thanh toán qua VNPAY</h1>
-      <div className="text-center mb-4">
-        <img src={vnpayLogo} alt="VNPAY Logo" style={{ width: "150px" }} />
-      </div>
+      <h1 className="my-4 text-center">Thanh toán</h1>
       <h3>Thông tin người dùng</h3>
       <table className="mb-4 table table-bordered">
         <tbody>
@@ -109,6 +121,8 @@ const Vnpay = () => {
       <div className="my-4 text-center">
         <h3>
           <button onClick={handleCreatePayment}>Thanh toán</button>
+
+          <button onClick={handleDeadPayment} >Hủy Thanh toán</button>
         </h3>
       </div>
     </div>
