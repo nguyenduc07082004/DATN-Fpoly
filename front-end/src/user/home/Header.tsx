@@ -149,7 +149,7 @@ const Header = () => {
               aria-expanded="false"
             >
               <strong>
-                {JSON.parse(localStorage.getItem("user") || "{}").first_name}
+                {JSON.parse(localStorage.getItem("user") || "{}").last_name}
               </strong>
             </Link>
             <ul
