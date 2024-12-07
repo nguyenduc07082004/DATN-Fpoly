@@ -68,14 +68,22 @@ export const getVoucherByCode = async (req, res) => {
 };
 
 export const createVoucher = async (req, res) => {
-    const { code } = req.body; // Giả sử bạn kiểm tra theo code voucher
+    const { code, discount , expiration_date } = req.body; // Giả sử bạn kiểm tra theo code voucher
     try {
+
         // Kiểm tra xem voucher đã tồn tại chưa
         const existingVoucher = await Voucher.findOne({ code });
 
         if (existingVoucher) {
             return res.status(400).json({ error: 'Mã giảm giá đã tồn tại' });
         }
+        if (discount > 30) {
+            return res.status(400).json({ error: 'Không được quá 30%' });
+        }
+        if (new Date(expiration_date) < new Date()) {
+            return res.status(400).json({ error: 'Ngày hết hạn phải lớn hơn ngày hiện tại' });
+        }
+    
 
         // Nếu chưa tồn tại, tạo voucher mới
         const voucher = new Voucher(req.body);
@@ -180,3 +188,34 @@ export const useVoucher = async (req, res) => {
         res.status(500).json({ error: 'Internal server error' });
     }
 };
+
+
+export const getVoucherUsed = async (req, res) => {
+    try {
+      const page = parseInt(req.query.page) || 1;  
+      const limit = parseInt(req.query.limit) || 6; 
+      const skip = (page - 1) * limit; 
+  
+      const vouchers = await Voucher.find({
+        expiration_date: { $gte: new Date() },
+        is_used: false,
+      })
+        .sort({ expiration_date: -1 }) 
+        .skip(skip)
+        .limit(limit);
+  
+      const totalVouchers = await Voucher.countDocuments({
+        expiration_date: { $gte: new Date() },
+        is_used: false,
+      });
+  
+      res.status(200).json({
+        vouchers,
+        totalVouchers,
+        totalPages: Math.ceil(totalVouchers / limit),
+        currentPage: page,
+      });
+    } catch (error) {
+      res.status(500).json({ error: 'Internal server error' });
+    }
+  };

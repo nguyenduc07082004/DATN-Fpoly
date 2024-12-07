@@ -122,6 +122,15 @@ const Header = () => {
               Đơn hàng
             </Link>
           </li>
+          <li>
+            <Link
+              to="/voucher"
+              className="text-decoration-none"
+              style={{ color: "white" }}
+            >
+              Mã Giảm Giá
+            </Link>
+          </li>
         </ul>
       </nav>
       <div className="user-options">
