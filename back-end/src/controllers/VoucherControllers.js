@@ -80,6 +80,9 @@ export const createVoucher = async (req, res) => {
         if (discount > 30) {
             return res.status(400).json({ error: 'Không được quá 30%' });
         }
+        if (discount < 0) {
+            return res.status(400).json({ error: 'Giảm giá phải lớn hơn 0%' });
+        }
         if (new Date(expiration_date) < new Date()) {
             return res.status(400).json({ error: 'Ngày hết hạn phải lớn hơn ngày hiện tại' });
         }
