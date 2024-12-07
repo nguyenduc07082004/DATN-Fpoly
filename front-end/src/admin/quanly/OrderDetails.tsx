@@ -2,7 +2,7 @@ import "../.././App.scss";
 import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { baseURL } from "../../api";
-import { orderStatusColors } from "../../utils/colorUtils";
+import { orderStatusColors, getStatusText } from "../../utils/colorUtils";
 import ins from "../../api";
 
 const OrderDetail = () => {
@@ -73,6 +73,22 @@ const OrderDetail = () => {
             </td>
             <td>{order.receiver_phone}</td>
           </tr>
+          {order.voucher && order.discount_value !== 0 && (
+            <>
+              <tr>
+                <td>
+                  <b>Mã giảm giá:</b>
+                </td>
+                <td>{order.voucher}</td>
+              </tr>
+              <tr>
+                <td>
+                  <b>Giá trị giảm giá:</b>
+                </td>
+                <td>{order.discount_value.toLocaleString("vi", { style: "currency", currency: "VND" })}</td>
+              </tr>
+            </>
+          )}
           <tr>
             <td>
               <b>Ngày đặt hàng:</b>
@@ -90,7 +106,7 @@ const OrderDetail = () => {
                 ] || ""
               }
             >
-              {order.status}
+              {getStatusText(order.status)}
             </td>
           </tr>
         </tbody>

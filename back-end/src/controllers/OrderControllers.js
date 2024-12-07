@@ -360,7 +360,7 @@ export const getOrderByUserID = async (req, res) => {
         path: "items",
         populate: {
           path: "product",
-          select: "title description variants",
+          select: "title description variants image",
         },
       });
 

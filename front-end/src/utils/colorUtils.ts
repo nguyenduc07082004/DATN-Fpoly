@@ -53,3 +53,20 @@ export const orderStatusColors: Record<OrderStatus, string> = {
   "Delivered": "text-success",
   "Cancelled": "text-danger",
 };
+
+export const getStatusText = (status:string) => {
+  switch (status) {
+    case "Pending":
+      return "Chờ xác nhận";
+    case "Confirmed":
+      return "Đã xác nhận";
+    case "In Delivery":
+      return "Vận chuyển";
+    case "Delivered":
+      return "Vận chuyển thành công";
+    case "Cancelled":
+      return "Đã huỷ";
+    default:
+      return "Không xác định";
+  }
+};

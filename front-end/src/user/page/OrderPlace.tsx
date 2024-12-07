@@ -3,7 +3,8 @@ import ins from "../../api";
 import Pagination from "./Pagination";
 import Swal from "sweetalert2";
 import { Modal } from "react-bootstrap";
-
+import { baseURL } from "../../api";
+import { useNavigate } from "react-router-dom";
 const OrderPlace = () => {
   const userId = JSON.parse(localStorage.getItem("user") ?? "{}")?._id ?? "";
   const [orderData, setOrderData] = useState<any>([]);
@@ -15,7 +16,7 @@ const OrderPlace = () => {
   const [receiverPhone, setReceiverPhone] = useState("");
   const [receiverName, setReceiverName] = useState("");
   const [orderId, setOrderId] = useState("");
-
+  const navigate = useNavigate();
   const fetchOrderData = async (page: number) => {
     setIsLoading(true);
     try {
@@ -108,6 +109,10 @@ const OrderPlace = () => {
     }
   };
 
+  const handleDetail = (id: string) => {
+    navigate(`/orderplace/${id}`);
+  };
+
   return (
     <div className="order-place">
       <h1 className="my-4 text-center">Danh sách đơn hàng</h1>
@@ -116,10 +121,13 @@ const OrderPlace = () => {
 
       <div className="order-list">
         {orderData.length > 0 ? (
-          orderData.map((order) => (
+          orderData.map((order : any) => (
             <div key={order._id} className="shadow-sm mb-3 card">
               <div className="card-body">
+                <div className="d-flex">
                 <h5 className="card-title">Mã đơn hàng: {order._id}</h5>
+                <button className="ms-2 fs-6 fw-bold text-uppercase cursor-pointer btn btn-primary" onClick ={() => handleDetail(order._id)}>Chi tiết</button>
+                </div>
                 <div>
                   {order?.items?.map((item, index) => (
                     <div key={index} className="mb-2">
@@ -139,7 +147,9 @@ const OrderPlace = () => {
                       </p>
                       <p>
                         <strong>Image:</strong>{" "}
-                        <img src={item?.product?.image} alt="không thấy ảnh"
+                        <img
+                          src={`${baseURL}/images/${item?.product?.image}`}
+                          alt="không thấy ảnh"
                           className="me-3"
                           style={{
                             width: "100px",
@@ -159,24 +169,33 @@ const OrderPlace = () => {
                     0
                   )}
                 </p>
+                {order?.voucher && (
+                  <p>
+                    <strong>Mã giảm giá : {order?.voucher}</strong>
+                  </p>
+                )}
+                {order?.discount_value !== 0 && (
+                  <p>
+                    <strong>
+                      Giảm giá : {order?.discount_value.toLocaleString("vi-VN")}
+                      VND
+                    </strong>
+                  </p>
+                )}
                 <h2>
                   <strong>Thành tiền:</strong>{" "}
-                  {order?.items
-                    ?.reduce(
-                      (total, item) => total + item.price * item.quantity,
-                      0
-                    )
-                    .toLocaleString()}{" "}
-                  VND
+                  {order?.total_price.toLocaleString()} VND
                 </h2>
                 <p>
                   <strong>Trạng thái:</strong>{" "}
                   {order?.status === "Pending" ? (
-                    <span className="bg-info badge">Đang chờ</span>
+                    <span className="bg-warning badge">Chờ xác nhận</span>
                   ) : order?.status === "In Delivery" ? (
                     <span className="bg-primary badge">Đang giao</span>
                   ) : order?.status === "Delivered" ? (
                     <span className="bg-success badge">Giao thành công</span>
+                  ) : order?.status === "Confirmed" ? (
+                    <span className="bg-info badge">Đã xác nhận</span>
                   ) : (
                     <span className="bg-danger badge">Đã huỷ</span>
                   )}
