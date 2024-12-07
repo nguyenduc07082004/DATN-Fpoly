@@ -5,6 +5,7 @@ import Swal from "sweetalert2";
 import { Modal } from "react-bootstrap";
 import { baseURL } from "../../api";
 import { useNavigate } from "react-router-dom";
+
 const OrderPlace = () => {
   const userId = JSON.parse(localStorage.getItem("user") ?? "{}")?._id ?? "";
   const [orderData, setOrderData] = useState<any>([]);
@@ -17,6 +18,7 @@ const OrderPlace = () => {
   const [receiverName, setReceiverName] = useState("");
   const [orderId, setOrderId] = useState("");
   const navigate = useNavigate();
+
   const fetchOrderData = async (page: number) => {
     setIsLoading(true);
     try {
@@ -114,111 +116,84 @@ const OrderPlace = () => {
   };
 
   return (
-    <div className="order-place">
+    <div className="container-xl bg-white rounded shadow-sm p-4">
       <h1 className="my-4 text-center">Danh sách đơn hàng</h1>
 
       {isLoading && <div className="text-center">Loading...</div>}
 
       <div className="order-list">
         {orderData.length > 0 ? (
-          orderData.map((order : any) => (
-            <div key={order._id} className="shadow-sm mb-3 card">
-              <div className="card-body">
-                <div className="d-flex">
-                <h5 className="card-title">Mã đơn hàng: {order._id}</h5>
-                <button className="ms-2 fs-6 fw-bold text-uppercase cursor-pointer btn btn-primary" onClick ={() => handleDetail(order._id)}>Chi tiết</button>
-                </div>
-                <div>
-                  {order?.items?.map((item, index) => (
-                    <div key={index} className="mb-2">
-                      <p>
-                        <strong>{item?.product?.title}</strong>
-                      </p>
-                      <p>
-                        <strong>Color:</strong> {item?.color} |{" "}
-                        <strong>Storage:</strong> {item?.storage}
-                      </p>
-                      <p>
-                        <strong>Price:</strong> {item?.price.toLocaleString()}{" "}
-                        VND
-                      </p>
-                      <p>
-                        <strong>Quantity:</strong> {item?.quantity}
-                      </p>
-                      <p>
-                        <strong>Image:</strong>{" "}
-                        <img
-                          src={`${baseURL}/images/${item?.product?.image}`}
-                          alt="không thấy ảnh"
-                          className="me-3"
-                          style={{
-                            width: "100px",
-                            height: "100px",
-                            objectFit: "cover",
-                            borderRadius: "8px",
-                          }}
-                        />
-                      </p>
-                    </div>
-                  ))}
-                </div>
-                <p>
-                  <strong>Tổng số lượng:</strong>{" "}
-                  {order?.items?.reduce(
-                    (total, item) => total + item.quantity,
-                    0
-                  )}
-                </p>
-                {order?.voucher && (
-                  <p>
-                    <strong>Mã giảm giá : {order?.voucher}</strong>
-                  </p>
-                )}
-                {order?.discount_value !== 0 && (
-                  <p>
-                    <strong>
-                      Giảm giá : {order?.discount_value?.toLocaleString("vi-VN")}
-                      VND
-                    </strong>
-                  </p>
-                )}
-                <h2>
-                  <strong>Thành tiền:</strong>{" "}
-                  {order?.total_price.toLocaleString()} VND
-                </h2>
-                <p>
-                  <strong>Trạng thái:</strong>{" "}
-                  {order?.status === "Pending" ? (
-                    <span className="bg-warning badge">Chờ xác nhận</span>
-                  ) : order?.status === "In Delivery" ? (
-                    <span className="bg-primary badge">Đang giao</span>
-                  ) : order?.status === "Delivered" ? (
-                    <span className="bg-success badge">Giao thành công</span>
-                  ) : order?.status === "Confirmed" ? (
-                    <span className="bg-info badge">Đã xác nhận</span>
-                  ) : (
-                    <span className="bg-danger badge">Đã huỷ</span>
-                  )}
-                </p>
-                <div className="d-flex justify-content-between">
-                  <button
-                    className="btn btn-warning"
-                    onClick={() => handleShowModal(order)}
-                    disabled={order?.status !== "Pending"}
-                  >
-                    Sửa
-                  </button>
-                  <button
-                    className="btn btn-danger"
-                    onClick={() => handleDeleteOrder(order._id)}
-                    disabled={order?.status !== "Pending"}
-                  >
-                    Huỷ
-                  </button>
-                </div>
-              </div>
-            </div>
-          ))
+          <table className="table table-hover">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Mã đơn hàng</th>
+                <th>Sản phẩm</th>
+                <th>Tổng số lượng</th>
+                <th>Trạng thái</th>
+                <th>Thành tiền</th>
+                <th>Hành động</th>
+              </tr>
+            </thead>
+            <tbody>
+              {orderData.map((order: any, index: number) => (
+                <tr key={order._id}>
+                  <td>{index + 1}</td>
+                  <td>{order._id}</td>
+                  <td>
+                    {order?.items?.map((item: any, idx: number) => (
+                      <div key={idx}>
+                        <strong>{item.product.title}</strong> (x
+                        {item.quantity})
+                      </div>
+                    ))}
+                  </td>
+                  <td>
+                    {order.items.reduce(
+                      (total: number, item: any) => total + item.quantity,
+                      0
+                    )}
+                  </td>
+                  <td>
+                    {order.status === "Pending" ? (
+                      <span className="bg-warning badge">Chờ xác nhận</span>
+                    ) : order.status === "In Delivery" ? (
+                      <span className="bg-primary badge">Đang giao</span>
+                    ) : order.status === "Delivered" ? (
+                      <span className="bg-success badge">Giao thành công</span>
+                    ) : order.status === "Confirmed" ? (
+                      <span className="bg-info badge">Đã xác nhận</span>
+                    ) : (
+                      <span className="bg-danger badge">Đã huỷ</span>
+                    )}
+                  </td>
+                  <td>{order.total_price.toLocaleString()} VND</td>
+                  <td>
+                    <button
+                      className="btn btn-primary btn-sm me-2"
+                      onClick={() => handleDetail(order._id)}
+                    >
+                      Chi tiết
+                    </button>
+                    <button
+                      className="btn btn-warning btn-sm me-2"
+                      onClick={() => handleShowModal(order)}
+                      disabled={order.status !== "Pending"}
+                    >
+                      Sửa
+                    </button>
+                    <button
+                      className="btn btn-danger btn-sm"
+                      onClick={() => handleDeleteOrder(order._id)}
+                      disabled={order.status !== "Pending"}
+                    >
+                      Huỷ
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         ) : (
           <div className="text-center">Không tìm thấy đơn hàng</div>
         )}
@@ -238,7 +213,7 @@ const OrderPlace = () => {
         <Modal.Body>
           <div className="mb-3">
             <label htmlFor="receiver_name" className="form-label">
-              Receiver Name
+              Tên người nhận
             </label>
             <input
               type="text"
@@ -250,7 +225,7 @@ const OrderPlace = () => {
           </div>
           <div className="mb-3">
             <label htmlFor="receiver_phone" className="form-label">
-              Receiver Phone
+              Số điện thoại
             </label>
             <input
               type="text"
@@ -262,7 +237,7 @@ const OrderPlace = () => {
           </div>
           <div className="mb-3">
             <label htmlFor="receiver_address" className="form-label">
-              Receiver Address
+              Địa chỉ
             </label>
             <input
               type="text"
@@ -275,7 +250,7 @@ const OrderPlace = () => {
         </Modal.Body>
         <Modal.Footer>
           <button className="btn btn-secondary" onClick={handleCloseModal}>
-            Huỷ
+            Đóng
           </button>
           <button className="btn btn-primary" onClick={handleSave}>
             Lưu

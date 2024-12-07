@@ -64,6 +64,8 @@ const ProductCard: React.FC<{ product: Products }> = ({ product }) => {
       <div className="card">
         <img
           src={`${baseURL}/images/${product.image}`}
+          width="100px"
+          height="297px"
           className="card-img-top"
           alt={product.title}
         />
@@ -155,7 +157,7 @@ const Categories: React.FC = () => {
             </button>
           ))}
       </div>
-      <h3 className="mt-4">
+      <h3 className="mt-5">
         <ProductList products={products} />
       </h3>
     </section>

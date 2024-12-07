@@ -59,11 +59,11 @@ export const getStatusText = (status:string) => {
     case "Pending":
       return "Chờ xác nhận";
     case "Confirmed":
-      return "Đã xác nhận";
+      return "Xác nhận";
     case "In Delivery":
       return "Vận chuyển";
     case "Delivered":
-      return "Vận chuyển thành công";
+      return "Hoàn thành đơn hàng";
     case "Cancelled":
       return "Đã huỷ";
     default:

@@ -133,7 +133,7 @@ router.get('/vnpay_return', async function (req, res, next) {
         // Tạo một đơn hàng mới
         const order = new Order({
           user_id: user_id,
-          status: "Confirmed",
+          status: "Pending",
           total_price: totalPrice,
           receiver_name: `${cart.user_id.first_name} ${cart.user_id.last_name}`,
           receiver_phone: cart.user_id.phone,

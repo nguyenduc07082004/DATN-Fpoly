@@ -40,7 +40,12 @@ const OrderDetail = () => {
   };
 
   return (
-    <div>
+    <div   className="container-xl rounded shadow-sm p-4"
+    style={{
+      backgroundColor: '#f8f8f8', // Màu trắng bạc
+      borderRadius: '0.25rem',    // Bo góc
+      boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)', // Bóng mờ
+    }}>
       <p className="m-3">
         <b className="h2">Chi tiết đơn hàng</b>
       </p>

@@ -5,6 +5,7 @@ import OrderItem from "../models/OrderItemModels.js";
 import Invoice from "../models/InvoiceModels.js";
 import Voucher from "../models/VoucherModels.js";
 import {io } from "../../index.js"
+import { log } from "console";
 export const checkout = async (req, res, next) => {
   try {
     const userId = req.user._id;
@@ -171,7 +172,7 @@ export const getOrderDetail = async (req, res) => {
 export const updateOrderStatus = async (req, res) => {
   const { orderId } = req.params;
   const { status } = req.body;
-
+console.log(req.body);
   const validStatuses = [
     "Pending",
     "In Delivery",

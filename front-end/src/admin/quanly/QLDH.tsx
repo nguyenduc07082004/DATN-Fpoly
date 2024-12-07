@@ -125,7 +125,7 @@ const QLDH = () => {
                                 cancelButtonText: "Hủy",
                                 showCancelButton: true,
                                 preConfirm: () => {
-                                  handleStatusChange(order._id, getStatusText(status));
+                                  handleStatusChange(order._id,status);
                                 },
                               }).then((result) => {
                                 if (result.isConfirmed) {
