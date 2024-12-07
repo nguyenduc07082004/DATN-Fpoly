@@ -17,6 +17,7 @@ import Profile from "./page/Profile";
 import ContactPage from "./page/ContactPage";
 import IntroPage from "./page/IntroPage";
 import OrderDetails from "./page/OrderDetails";
+import Voucher from "./page/Voucher";
 const Client = () => {
   return (
     <div>
@@ -32,6 +33,7 @@ const Client = () => {
         <Route path="/user/:id" element={<FromUser />} />
         <Route path="/vnpay" element={<VnpayPayment />} />
         <Route path="/profile" element={<Profile />} />
+        <Route path="/voucher" element={<Voucher />} />
         <Route path="/checkout" element={<CheckOut />} />
         <Route path="/orderplace" element={<OrderPlace />} />
         <Route path="/orderplace/:id" element={<OrderDetails />} />
