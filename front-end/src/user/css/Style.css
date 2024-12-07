@@ -402,7 +402,14 @@
       .cart-icon {
         position: relative;
       }
-      
+      .card-title {
+        display: -webkit-box;
+        -webkit-line-clamp: 1; /* Hiển thị tối đa 2 dòng */
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: normal; /* Cho phép xuống dòng */
+      }
       .cart-count-badge {
         position: absolute;
         top: -6px;

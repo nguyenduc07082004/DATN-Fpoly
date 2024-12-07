@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import ins from "../../api";
-import Pagination from "./Pagination"; 
-import Swal from "sweetalert2"; // Để hiển thị thông báo SweetAlert
-import { Modal } from "react-bootstrap"; // Nếu bạn sử dụng React-Bootstrap
+import Pagination from "./Pagination";
+import Swal from "sweetalert2";
+import { Modal } from "react-bootstrap";
 
 const OrderPlace = () => {
   const userId = JSON.parse(localStorage.getItem("user") ?? "{}")?._id ?? "";
@@ -11,11 +11,11 @@ const OrderPlace = () => {
   const [totalPages, setTotalPages] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
   const [showModal, setShowModal] = useState(false);
-  const [modalContent, setModalContent] = useState<any>(null); // Dùng để lưu thông tin modal
   const [receiverAddress, setReceiverAddress] = useState("");
   const [receiverPhone, setReceiverPhone] = useState("");
   const [receiverName, setReceiverName] = useState("");
-  const [orderId , setOrderId] = useState("")
+  const [orderId, setOrderId] = useState("");
+
   const fetchOrderData = async (page: number) => {
     setIsLoading(true);
     try {
@@ -39,12 +39,12 @@ const OrderPlace = () => {
     setCurrentPage(newPage);
   };
 
-  const handleShowModal = (order : any) => {
-    setOrderId(order._id)
+  const handleShowModal = (order: any) => {
+    setOrderId(order._id);
     setReceiverAddress(order.receiver_address);
     setReceiverPhone(order.receiver_phone);
     setReceiverName(order.receiver_name);
-    setShowModal(true); 
+    setShowModal(true);
   };
 
   const handleSave = async () => {
@@ -61,8 +61,8 @@ const OrderPlace = () => {
           title: "Thành công",
           text: "Thay đổi thông tin đơn hàng thành công",
         });
-      fetchOrderData(currentPage);
-      handleCloseModal();
+        fetchOrderData(currentPage);
+        handleCloseModal();
       }
     } catch (error) {
       console.error("Error updating order:", error);
@@ -70,28 +70,27 @@ const OrderPlace = () => {
   };
 
   const handleCloseModal = () => {
-    setShowModal(false); 
+    setShowModal(false);
   };
 
   const handleDeleteOrder = async (orderId: string) => {
-    // Hiển thị hộp thoại xác nhận trước khi huỷ đơn hàng
     const result = await Swal.fire({
-      icon: 'warning',
-      title: 'Bạn có chắc chắn muốn huỷ đơn hàng?',
-      text: 'Hành động này không thể hoàn tác.',
+      icon: "warning",
+      title: "Bạn có chắc chắn muốn huỷ đơn hàng?",
+      text: "Hành động này không thể hoàn tác.",
       showCancelButton: true,
-      confirmButtonText: 'Huỷ đơn',
-      cancelButtonText: 'Hủy',
-      confirmButtonColor: '#d33',
-      cancelButtonColor: '#3085d6',
+      confirmButtonText: "Huỷ đơn",
+      cancelButtonText: "Hủy",
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#3085d6",
     });
-  
+
     if (result.isConfirmed) {
       try {
         const status = "Cancelled";
         const response = await ins.patch(`/orders/${orderId}`, { status });
         if (response.status === 200) {
-          fetchOrderData(currentPage); 
+          fetchOrderData(currentPage);
           Swal.fire({
             icon: "success",
             title: "Thành công",
@@ -110,113 +109,102 @@ const OrderPlace = () => {
   };
 
   return (
-    <div>
-      <h1>Đơn hàng</h1>
+    <div className="order-place">
+      <h1 className="my-4 text-center">Danh sách đơn hàng</h1>
 
-      {isLoading && <div>Loading...</div>}
+      {isLoading && <div className="text-center">Loading...</div>}
 
-      <table className="table table-bordered table-striped">
-        <thead className="text-center bg-light">
-          <tr>
-            <th className="col-1">Mã đơn hàng</th>
-            <th className="col-2">Tên sản phẩm</th>
-            <th className="col-2">Số lượng</th>
-            <th className="col-2">Thành tiền</th>
-            <th className="col-1">Thanh toán</th>
-            <th className="col-1">Trạng thái</th>
-            <th className="col-2">Thao tác</th>
-          </tr>
-        </thead>
-        <tbody className="text-center">
-          {orderData.length > 0 ? (
-            orderData.map((order, orderIndex) => (
-              <tr key={orderIndex}>
-                <td>{order._id}</td>
-                <td className="text-left">
-                  {order?.items?.map((item, itemIndex) => (
-                    <div key={itemIndex}>
-                      <span>{item?.product?.title}</span>
-                      <ul className="list-unstyled">
-                        <li>
-                          <strong>Color:</strong> {item?.color}
-                        </li>
-                        <li>
-                          <strong>Storage:</strong> {item?.storage}
-                        </li>
-                        <li>
-                          <strong>Quantity:</strong> {item?.quantity}
-                        </li>
-                        <li>
-                          <strong>Price:</strong> {item?.price.toLocaleString()}{" "}
-                          VND
-                        </li>
-                      </ul>
+      <div className="order-list">
+        {orderData.length > 0 ? (
+          orderData.map((order) => (
+            <div key={order._id} className="shadow-sm mb-3 card">
+              <div className="card-body">
+                <h5 className="card-title">Mã đơn hàng: {order._id}</h5>
+                <div>
+                  {order?.items?.map((item, index) => (
+                    <div key={index} className="mb-2">
+                      <p>
+                        <strong>{item?.product?.title}</strong>
+                      </p>
+                      <p>
+                        <strong>Color:</strong> {item?.color} |{" "}
+                        <strong>Storage:</strong> {item?.storage}
+                      </p>
+                      <p>
+                        <strong>Price:</strong> {item?.price.toLocaleString()}{" "}
+                        VND
+                      </p>
+                      <p>
+                        <strong>Quantity:</strong> {item?.quantity}
+                      </p>
+                      <p>
+                        <strong>Image:</strong>{" "}
+                        <img src={item?.product?.image} alt="không thấy ảnh"
+                          className="me-3"
+                          style={{
+                            width: "100px",
+                            height: "100px",
+                            objectFit: "cover",
+                            borderRadius: "8px",
+                          }}
+                        />
+                      </p>
                     </div>
                   ))}
-                </td>
-                <td>
+                </div>
+                <p>
+                  <strong>Tổng số lượng:</strong>{" "}
                   {order?.items?.reduce(
                     (total, item) => total + item.quantity,
                     0
                   )}
-                </td>
-                <td className="fw-bold">
-                  {order?.items?.reduce(
+                </p>
+                <h2>
+                  <strong>Thành tiền:</strong>{" "}
+                  {order?.items
+                    ?.reduce(
                       (total, item) => total + item.price * item.quantity,
                       0
                     )
                     .toLocaleString()}{" "}
                   VND
-                </td>
-                <td>
-                  {order?.payment_status === "paid" ? (
-                    <span className="badge bg-success">Đã Thanh toán</span>
-                  ) : (
-                    <span className="badge bg-warning">Chưa thanh toán</span>
-                  )}
-                </td>
-                <td>
+                </h2>
+                <p>
+                  <strong>Trạng thái:</strong>{" "}
                   {order?.status === "Pending" ? (
-                    <span className="badge bg-info">Đang chờ</span>
+                    <span className="bg-info badge">Đang chờ</span>
                   ) : order?.status === "In Delivery" ? (
-                    <span className="badge bg-primary">Đang giao</span>
+                    <span className="bg-primary badge">Đang giao</span>
                   ) : order?.status === "Delivered" ? (
-                    <span className="badge bg-success">Giao thành công</span>
-                  ) : order?.status === "Cancelled" ? (
-                    <span className="badge bg-danger">Đã huỷ</span>
+                    <span className="bg-success badge">Giao thành công</span>
                   ) : (
-                    order?.status
+                    <span className="bg-danger badge">Đã huỷ</span>
                   )}
-                </td>
-                <td>
-  <button
-    className="btn btn-warning me-2"
-    onClick={() => handleShowModal(order)}
-    disabled={order?.status !== "Pending" && order?.status !== "Confirmed"} 
-  >
-    Sửa thông tin
-  </button>
-  <button
-    className="btn btn-danger"
-    onClick={() => handleDeleteOrder(order._id)}
-    disabled={order?.status !== "Pending" && order?.status !== "Confirmed"}
-  >
-    Huỷ đơn
-  </button>
-</td>
-              </tr>
-            ))
-          ) : (
-            <tr>
-              <td colSpan={7} className="text-center">
-                Không tìm thấy đơn hàng
-              </td>
-            </tr>
-          )}
-        </tbody>
-      </table>
+                </p>
+                <div className="d-flex justify-content-between">
+                  <button
+                    className="btn btn-warning"
+                    onClick={() => handleShowModal(order)}
+                    disabled={order?.status !== "Pending"}
+                  >
+                    Sửa
+                  </button>
+                  <button
+                    className="btn btn-danger"
+                    onClick={() => handleDeleteOrder(order._id)}
+                    disabled={order?.status !== "Pending"}
+                  >
+                    Huỷ
+                  </button>
+                </div>
+              </div>
+            </div>
+          ))
+        ) : (
+          <div className="text-center">Không tìm thấy đơn hàng</div>
+        )}
+      </div>
 
-      {/* Use Pagination component */}
       <Pagination
         currentPage={currentPage}
         totalPages={totalPages}
