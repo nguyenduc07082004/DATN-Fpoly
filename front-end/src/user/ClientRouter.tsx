@@ -16,7 +16,7 @@ import OrderPlace from "./page/OrderPlace";
 import Profile from "./page/Profile";
 import ContactPage from "./page/ContactPage";
 import IntroPage from "./page/IntroPage";
-
+import OrderDetails from "../admin/quanly/OrderDetails";
 const Client = () => {
   return (
     <div>
@@ -34,6 +34,7 @@ const Client = () => {
         <Route path="/profile" element={<Profile />} />
         <Route path="/checkout" element={<CheckOut />} />
         <Route path="/orderplace" element={<OrderPlace />} />
+        <Route path="/orderplace/:id" element={<OrderDetails />} />
         <Route path="/contactPage" element={<ContactPage />} />
         <Route path="/introPage" element={<IntroPage />} />
       </Routes>

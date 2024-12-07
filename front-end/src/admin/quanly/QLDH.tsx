@@ -19,6 +19,7 @@ import {
   getButtonClass,
   getPaymentStatusColor,
   getPaymentStatusButtonClass,
+  getStatusText
 } from "../../utils/colorUtils";
 import Swal from "sweetalert2";
 import { Link } from "react-router-dom";
@@ -72,6 +73,8 @@ const QLDH = () => {
     Cancelled: [],
   };
 
+  
+
   return (
     <div className="order-management">
       <Typography variant="h4" className="m-3">
@@ -104,7 +107,7 @@ const QLDH = () => {
                   <Typography variant="body2" color="textSecondary">
                     <strong>Trạng thái hiện tại:</strong>{" "}
                     <span style={{ color: getStatusColor(order.status) }}>
-                      {order.status}
+                      {getStatusText(order.status)}
                     </span>
                   </Typography>
                   <div style={{ marginTop: "10px" }}>
@@ -116,19 +119,19 @@ const QLDH = () => {
                             className={getButtonClass(status)}
                             onClick={() => {
                               Swal.fire({
-                                title: `Chuyển trạng thái sang ${status}?`,
+                                title: `Chuyển trạng thái sang ${getStatusText(status)}?`,
                                 text: "Bạn có chắc chắn muốn thay đổi trạng thái không?",
                                 confirmButtonText: "Có, thay đổi!",
                                 cancelButtonText: "Hủy",
                                 showCancelButton: true,
                                 preConfirm: () => {
-                                  handleStatusChange(order._id, status);
+                                  handleStatusChange(order._id, getStatusText(status));
                                 },
                               }).then((result) => {
                                 if (result.isConfirmed) {
                                   Swal.fire(
                                     "Thành công!",
-                                    `Trạng thái đã được chuyển sang ${status}.`,
+                                    `Trạng thái đã được chuyển sang ${getStatusText(status)}.`,
                                     "success"
                                   );
                                 } else {
@@ -137,7 +140,7 @@ const QLDH = () => {
                               });
                             }}
                           >
-                            {status}
+                            {getStatusText(status)}
                           </button>
                         )
                       )}
