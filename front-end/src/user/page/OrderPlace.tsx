@@ -177,7 +177,7 @@ const OrderPlace = () => {
                 {order?.discount_value !== 0 && (
                   <p>
                     <strong>
-                      Giảm giá : {order?.discount_value.toLocaleString("vi-VN")}
+                      Giảm giá : {order?.discount_value?.toLocaleString("vi-VN")}
                       VND
                     </strong>
                   </p>
