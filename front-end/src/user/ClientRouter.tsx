@@ -16,7 +16,7 @@ import OrderPlace from "./page/OrderPlace";
 import Profile from "./page/Profile";
 import ContactPage from "./page/ContactPage";
 import IntroPage from "./page/IntroPage";
-import OrderDetails from "../admin/quanly/OrderDetails";
+import OrderDetails from "./page/OrderDetails";
 const Client = () => {
   return (
     <div>
