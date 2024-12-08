@@ -35,7 +35,7 @@ function Dashboard() {
         </div>
         <div
           className="bg-light content rounded-3"
-          style={{ height: "900px", width: "1000rem" }}
+          style={{ height: "900px", width: "1170px" }}
         >
           <Routes>
             {/* QLSP */}
