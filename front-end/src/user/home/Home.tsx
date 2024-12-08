@@ -120,14 +120,13 @@ const Categories: React.FC = () => {
     }
   };
 
-  const fetchProducts = async () => {
+  const fetchProducts = async (categoryId?: string) => {
     try {
       const response = await ins.get(`${baseURL}/products/filters`, {
-        params: { category: selectedCategory },
+        params: { category: categoryId },
       });
       if (response.status >= 200 && response.status < 300) {
         setProducts(response.data.products);
-        console.log(response.data.products);
       }
     } catch (err) {
       console.error((err as Error).message);
@@ -136,33 +135,42 @@ const Categories: React.FC = () => {
 
   useEffect(() => {
     fetchCategories();
-    fetchProducts();
+    fetchProducts(selectedCategory); // Fetch products based on selected category or no category (for "Tất cả")
   }, [selectedCategory]);
 
+  const handleAllCategories = () => {
+    setSelectedCategory(""); // Set to an empty string to load all products
+  };
+
   return (
-    <section className="mt-5">
-      <h2>Danh mục sản phẩm</h2>
-      <div className="btn-group" role="group" aria-label="Categories">
+    <section className="category-section">
+      <h2 className="category-title">Danh mục sản phẩm </h2>
+      <div className="category-buttons">
+        {/* Nút Tất cả */}
+        <button
+          className={`category-button ${selectedCategory === "" ? "active" : ""}`}
+          onClick={handleAllCategories}
+        >
+          Tất cả
+        </button>
+
+        {/* Hiển thị danh sách các category */}
         {categories.length > 0 &&
           categories.map((category) => (
             <button
               key={category._id}
-              type="button"
-              className={`btn ${
-                category._id === selectedCategory ? "btn-primary" : "btn-outline-primary"
-              }`}
+              className={`category-button ${category._id === selectedCategory ? "active" : ""}`}
               onClick={() => setSelectedCategory(category._id)}
             >
               {category.name}
             </button>
           ))}
       </div>
-      <h3 className="mt-5">
-        <ProductList products={products} />
-      </h3>
+      <ProductList products={products} />
     </section>
   );
 };
+
 
 // Deals Component
 const Deals: React.FC = () => {
