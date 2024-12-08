@@ -72,48 +72,6 @@ const TrangChu = () => {
   useEffect(() => {
     getData();
   }, []);
-  const chartData = {
-    labels: salesData.map((item) => item._id),
-    datasets: [
-      {
-        label: "Tổng doanh số (VND)",
-        data: salesData.map((item) => item.totalSales),
-        fill: false,
-        borderColor: "rgba(75, 192, 192, 1)",
-        borderWidth: 2,
-        pointRadius: 5,
-      },
-    ],
-  };
-
-  const options = {
-    responsive: true,
-    plugins: {
-      title: {
-        display: true,
-        text: "Tổng quan về doanh số theo ngày",
-      },
-      tooltip: {
-        mode: "index",
-        intersect: false,
-      },
-    },
-    scales: {
-      x: {
-        title: {
-          display: true,
-          text: "Ngày",
-        },
-      },
-      y: {
-        title: {
-          display: true,
-          text: "Tổng doanh số (VND)",
-        },
-        beginAtZero: true,
-      },
-    },
-  };
 
   return (
     <div className="container-fluid">
@@ -222,20 +180,6 @@ const TrangChu = () => {
           </div>
         </section>
 
-        {/* Sales Overview */}
-        <section className="p-4">
-          <div className="card shadow-sm mb-4">
-            <div className="card-body">
-              <h2 className="card-title">Doanh thu bán hàng</h2>
-              {loading ? (
-                <p>Loading...</p>
-              ) : (
-                <Line data={chartData} options={options} />
-              )}
-            </div>
-          </div>
-        </section>
-
         <section className="p-4">
           <div className="card shadow-sm mb-4">
             <div className="card-body">
@@ -261,38 +205,41 @@ const TrangChu = () => {
                   </thead>
                   <tbody>
                     {/* Loop through each order */}
-                    {recentOrders.length > 0 && recentOrders?.map((order) => (
-                      <tr key={order._id}>
-                        <td className="col-2">{order._id}</td>
-                        <td className="col-2">{order.receiver_name}</td>
-                        <td className="col-4">
-                          {/* Display detailed item information */}
-                          {order?.items?.map((item, itemIndex) => (
-                            <div key={itemIndex}>
-                              {item?.product?.title} ({item?.color}, {item?.storage}
-                              )
-                            </div>
-                          ))}
-                        </td>
-                        <td className="col-2">
-                          {/* Show order status */}
-                          <span
-                            className={`badge ${
-                              order?.status === "Completed"
-                                ? "bg-success"
-                                : order?.status === "Pending"
-                                ? "bg-warning"
-                                : order?.status === "In Delivery"
-                                ? "bg-info"
-                                : "bg-danger"
-                            }`}
-                          >
-                            {order?.status}
-                          </span>
-                        </td>
-                        <td className="col-2">{order?.total_price.toLocaleString("vi-VN")} VND</td>
-                      </tr>
-                    ))}
+                    {recentOrders.length > 0 &&
+                      recentOrders?.map((order) => (
+                        <tr key={order._id}>
+                          <td className="col-2">{order._id}</td>
+                          <td className="col-2">{order.receiver_name}</td>
+                          <td className="col-4">
+                            {/* Display detailed item information */}
+                            {order?.items?.map((item, itemIndex) => (
+                              <div key={itemIndex}>
+                                {item?.product?.title} ({item?.color},{" "}
+                                {item?.storage})
+                              </div>
+                            ))}
+                          </td>
+                          <td className="col-2">
+                            {/* Show order status */}
+                            <span
+                              className={`badge ${
+                                order?.status === "Completed"
+                                  ? "bg-success"
+                                  : order?.status === "Pending"
+                                  ? "bg-warning"
+                                  : order?.status === "In Delivery"
+                                  ? "bg-info"
+                                  : "bg-danger"
+                              }`}
+                            >
+                              {order?.status}
+                            </span>
+                          </td>
+                          <td className="col-2">
+                            {order?.total_price.toLocaleString("vi-VN")} VND
+                          </td>
+                        </tr>
+                      ))}
                   </tbody>
                 </table>
               )}
@@ -302,37 +249,37 @@ const TrangChu = () => {
 
         {/* Top Customers */}
         <section className="p-4">
-      <div className="card shadow-sm">
-        <div className="card-body">
-          <h2 className="card-title">Cảnh báo tồn kho</h2>
-          <ul className="list-group list-group-flush">
-            {loading ? (
-              // Hiển thị loading khi dữ liệu chưa được tải
-              <li className="list-group-item text-center">
-                <div className="spinner-border text-primary" role="status">
-                  <span className="visually-hidden">Loading...</span>
-                </div>
-              </li>
-            ) : (
-              // Hiển thị sản phẩm khi dữ liệu đã được tải
-              products
-                .filter((product) => product.totalStock < 5) // Lọc sản phẩm có totalStock < 5
-                .map((product, index) => (
-                  <li
-                    key={index}
-                    className="list-group-item d-flex justify-content-between align-items-center"
-                  >
-                    {product._id.title}{" "}
-                    <span className="badge bg-danger">
-                      {product.totalStock} Sản phẩm
-                    </span>
+          <div className="card shadow-sm">
+            <div className="card-body">
+              <h2 className="card-title">Cảnh báo tồn kho</h2>
+              <ul className="list-group list-group-flush">
+                {loading ? (
+                  // Hiển thị loading khi dữ liệu chưa được tải
+                  <li className="list-group-item text-center">
+                    <div className="spinner-border text-primary" role="status">
+                      <span className="visually-hidden">Loading...</span>
+                    </div>
                   </li>
-                ))
-            )}
-          </ul>
-        </div>
-      </div>
-    </section>
+                ) : (
+                  // Hiển thị sản phẩm khi dữ liệu đã được tải
+                  products
+                    .filter((product) => product.totalStock < 5) // Lọc sản phẩm có totalStock < 5
+                    .map((product, index) => (
+                      <li
+                        key={index}
+                        className="list-group-item d-flex justify-content-between align-items-center"
+                      >
+                        {product._id.title}{" "}
+                        <span className="badge bg-danger">
+                          {product.totalStock} Sản phẩm
+                        </span>
+                      </li>
+                    ))
+                )}
+              </ul>
+            </div>
+          </div>
+        </section>
       </main>
     </div>
   );
