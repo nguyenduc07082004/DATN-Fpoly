@@ -119,7 +119,8 @@ const Cart = () => {
             <th className="col-3">Màu sắc</th>
             <th className="col-3">Dung lượng</th>
             <th className="col-3">Số lượng</th>
-            <th className="col-3">Giá</th>
+            <th className="col-2">Đơn Giá</th>
+            <th className="col-2">Giá</th>
             <th className="col-1">Xóa</th>
           </tr>
         </thead>
@@ -140,6 +141,7 @@ const Cart = () => {
                   className="text-primary"
                 />
               </td>
+              <td>{product?.price}</td>
               <td className="row-4">{(product.price * product.quantity).toLocaleString()}</td>
               <td>
                 <FaTrash
@@ -154,11 +156,11 @@ const Cart = () => {
       </table>
 
       {/* Tổng tiền sau khi giảm giá */}
-      <div className="row fs-5 my-4">
-        <div className="col text-right">
+      <div className="my-4 row fs-5">
+        <div className="text-right col">
           <strong>Tổng tiền:</strong>
         </div>
-        <div className="col text-right fw-bold">
+        <div className="text-right col fw-bold">
           <span>{state.totalPrice.toLocaleString()} đ</span>
         </div>
       </div>
