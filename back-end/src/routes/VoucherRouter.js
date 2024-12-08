@@ -8,10 +8,12 @@ import {
     updateVoucher,
     deleteVoucher,
     useVoucher,
-    checkVoucher
+    checkVoucher,
+    getVoucherUsed
 } from "../controllers/VoucherControllers.js";
 
 VoucherRouter.get("/", getAllVouchers);
+VoucherRouter.get("/user", getVoucherUsed);
 VoucherRouter.get("/:code",getVoucherByCode );
 VoucherRouter.post("/", createVoucher);
 VoucherRouter.post("/use", useVoucher);

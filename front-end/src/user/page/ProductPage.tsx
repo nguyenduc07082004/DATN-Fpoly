@@ -188,6 +188,8 @@ const ProductPage = () => {
                   <div className="card">
                     <img
                       src={`${baseURL}/images/${product.image}`}
+                      width="100px"
+                      height="400px"
                       alt={product.title}
                       className="card-img-top"
                     />

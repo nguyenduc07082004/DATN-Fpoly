@@ -260,7 +260,7 @@ const handleMainImageChange = (image:{url:string}) => {
           src={mainImage ? `${baseURL}/images/${mainImage}` : `${baseURL}/images/${product.image}`}
           alt="Main product image"
           sx={{
-            width: "100%",
+            width: "70%",
             height: "auto",
             objectFit: "contain",
             borderRadius: 2,

@@ -189,8 +189,16 @@ const VoucherManagement: React.FC = () => {
             fullWidth
             type="number"
             value={discount}
-            onChange={(e) => setDiscount(Number(e.target.value))}
+            onChange={(e) =>
+              setDiscount(Math.max(1, Math.min(30, Number(e.target.value))))
+            } 
             required
+            InputProps={{
+              inputProps: {
+                min: 1, 
+                max: 30, 
+              },
+            }}
           />
         </Grid>
         <Grid item xs={12} sm={4}>
