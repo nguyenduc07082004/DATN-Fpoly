@@ -7,16 +7,18 @@ import toastr from "toastr";
 const AdminSidebar = () => {
   const { logout } = useAuth();
   const socket = io(baseURL);
-  let hasShownMessage = JSON.parse(localStorage.getItem('hasShownMessage') || '{}')
+  let hasShownMessage = JSON.parse(
+    localStorage.getItem("hasShownMessage") || "{}"
+  );
   // Khi nhận sự kiện
   socket.on("orderCreated", (data) => {
-      toastr.success(data.message, "Thành công");
-      hasShownMessage[data.orderId] = true;
-  
-      localStorage.setItem('hasShownMessage', JSON.stringify(hasShownMessage));
+    toastr.success(data.message, "Thành công");
+    hasShownMessage[data.orderId] = true;
+
+    localStorage.setItem("hasShownMessage", JSON.stringify(hasShownMessage));
   });
   return (
-    <div>
+    <div className="position-fixed">
       <div
         className="d-flex flex-column flex-shrink-0 p-3 text-white bg-dark"
         style={{ height: "100vh", width: "280px" }}
@@ -160,16 +162,23 @@ const AdminSidebar = () => {
               </svg>
               Quản lý hoá đơn
             </Link>
-            </li>
-            <li>
+          </li>
+          <li>
             <Link to="/admin/qlvc" className="nav-link text-white">
-             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-cash-stack me-2" viewBox="0 0 16 16">
-             <path d="M1 3a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1H1zm7 8a1 1 0 0 1-1 1H1v-1a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v1zm-7-2a1 1 0 0 0-1 1v1h14v-1a1 1 0 0 0-1-1H1z"/>
-             <path d="M15.854 8.354a.5.5 0 0 0 0-.708l-3-3a.5.5 0 0 0-.708.708L14.293 7.5H5.5a.5.5 0 0 0 0 1h8.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3z"/>
-             </svg>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="16"
+                height="16"
+                fill="currentColor"
+                className="bi bi-cash-stack me-2"
+                viewBox="0 0 16 16"
+              >
+                <path d="M1 3a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1H1zm7 8a1 1 0 0 1-1 1H1v-1a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v1zm-7-2a1 1 0 0 0-1 1v1h14v-1a1 1 0 0 0-1-1H1z" />
+                <path d="M15.854 8.354a.5.5 0 0 0 0-.708l-3-3a.5.5 0 0 0-.708.708L14.293 7.5H5.5a.5.5 0 0 0 0 1h8.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3z" />
+              </svg>
               Quản lý vouchers
             </Link>
-            </li>
+          </li>
           <li>
             <Link to="/" className="nav-link text-white">
               <svg
@@ -206,7 +215,7 @@ const AdminSidebar = () => {
               className="rounded-circle me-2"
             />
             <strong>
-              {JSON.parse(localStorage.getItem("user") || "{}").fullName}
+              {JSON.parse(localStorage.getItem("user") || "{}").last_name}
             </strong>
           </Link>
           <ul

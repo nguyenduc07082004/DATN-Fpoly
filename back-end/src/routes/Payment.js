@@ -6,7 +6,7 @@ import crypto from "crypto";
 import Cart from "../models/CartModels.js";
 import Order from "../models/OrderModels.js";
 import OrderItem from "../models/OrderItemModels.js";
-import Voucher from "../models/VoucherModels.js"
+import Voucher from "../models/VoucherModels.js";
 const vnp_TmnCode = "1FDEBV99"; // Replace with your VNPay TmnCode
 const vnp_HashSecret = "HMD09FSOL18IL59STWAMEX0ZOIU4HENY"; // Replace with your VNPay HashSecret
 const vnp_Url = "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html"; // VNPay URL
@@ -34,7 +34,7 @@ router.post("/create_payment_url", async function (req, res, next) {
   let bankCode = req.body.bankCode;
   let locale = req.body.language;
   let userId = req.body.userId;
-  let discountCode = req.body.discountCode
+  let discountCode = req.body.discountCode;
   if (locale === null || locale === "") {
     locale = "vn";
   }
@@ -70,19 +70,18 @@ router.post("/create_payment_url", async function (req, res, next) {
 
   // Process the cart and order only after the payment is successful (on VNPay's return)
   // You will need to handle this in a separate route, where VNPay returns the payment result
-
 });
 
-router.get('/vnpay_return', async function (req, res, next) {
+router.get("/vnpay_return", async function (req, res, next) {
   var vnp_Params = req.query;
-  const vnp_OrderInfo = vnp_Params['vnp_OrderInfo'];
+  const vnp_OrderInfo = vnp_Params["vnp_OrderInfo"];
   const [userId, discountCode] = vnp_OrderInfo.split("|"); // Tách userId và discountCode
 
-  var secureHash = vnp_Params['vnp_SecureHash'];
-  const responseCode = vnp_Params['vnp_ResponseCode']; // Lấy mã phản hồi từ VNPAY
+  var secureHash = vnp_Params["vnp_SecureHash"];
+  const responseCode = vnp_Params["vnp_ResponseCode"]; // Lấy mã phản hồi từ VNPAY
 
-  delete vnp_Params['vnp_SecureHash'];
-  delete vnp_Params['vnp_SecureHashType'];
+  delete vnp_Params["vnp_SecureHash"];
+  delete vnp_Params["vnp_SecureHashType"];
 
   vnp_Params = sortObject(vnp_Params);
 
@@ -91,7 +90,7 @@ router.get('/vnpay_return', async function (req, res, next) {
 
   var signData = querystring.stringify(vnp_Params, { encode: false });
   var hmac = crypto.createHmac("sha512", secretKey);
-  var signed = hmac.update(Buffer.from(signData, 'utf-8')).digest("hex");
+  var signed = hmac.update(Buffer.from(signData, "utf-8")).digest("hex");
 
   if (secureHash === signed) {
     // Kiểm tra nếu mã phản hồi là "00" (thành công)
@@ -100,30 +99,41 @@ router.get('/vnpay_return', async function (req, res, next) {
         const user_id = userId;
 
         // Lấy giỏ hàng của người dùng
-        const cart = await Cart.findOne({ user_id: user_id }).populate("products.product").populate("user_id");
+        const cart = await Cart.findOne({ user_id: user_id })
+          .populate("products.product")
+          .populate("user_id");
 
         if (!cart || cart.products.length === 0) {
-          return res.status(400).json({ message: "Giỏ hàng không tồn tại hoặc giỏ hàng trống." });
+          return res
+            .status(400)
+            .json({ message: "Giỏ hàng không tồn tại hoặc giỏ hàng trống." });
         }
 
         // Kiểm tra số lượng sản phẩm trong kho
         const checkStockPromises = cart.products.map(async (item) => {
           const product = item.product;
-          const variant = product.variants.find(v => v._id.toString() === item.variantId.toString());
+          const variant = product.variants.find(
+            (v) => v._id.toString() === item.variantId.toString()
+          );
 
           if (variant && variant.quantity < item.quantity) {
-            throw new Error(`Không đủ số lượng cho sản phẩm ${product.name} (Màu sắc: ${variant.color}). Số lượng tồn kho: ${variant.quantity}`);
+            throw new Error(
+              `Không đủ số lượng cho sản phẩm ${product.name} (Màu sắc: ${variant.color}). Số lượng tồn kho: ${variant.quantity}`
+            );
           }
         });
 
         await Promise.all(checkStockPromises);
 
         // Tính tổng giá trị giỏ hàng
-        let totalPrice = cart.products.reduce((total, item) => total + item.price * item.quantity, 0);
+        let totalPrice = cart.products.reduce(
+          (total, item) => total + item.price * item.quantity,
+          0
+        );
         if (discountCode) {
           const discount = await Voucher.findOne({ code: discountCode });
           if (discount) {
-            const discountPercent = Number(discount.discount); 
+            const discountPercent = Number(discount.discount);
             const value = (Number(totalPrice) * discountPercent) / 100;
 
             totalPrice -= value;
@@ -140,12 +150,19 @@ router.get('/vnpay_return', async function (req, res, next) {
           receiver_address: cart.user_id.address,
           payment_status: "paid",
           voucher: discountCode,
-          discount_value: cart.products.reduce((total, item) => total + item.price * item.quantity, 0) - totalPrice
+          discount_value:
+            cart.products.reduce(
+              (total, item) => total + item.price * item.quantity,
+              0
+            ) - totalPrice,
         });
 
         const savedOrder = await order.save();
 
-        await Voucher.findOneAndUpdate({ code: discountCode }, { is_used: true });
+        await Voucher.findOneAndUpdate(
+          { code: discountCode },
+          { is_used: true }
+        );
 
         const orderItems = cart.products.map((item) => ({
           order_id: savedOrder._id,
@@ -164,7 +181,9 @@ router.get('/vnpay_return', async function (req, res, next) {
 
         for (const item of cart.products) {
           const product = item.product;
-          const variant = product.variants.find(variant => variant._id.toString() === item.variantId.toString());
+          const variant = product.variants.find(
+            (variant) => variant._id.toString() === item.variantId.toString()
+          );
           if (variant) {
             variant.quantity -= item.quantity;
             await product.save();
@@ -173,21 +192,17 @@ router.get('/vnpay_return', async function (req, res, next) {
 
         await Cart.findOneAndDelete({ user_id: userId });
 
-        res.redirect('http://localhost:5173/checkout');
+        res.redirect("http://localhost:5173/checkout");
       } catch (error) {
         res.status(400).json({ message: error.message });
       }
     } else {
-      res.redirect('http://localhost:5173/cart');
+      res.redirect("http://localhost:5173/cart");
     }
   } else {
-    res.json({ code: '97' });
+    res.json({ code: "97" });
   }
 });
-
-
-
-
 
 function sortObject(obj) {
   let sorted = {};

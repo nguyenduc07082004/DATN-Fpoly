@@ -84,7 +84,7 @@ const Profile = () => {
         </div>
         <div className="col-md-8">
           <div className="row mb-3">
-            <label className="col-sm-3 col-form-label">Tên:</label>
+            <label className="col-sm-3 col-form-label">Họ:</label>
             <div className="col-sm-9">
               {isEditing ? (
                 <input
@@ -100,7 +100,7 @@ const Profile = () => {
             </div>
           </div>
           <div className="row mb-3">
-            <label className="col-sm-3 col-form-label">Họ:</label>
+            <label className="col-sm-3 col-form-label">Tên:</label>
             <div className="col-sm-9">
               {isEditing ? (
                 <input
@@ -153,7 +153,10 @@ const Profile = () => {
       <div className="text-center mt-4">
         {isEditing ? (
           <>
-            <button className="btn btn-success me-2" onClick={handleSaveChanges}>
+            <button
+              className="btn btn-success me-2"
+              onClick={handleSaveChanges}
+            >
               Lưu thay đổi
             </button>
             <button className="btn btn-secondary" onClick={handleCancelEdit}>
