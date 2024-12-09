@@ -19,7 +19,7 @@ import {
   getButtonClass,
   getPaymentStatusColor,
   getPaymentStatusButtonClass,
-  getStatusText
+  getStatusText,
 } from "../../utils/colorUtils";
 import Swal from "sweetalert2";
 import { Link } from "react-router-dom";
@@ -73,8 +73,6 @@ const QLDH = () => {
     Cancelled: [],
   };
 
-  
-
   return (
     <div className="order-management">
       <Typography variant="h4" className="m-3">
@@ -119,19 +117,23 @@ const QLDH = () => {
                             className={getButtonClass(status)}
                             onClick={() => {
                               Swal.fire({
-                                title: `Chuyển trạng thái sang ${getStatusText(status)}?`,
+                                title: `Chuyển trạng thái sang ${getStatusText(
+                                  status
+                                )}?`,
                                 text: "Bạn có chắc chắn muốn thay đổi trạng thái không?",
                                 confirmButtonText: "Có, thay đổi!",
                                 cancelButtonText: "Hủy",
                                 showCancelButton: true,
                                 preConfirm: () => {
-                                  handleStatusChange(order._id,status);
+                                  handleStatusChange(order._id, status);
                                 },
                               }).then((result) => {
                                 if (result.isConfirmed) {
                                   Swal.fire(
                                     "Thành công!",
-                                    `Trạng thái đã được chuyển sang ${getStatusText(status)}.`,
+                                    `Trạng thái đã được chuyển sang ${getStatusText(
+                                      status
+                                    )}.`,
                                     "success"
                                   );
                                 } else {
@@ -149,92 +151,26 @@ const QLDH = () => {
                 <TableCell>
                   <Typography variant="body2" color="textSecondary">
                     <strong>Trạng thái thanh toán:</strong>{" "}
-                    <span
+                    <button
                       style={{
-                        color: getPaymentStatusColor(order.payment_status),
+                        display:
+                          order.status === "Cancelled" ||
+                          order.status === "Delivered"
+                            ? "none"
+                            : "inline-block",
                       }}
                     >
-                      {order.payment_status === "paid"
-                        ? "Đã thanh toán"
-                        : "Chưa thanh toán"}
-                    </span>
+                      <span
+                        style={{
+                          color: getPaymentStatusColor(order.payment_status),
+                        }}
+                      >
+                        {order.payment_status === "paid"
+                          ? "Đã thanh toán"
+                          : "Chưa thanh toán"}
+                      </span>
+                    </button>
                   </Typography>
-
-                  <div style={{ marginTop: "10px" }}>
-                    {order.payment_status === "paid" ? (
-                      <button
-                        className={getPaymentStatusButtonClass("unpaid")}
-                        onClick={() => {
-                          Swal.fire({
-                            title:
-                              "Chuyển trạng thái thanh toán sang Chưa thanh toán?",
-                            text: "Bạn có chắc chắn muốn thay đổi trạng thái thanh toán không?",
-                            confirmButtonText: "Có, thay đổi!",
-                            cancelButtonText: "Hủy",
-                            showCancelButton: true,
-                            preConfirm: () => {
-                              handlePaymentStatusChange(order._id, "unpaid");
-                            },
-                          }).then((result) => {
-                            if (result.isConfirmed) {
-                              Swal.fire(
-                                "Thành công!",
-                                "Trạng thái thanh toán đã được chuyển sang Chưa thanh toán.",
-                                "success"
-                              );
-                            } else {
-                              console.log("Hủy thay đổi thanh toán");
-                            }
-                          });
-                        }}
-                        style={{
-                          display:
-                            order.status === "Cancelled" ||
-                            order.status === "Delivered"
-                              ? "none"
-                              : "inline-block",
-                        }}
-                      >
-                        Chưa thanh toán
-                      </button>
-                    ) : (
-                      <button
-                        className={getPaymentStatusButtonClass("paid")}
-                        onClick={() => {
-                          Swal.fire({
-                            title:
-                              "Chuyển trạng thái thanh toán sang Đã thanh toán?",
-                            text: "Bạn có chắc chắn muốn thay đổi trạng thái thanh toán không?",
-                            confirmButtonText: "Có, thay đổi!",
-                            cancelButtonText: "Hủy",
-                            showCancelButton: true,
-                            preConfirm: () => {
-                              handlePaymentStatusChange(order._id, "paid");
-                            },
-                          }).then((result) => {
-                            if (result.isConfirmed) {
-                              Swal.fire(
-                                "Thành công!",
-                                "Trạng thái thanh toán đã được chuyển sang Đã thanh toán.",
-                                "success"
-                              );
-                            } else {
-                              console.log("Hủy thay đổi thanh toán");
-                            }
-                          });
-                        }}
-                        style={{
-                          display:
-                            order.status === "Cancelled" ||
-                            order.status === "Delivered"
-                              ? "none"
-                              : "inline-block",
-                        }}
-                      >
-                        Đã thanh toán
-                      </button>
-                    )}
-                  </div>
                 </TableCell>
 
                 <TableCell>{order.created_at.slice(0, 10)}</TableCell>
