@@ -294,7 +294,7 @@ console.log(req.body);
         message: `Trạng thái đơn hàng ${orderId} đã thay đổi từ "${currentStatus}" thành "${status}"`,
         orderId: orderId,
         status: status,
-        userId: req.user._id
+        userId: order.user_id
       });
     }
 

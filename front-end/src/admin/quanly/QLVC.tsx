@@ -33,6 +33,12 @@ const VoucherManagement: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [page, setPage] = useState<number>(1);
   const [totalPages, setTotalPages] = useState<number>(1);
+  const [minimumOrderAmount, setMinimumOrderAmount] = useState<number | null>(
+    null
+  );
+  const [maxDiscountAmount, setMaxDiscountAmount] = useState<number | null>(
+    null
+  );
 
   // Hàm lấy danh sách voucher với tìm kiếm và phân trang
   useEffect(() => {
@@ -58,14 +64,35 @@ const VoucherManagement: React.FC = () => {
   // Hàm tạo voucher mới
   const handleCreateVoucher = async () => {
     try {
-      if (!code || !discount || !expirationDate) {
+      if (
+        !code ||
+        !discount ||
+        !expirationDate ||
+        !minimumOrderAmount ||
+        !maxDiscountAmount
+      ) {
         setMessage({
           type: "warning",
           message: "Vui lòng nhập đầy đủ thông tin",
         });
         return;
       }
-      const newVoucher = { code, discount, expiration_date: expirationDate };
+
+      if (maxDiscountAmount && maxDiscountAmount <= minimumOrderAmount) {
+        setMessage({
+          type: "warning",
+          message:
+            "Giới hạn giá trị giảm giá không được nhỏ hơn giá trị đơn hàng tối thiểu",
+        });
+        return;
+      }
+      const newVoucher = {
+        code,
+        discount,
+        expiration_date: expirationDate,
+        min_order_value: minimumOrderAmount,
+        max_discount_amount: maxDiscountAmount,
+      };
       const response = await ins.post("/vouchers", newVoucher);
       setVouchers([...vouchers, response.data]);
       setMessage({ type: "success", message: "Tạo mã giảm giá thành công!" });
@@ -87,7 +114,10 @@ const VoucherManagement: React.FC = () => {
           code,
           discount,
           expiration_date: expirationDate,
+          min_order_value: minimumOrderAmount,
+          max_discount_amount: maxDiscountAmount,
         };
+
         const response = await ins.put(
           `/vouchers/${editVoucher._id}`,
           updatedVoucher
@@ -106,6 +136,8 @@ const VoucherManagement: React.FC = () => {
         setCode("");
         setDiscount(0);
         setExpirationDate("");
+        setMinimumOrderAmount(null);
+        setMaxDiscountAmount(null);
       } catch (error) {
         setMessage({ type: "error", message: "Lỗi khi cập nhật mã giảm giá" });
       }
@@ -144,6 +176,8 @@ const VoucherManagement: React.FC = () => {
     setCode(voucher.code);
     setDiscount(voucher.discount);
     setExpirationDate(voucher.expiration_date);
+    setMinimumOrderAmount(voucher.min_order_value);
+    setMaxDiscountAmount(voucher.max_discount_amount);
     setOpenEditDialog(true);
   };
 
@@ -154,6 +188,8 @@ const VoucherManagement: React.FC = () => {
     setCode("");
     setDiscount(0);
     setExpirationDate("");
+    setMinimumOrderAmount(null);
+    setMaxDiscountAmount(null);
   };
 
   return (
@@ -191,12 +227,42 @@ const VoucherManagement: React.FC = () => {
             value={discount}
             onChange={(e) =>
               setDiscount(Math.max(1, Math.min(30, Number(e.target.value))))
-            } 
+            }
             required
             InputProps={{
               inputProps: {
-                min: 1, 
-                max: 30, 
+                min: 1,
+                max: 30,
+              },
+            }}
+          />
+        </Grid>
+        <Grid item xs={12} sm={4}>
+          <TextField
+            label="Số tiền tối thiểu đơn hàng"
+            variant="outlined"
+            fullWidth
+            type="number"
+            value={minimumOrderAmount || ""}
+            onChange={(e) => setMinimumOrderAmount(Number(e.target.value))}
+            InputProps={{
+              inputProps: {
+                min: 0, // Giá trị tối thiểu
+              },
+            }}
+          />
+        </Grid>
+        <Grid item xs={12} sm={4}>
+          <TextField
+            label="Giới hạn tối đa giá trị giảm giá"
+            variant="outlined"
+            fullWidth
+            type="number"
+            value={maxDiscountAmount || ""}
+            onChange={(e) => setMaxDiscountAmount(Number(e.target.value))}
+            InputProps={{
+              inputProps: {
+                min: 0, // Giá trị tối thiểu
               },
             }}
           />
@@ -251,6 +317,13 @@ const VoucherManagement: React.FC = () => {
                   <Typography variant="body2" color="textSecondary">
                     Giảm giá: {voucher.discount}%
                   </Typography>
+                  <Typography variant="body2" color="textSecondary">
+                    Giá trị tối thiểu: {voucher.min_order_value.toLocaleString('vi-VN')} VND
+                  </Typography>
+                  <Typography variant="body2" color="textSecondary">
+                    Giá trị tối đa: {voucher.max_discount_amount.toLocaleString('vi-VN')} VND
+                  </Typography>
+
                   <Typography variant="body2" color="textSecondary">
                     Ngày hết hạn:{" "}
                     {new Date(voucher.expiration_date).toLocaleDateString()}
@@ -317,7 +390,7 @@ const VoucherManagement: React.FC = () => {
 
       {/* Dialog để chỉnh sửa voucher */}
       <Dialog open={openEditDialog} onClose={handleCloseEditDialog}>
-        <DialogTitle>Edit Voucher</DialogTitle>
+        <DialogTitle>Chỉnh sửa voucher</DialogTitle>
         <DialogContent>
           <TextField
             label="Voucher Code"
@@ -326,13 +399,45 @@ const VoucherManagement: React.FC = () => {
             value={code}
             onChange={(e) => setCode(e.target.value)}
             disabled
+            sx={{ mb: 2 }}
           />
           <TextField
-            label="Discount"
+            label="Discount (%)"
             fullWidth
             variant="outlined"
+            type="number"
             value={discount}
             onChange={(e) => setDiscount(Number(e.target.value))}
+            InputProps={{
+              inputProps: { min: 1, max: 100 }, // Giới hạn giá trị từ 1 đến 100%
+            }}
+            required
+            sx={{ mb: 2 }}
+          />
+          <TextField
+            label="Minimum Order Value"
+            fullWidth
+            variant="outlined"
+            type="number"
+            value={minimumOrderAmount || ""}
+            onChange={(e) => setMinimumOrderAmount(Number(e.target.value))}
+            InputProps={{
+              inputProps: { min: 0 }, // Không cho phép giá trị âm
+            }}
+            required
+            sx={{ mb: 2 }}
+          />
+          <TextField
+            label="Maximum Discount Amount"
+            fullWidth
+            variant="outlined"
+            type="number"
+            value={maxDiscountAmount || ""}
+            onChange={(e) => setMaxDiscountAmount(Number(e.target.value))}
+            InputProps={{
+              inputProps: { min: 0 }, // Không cho phép giá trị âm
+            }}
+            sx={{ mb: 2 }}
           />
           <TextField
             label="Expiration Date"
@@ -347,8 +452,12 @@ const VoucherManagement: React.FC = () => {
           />
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleCloseEditDialog}>Cancel</Button>
-          <Button onClick={handleEditVoucher}>Save</Button>
+          <Button onClick={handleCloseEditDialog} color="secondary">
+            Huỷ
+          </Button>
+          <Button onClick={handleEditVoucher} color="primary">
+            Lưu
+          </Button>
         </DialogActions>
       </Dialog>
     </Container>

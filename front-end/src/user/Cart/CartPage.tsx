@@ -55,22 +55,6 @@ const Cart = () => {
         navigate("/login");
       } else {
           navigate("/vnpay");
-        // } else {
-        //   const res = await checkout(checkoutData);
-        //   if (res.status === 201) {
-        //     Swal.fire({
-        //       icon: "success",
-        //       title: "Thanh toán đơn hàng thành công",
-        //       showConfirmButton: true,
-        //       confirmButtonText: "OK",
-        //       timer: 1500,
-        //     }).then(() => {
-        //       sessionStorage.removeItem("discountCode");
-        //       sessionStorage.removeItem("discountValue");
-        //       navigate("/checkout");
-        //     });
-        //   }
-        // }
       }
     } catch (error: any) {
       Swal.fire({

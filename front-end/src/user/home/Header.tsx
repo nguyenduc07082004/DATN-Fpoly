@@ -6,7 +6,7 @@ import {
   AuthContextType,
   useAuth,
 } from "../../api/contexts/AuthContext";
-import { useContext } from "react";
+import { useContext , useEffect , useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCartShopping } from "@fortawesome/free-solid-svg-icons";
 import { CartContext, CartContextType } from "../../api/contexts/CartContext";
@@ -17,31 +17,60 @@ import toastr from "toastr";
 const Header = () => {
   const { logout } = useAuth();
   const { user } = useContext(AuthContext) as AuthContextType;
+  const [isNoti, setIsNoti] = useState(false);
   const { state } = useContext(CartContext) as CartContextType;
   const socket = io(baseURL);
-
   interface OrderStatusUpdateData {
     userId: string;
     orderId: string;
     status: string;
     message: string;
   }
-
+  
   const debounceTimeouts: Record<string, NodeJS.Timeout> = {};
+  const shownMessages: Record<string, boolean> = JSON.parse(localStorage.getItem("shownMessages") || "{}");
+  
+  useEffect(() => {
+    const handleOrderStatusUpdated = (data: OrderStatusUpdateData) => {
+      // Kiểm tra nếu thông báo này là của user hiện tại
+      if (data.userId !== user._id) {
+        return;  // Nếu không phải của người dùng hiện tại, không làm gì
+      }
 
-  socket.on("orderStatusUpdated", (data: OrderStatusUpdateData) => {
-    if (data.userId === user._id) {
-      const { orderId, status } = data;
+      const { orderId, message } = data;
 
+      // Nếu thông báo cho orderId này đã được hiển thị, không làm gì
+      if (shownMessages[orderId]) {
+        return;
+      }
+
+      // Nếu chưa hiển thị thông báo, kiểm tra debounce
       if (debounceTimeouts[orderId]) {
         clearTimeout(debounceTimeouts[orderId]);
       }
 
+      // Đặt timeout để trì hoãn việc hiển thị toastr
       debounceTimeouts[orderId] = setTimeout(() => {
-        toastr.success(data.message, "Thành công");
-      }, 2000);
-    }
-  });
+        toastr.success(message, "Thành công");
+
+        // Đánh dấu thông báo đã được hiển thị
+        shownMessages[orderId] = true;
+        localStorage.setItem("shownMessages", JSON.stringify(shownMessages));
+
+        // Cập nhật trạng thái thông báo
+        setIsNoti(true);
+      }, 500);
+    };
+
+    // Lắng nghe sự kiện orderStatusUpdated và xử lý sự kiện
+    socket.off("orderStatusUpdated", handleOrderStatusUpdated);
+    socket.on("orderStatusUpdated", handleOrderStatusUpdated);
+
+    // Cleanup khi component unmount hoặc khi socket bị off
+    return () => {
+      socket.off("orderStatusUpdated", handleOrderStatusUpdated);
+    };
+  }, [user, isNoti]); 
 
   const totalProduct = state.products.reduce(
     (acc, item) => acc + item.quantity,

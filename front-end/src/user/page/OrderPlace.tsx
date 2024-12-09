@@ -5,6 +5,8 @@ import Swal from "sweetalert2";
 import { Modal } from "react-bootstrap";
 import { baseURL } from "../../api";
 import { useNavigate } from "react-router-dom";
+import io from "socket.io-client";
+import toastr from "toastr";
 
 const OrderPlace = () => {
   const userId = JSON.parse(localStorage.getItem("user") ?? "{}")?._id ?? "";
@@ -17,6 +19,16 @@ const OrderPlace = () => {
   const [receiverPhone, setReceiverPhone] = useState("");
   const [receiverName, setReceiverName] = useState("");
   const [orderId, setOrderId] = useState("");
+  const [isNoti, setIsNoti] = useState(false);
+  interface OrderStatusUpdateData {
+    userId: string;
+    orderId: string;
+    status: string;
+    message: string;
+  }
+  const debounceTimeouts: Record<string, NodeJS.Timeout> = {};
+  const shownMessages: Record<string, boolean> = JSON.parse(localStorage.getItem("shownMessages") || "{}");
+  const socket = io(baseURL);
   const navigate = useNavigate();
 
   const fetchOrderData = async (page: number) => {
@@ -36,7 +48,36 @@ const OrderPlace = () => {
 
   useEffect(() => {
     fetchOrderData(currentPage);
-  }, [currentPage]);
+
+    const handleOrderStatusUpdated = (data: OrderStatusUpdateData) => {
+
+      if (data.userId !== userId) {
+        return;
+      }
+
+      const { orderId, message } = data;
+
+      if (debounceTimeouts[orderId]) {
+        clearTimeout(debounceTimeouts[orderId]);
+      }
+
+      debounceTimeouts[orderId] = setTimeout(() => {
+        toastr.success(message, "Thành công");
+        shownMessages[orderId] = true;
+        localStorage.setItem("shownMessages", JSON.stringify(shownMessages));
+        fetchOrderData(currentPage);
+        setIsNoti(true);
+      }, 500);
+    };
+
+    socket.off("orderStatusUpdated", handleOrderStatusUpdated); 
+    socket.on("orderStatusUpdated", handleOrderStatusUpdated);
+
+    return () => {
+      socket.off("orderStatusUpdated", handleOrderStatusUpdated); 
+    };
+  }, [userId, currentPage]); 
+
 
   const handlePageChange = (newPage: number) => {
     setCurrentPage(newPage);
