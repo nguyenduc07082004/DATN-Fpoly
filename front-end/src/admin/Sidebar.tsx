@@ -1,3 +1,8 @@
+import { useContext , useEffect } from "react";
+import {
+  OrderContext,
+  OrderContextType,
+} from "../api/contexts/OrdersContext";
 import { Link } from "react-router-dom";
 import ".././App.scss";
 import { useAuth } from "../api/contexts/AuthContext";
@@ -6,17 +11,33 @@ import { baseURL } from "../api";
 import toastr from "toastr";
 const AdminSidebar = () => {
   const { logout } = useAuth();
-  const socket = io(baseURL);
+  const {fetchOrder} =
+    useContext(OrderContext) as OrderContextType;  const socket = io(baseURL);
   let hasShownMessage = JSON.parse(
     localStorage.getItem("hasShownMessage") || "{}"
   );
   // Khi nhận sự kiện
-  socket.on("orderCreated", (data) => {
-    toastr.success(data.message, "Thành công");
-    hasShownMessage[data.orderId] = true;
 
-    localStorage.setItem("hasShownMessage", JSON.stringify(hasShownMessage));
-  });
+  useEffect(() => {
+    socket.on("orderCreated", (data) => {
+      toastr.success(data.message, "Thành công", {
+        onclick: () => {
+          window.location.href = "/admin/qldh";  
+        }
+      });  
+      // Cập nhật trạng thái đã hiển thị thông báo
+      hasShownMessage[data.orderId] = true;
+      localStorage.setItem("hasShownMessage", JSON.stringify(hasShownMessage));
+
+      // Gọi lại hàm fetchOrder để tải lại danh sách đơn hàng
+      fetchOrder();
+    });
+
+    // Clean up listener khi component unmount
+    return () => {
+      socket.off("orderCreated");
+    };
+  }, [fetchOrder, socket]);
   return (
     <div className="position-fixed">
       <div

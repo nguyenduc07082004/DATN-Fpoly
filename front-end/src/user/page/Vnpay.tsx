@@ -9,6 +9,7 @@ const Vnpay = () => {
   const token = localStorage.getItem("accessToken"); // Lấy token từ localStorage
   const [discountCode, setDiscountCode] = useState("");
   const [discountValue, setDiscountValue] = useState(0); // Giá trị giảm giá (theo tỷ lệ phần trăm)
+  const [discountAmount , setDiscountAmount] = useState(0);
   const [paymentMethod, setPaymentMethod] = useState("COD");
   const { checkout } = useContext(CartContext);
   const { state: cartState } = useContext(CartContext);
@@ -17,9 +18,8 @@ const Vnpay = () => {
   const applyDiscount = async (discountCode: string) => {
     try {
       // Gửi yêu cầu đến API để kiểm tra mã giảm giá
-      const response = await ins.post("/vouchers/check", { discountCode });
+      const response = await ins.post("/vouchers/check", { discountCode, orderValue: cartState.totalPrice });
       const data = response.data;
-
       if (response.status === 200) {
         if (data.is_used) {
           // Nếu voucher đã được sử dụng
@@ -45,10 +45,13 @@ const Vnpay = () => {
         Swal.fire({
           icon: "success",
           title: "Mã giảm giá áp dụng thành công!",
-          text: `Giảm giá: ${data.discount}%`,
+          text: `Giảm giá: ${data.discount}% , Tối đa giảm giá: ${data.discountAmount.toLocaleString("vi-VN")} VND`,
         });
 
-        return data.discount; // Trả về giá trị giảm giá (theo tỷ lệ phần trăm)
+        return {
+          discount: data.discount,
+          discountAmount: data.discountAmount,
+        }; // Trả về giá trị giảm giá (theo tỷ lệ phần trăm)
       } else {
         // Nếu mã giảm giá không hợp lệ
         Swal.fire({
@@ -69,13 +72,13 @@ const Vnpay = () => {
   };
 
   const handleApplyDiscount = async () => {
-    const value = await applyDiscount(discountCode);
-    setDiscountValue(value);
-    if (value > 0) {
-      sessionStorage.setItem("discountCode", discountCode);
-      sessionStorage.setItem("discountValue", value.toString());
+    const data = await applyDiscount(discountCode);
+    if (data) { 
+    setDiscountValue(data.discount);
+    setDiscountAmount(data.discountAmount);
     }
   };
+
 
   // const { dispatch: orderDispatch } = useContext(OrderContext);
   const navigate = useNavigate();
@@ -89,15 +92,20 @@ const Vnpay = () => {
 
   useEffect(() => {
     if (cartState.totalPrice) {
-      setTotalPrice(cartState.totalPrice);
+      let finalPrice = cartState.totalPrice;
+  
+      // Tính toán giảm giá theo tỷ lệ phần trăm
+      const discountAmountByPercent = (Number(discountValue) / 100) * cartState.totalPrice;
+  
+      // Kiểm tra nếu giá trị giảm giá theo tỷ lệ phần trăm lớn hơn discountAmount
+      const discountToApply = discountAmountByPercent > discountAmount ? discountAmount : discountAmountByPercent;
+  
+      // Cập nhật tổng giá trị sau khi áp dụng giảm giá
+      finalPrice = cartState.totalPrice - discountToApply;
+  
+      setTotalPrice(finalPrice);
     }
-    if (discountCode && discountValue) {
-      setTotalPrice(
-        cartState.totalPrice -
-          (Number(discountValue) / 100) * cartState.totalPrice
-      );
-    }
-  }, [discountValue]);
+  }, [discountValue, discountAmount, cartState.totalPrice]);
 
   const handleCreatePayment = async () => {
     const checkoutData = {
@@ -113,10 +121,13 @@ const Vnpay = () => {
       }).then(async (result) => {
         if (result.isConfirmed) {
           await checkout(checkoutData);
+          setTotalPrice(0);
+          setDiscountCode("");
+          setDiscountValue(0);
+          setDiscountAmount(0);
         }
       });
     }
-    console.log("Payment method:", totalPrice);
     if (paymentMethod === "CreditCard") {
       try {
         const response = await ins.post("/vnpay/create_payment_url", {
@@ -222,11 +233,16 @@ const Vnpay = () => {
         </div>
       </div>
       {discountCode && discountValue !== 0 && (
-        <div>
-          <h4>Mã giảm giá: {discountCode}</h4>
-          <h4>Giá trị giảm giá : {discountValue}%</h4>
-        </div>
-      )}
+  <div>
+    <h4>Mã giảm giá: {discountCode}</h4>
+    <h4>
+  Giảm giá:{" "}
+  {Math.min((discountValue / 100) * cartState.totalPrice, discountAmount).toLocaleString("vi", {
+    style: "currency",
+    currency: "VND",
+  })}
+</h4>  </div>
+)}
       <h4>
         Tổng giá trị giỏ hàng:{" "}
         {totalPrice.toLocaleString("vi", {

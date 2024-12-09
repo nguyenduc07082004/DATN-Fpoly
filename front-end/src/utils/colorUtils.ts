@@ -65,7 +65,7 @@ export const getStatusText = (status:string) => {
     case "Delivered":
       return "Hoàn thành đơn hàng";
     case "Cancelled":
-      return "Đã huỷ";
+      return "Huỷ";
     default:
       return "Không xác định";
   }

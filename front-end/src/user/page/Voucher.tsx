@@ -73,6 +73,12 @@ const Voucher: React.FC = () => {
                     Giảm giá: {voucher.discount}%
                   </Typography>
                   <Typography variant="body2" color="textSecondary">
+                    Giá trị tối thiểu: {voucher.min_order_value.toLocaleString('vi-VN')} VND
+                  </Typography>
+                  <Typography variant="body2" color="textSecondary">
+                    Giá trị tối đa: {voucher.max_discount_amount.toLocaleString('vi-VN')} VND
+                  </Typography>
+                  <Typography variant="body2" color="textSecondary">
                     Ngày hết hạn:{" "}
                     {new Date(voucher.expiration_date).toLocaleDateString()}
                   </Typography>

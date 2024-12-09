@@ -68,36 +68,42 @@ export const getVoucherByCode = async (req, res) => {
 };
 
 export const createVoucher = async (req, res) => {
-    const { code, discount , expiration_date } = req.body; // Giả sử bạn kiểm tra theo code voucher
-    try {
+    const { code, discount, expiration_date, min_order_value, max_discount_amount } = req.body;
 
+    try {
         // Kiểm tra xem voucher đã tồn tại chưa
         const existingVoucher = await Voucher.findOne({ code });
-
         if (existingVoucher) {
             return res.status(400).json({ error: 'Mã giảm giá đã tồn tại' });
         }
-        if (discount > 30) {
-            return res.status(400).json({ error: 'Không được quá 30%' });
-        }
-        if (discount < 0) {
-            return res.status(400).json({ error: 'Giảm giá phải lớn hơn 0%' });
+
+        // Kiểm tra giá trị giảm giá và ngày hết hạn
+        if (discount > 30 || discount <= 0) {
+            return res.status(400).json({ error: 'Giảm giá phải trong khoảng 1% - 30%' });
         }
         if (new Date(expiration_date) < new Date()) {
             return res.status(400).json({ error: 'Ngày hết hạn phải lớn hơn ngày hiện tại' });
         }
-    
 
-        // Nếu chưa tồn tại, tạo voucher mới
+        // Kiểm tra giá trị mới
+        if (min_order_value < 0) {
+            return res.status(400).json({ error: 'Đơn tối thiểu phải lớn hơn 0' });
+        }
+        if (max_discount_amount <= 0) {
+            return res.status(400).json({ error: 'Giới hạn giảm tối đa phải lớn hơn 0' });
+        }
+
+        // Nếu hợp lệ, tạo voucher mới
         const voucher = new Voucher(req.body);
         await voucher.save();
 
         res.status(201).json(voucher);
     } catch (error) {
-        console.error(error); // In lỗi ra console để dễ dàng debug
+        console.error(error);
         res.status(500).json({ error: 'Internal server error' });
     }
 };
+
 
 export const updateVoucher = async (req, res) => {
     const { id } = req.params;
@@ -126,35 +132,39 @@ export const deleteVoucher = async (req, res) => {
 }
 
 export const checkVoucher = async (req, res) => {
-    const { discountCode } = req.body;
+    const { discountCode, orderValue } = req.body;
 
     try {
-        // Tìm mã giảm giá trong cơ sở dữ liệu
         const voucher = await Voucher.findOne({ code: discountCode });
 
-        // Nếu không tìm thấy voucher
         if (!voucher) {
             return res.status(404).json({ error: 'Mã giảm giá không tồn tại' });
         }
 
-        // Kiểm tra xem voucher có hết hạn không
         const currentDate = new Date();
-        if (new Date(voucher.expiry_date) < currentDate) {
-            return res.status(400).json({ error: 'Mã giảm giá hết hạn' });
+        if (new Date(voucher.expiration_date) < currentDate) {
+            return res.status(400).json({ error: 'Mã giảm giá đã hết hạn' });
         }
 
         if (voucher.is_used) {
-            return res.status(400).json({ error: 'Mã giảm giá được sử dụng rồi' });
+            return res.status(400).json({ error: 'Mã giảm giá đã được sử dụng' });
         }
 
-        // Nếu voucher hợp lệ, trả về thông tin voucher
+        // Kiểm tra đơn tối thiểu
+        if (orderValue < voucher.min_order_value) {
+            return res.status(400).json({ error: `Đơn hàng phải tối thiểu ${voucher.min_order_value.toLocaleString('vi-VN')} VND để sử dụng mã giảm giá này` });
+        }
+
+        // Tính toán giảm giá (đảm bảo không vượt quá giới hạn)
+        const discountAmount = Math.min(orderValue * (voucher.discount / 100), voucher.max_discount_amount);
+
         res.status(200).json({
             code: voucher.code,
-            discount: voucher.discount, // Giảm giá mà voucher mang lại
+            discount: voucher.discount,
+            discountAmount,
             message: 'Áp dụng mã giảm giá thành công',
         });
     } catch (error) {
-        // Xử lý lỗi khi truy vấn cơ sở dữ liệu hoặc lỗi hệ thống
         res.status(500).json({ error: 'Internal server error' });
     }
 };
