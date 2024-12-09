@@ -4,8 +4,9 @@ import Product from "../models/ProductModels.js";
 import OrderItem from "../models/OrderItemModels.js";
 import Invoice from "../models/InvoiceModels.js";
 import Voucher from "../models/VoucherModels.js";
+import {getStatusText} from "../utils/getStatusText.js"
 import {io } from "../../index.js"
-import { log } from "console";
+
 export const checkout = async (req, res, next) => {
   try {
     const userId = req.user._id;
@@ -32,18 +33,36 @@ export const checkout = async (req, res, next) => {
     }, 0);
     
     
-    if (req.body.discountCode.discountCode) {
+    if (req.body.discountCode && req.body.discountCode.discountCode) {
       const discount = await Voucher.findOne({ code: req.body.discountCode.discountCode });
     
       if (discount) {
+        const discountPercent = Number(discount.discount); // Phần trăm giảm giá
+        const minOrderValue = Number(discount.min_order_value); // Giá trị đơn hàng tối thiểu
+        const maxDiscountAmount = Number(discount.max_discount_amount); // Giới hạn giảm giá tối đa
+    
         console.log("Voucher found:", discount);
     
-        const discountPercent = Number(discount.discount); // Đảm bảo discount.discount là số
-        const value = (Number(totalPrice) * discountPercent) / 100;
+        // Kiểm tra xem totalPrice có đủ điều kiện để áp dụng voucher không
+        if (totalPrice >= minOrderValue) {
+          // Tính toán giá trị giảm giá theo phần trăm
+          let discountValue = (totalPrice * discountPercent) / 100;
     
-        totalPrice = totalPrice - value;
+          // Kiểm tra nếu discountValue vượt quá giới hạn giảm giá tối đa thì áp dụng maxDiscountAmount
+          if (discountValue > maxDiscountAmount) {
+            console.log(`Discount exceeds maximum limit, applying max discount of ${maxDiscountAmount}`);
+            discountValue = maxDiscountAmount; // Giới hạn giá trị giảm giá
+          } else {
+            console.log(`Applying discount: ${discountValue}`);
+          }
+    
+          // Trừ đi giá trị giảm giá từ totalPrice
+          totalPrice -= discountValue;
+        } else {
+          console.log(`Total price is less than minimum order value: ${minOrderValue}`);
+        }
       } else {
-        console.log("Voucher not found or invalid");
+        return res.status(404).json({ message: "Voucher not found" });
       }
     }
     
@@ -229,7 +248,7 @@ console.log(req.body);
 
     if (!allowedTransitions[currentStatus].includes(status)) {
       return res.status(400).json({
-        message: `Không thể chuyển trạng thái từ "${currentStatus}" sang "${status}"`,
+        message: `Không thể chuyển trạng thái từ "${getStatusText(currentStatus)}" sang "${getStatusText(status)}"`,
       });
     }
 
@@ -291,7 +310,7 @@ console.log(req.body);
     // Giả sử bạn đã lưu trạng thái cũ trong bộ nhớ (ví dụ: `previousStatuses`)
     if (io && io.emit) {
       io.emit("orderStatusUpdated", {
-        message: `Trạng thái đơn hàng ${orderId} đã thay đổi từ "${currentStatus}" thành "${status}"`,
+        message: `Trạng thái đơn hàng ${orderId} đã thay đổi từ "${getStatusText(currentStatus)}" thành "${getStatusText(status)}"`,
         orderId: orderId,
         status: status,
         userId: order.user_id

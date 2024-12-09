@@ -78,14 +78,12 @@ const VoucherManagement: React.FC = () => {
         return;
       }
 
-      if (maxDiscountAmount && maxDiscountAmount <= minimumOrderAmount) {
-        setMessage({
-          type: "warning",
-          message:
-            "Giới hạn giá trị giảm giá không được nhỏ hơn giá trị đơn hàng tối thiểu",
-        });
-        return;
-      }
+        if (maxDiscountAmount > minimumOrderAmount) {
+          setMessage({
+            type: "warning",
+            message: "Giá trị giảm giá phải nhỏ hơn hoặc bằng giá trị đơn hàng tối thiểu",
+          })
+        }
       const newVoucher = {
         code,
         discount,
@@ -99,6 +97,8 @@ const VoucherManagement: React.FC = () => {
       setCode("");
       setDiscount(0);
       setExpirationDate("");
+      setMinimumOrderAmount(null);
+      setMaxDiscountAmount(null);
     } catch (error: any) {
       console.log(error);
       setMessage({ type: "error", message: error.response.data.error });

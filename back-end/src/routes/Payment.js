@@ -7,6 +7,7 @@ import Cart from "../models/CartModels.js";
 import Order from "../models/OrderModels.js";
 import OrderItem from "../models/OrderItemModels.js";
 import Voucher from "../models/VoucherModels.js";
+import {io } from "../../index.js"
 const vnp_TmnCode = "1FDEBV99"; // Replace with your VNPay TmnCode
 const vnp_HashSecret = "HMD09FSOL18IL59STWAMEX0ZOIU4HENY"; // Replace with your VNPay HashSecret
 const vnp_Url = "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html"; // VNPay URL
@@ -133,10 +134,24 @@ router.get("/vnpay_return", async function (req, res, next) {
         if (discountCode) {
           const discount = await Voucher.findOne({ code: discountCode });
           if (discount) {
-            const discountPercent = Number(discount.discount);
-            const value = (Number(totalPrice) * discountPercent) / 100;
-
-            totalPrice -= value;
+            const discountPercent = Number(discount.discount); 
+            const minOrderValue = Number(discount.min_order_value); 
+            const maxDiscountAmount = Number(discount.max_discount_amount); 
+            if (totalPrice >= minOrderValue) {
+              let discountValue = (totalPrice * discountPercent) / 100;
+        
+              if (discountValue > maxDiscountAmount) {
+                console.log(`Discount exceeds maximum limit, applying max discount of ${maxDiscountAmount}`);
+                discountValue = maxDiscountAmount; 
+              } else {
+                console.log(`Applying discount: ${discountValue}`);
+              }
+              totalPrice -= discountValue;
+            } else {
+              console.log(`Total price is less than minimum order value: ${minOrderValue}`);
+            }
+          } else {
+            console.log("Voucher not found or invalid");
           }
         }
 
@@ -191,6 +206,10 @@ router.get("/vnpay_return", async function (req, res, next) {
         }
 
         await Cart.findOneAndDelete({ user_id: userId });
+        io.emit("orderCreated", {
+          message: `Bạn có đơn hàng mới vừa tạo`,
+          orderId: savedOrder._id,
+        });
 
         res.redirect("http://localhost:5173/checkout");
       } catch (error) {

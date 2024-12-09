@@ -121,10 +121,13 @@ const Vnpay = () => {
       }).then(async (result) => {
         if (result.isConfirmed) {
           await checkout(checkoutData);
+          setTotalPrice(0);
+          setDiscountCode("");
+          setDiscountValue(0);
+          setDiscountAmount(0);
         }
       });
     }
-    console.log("Payment method:", totalPrice);
     if (paymentMethod === "CreditCard") {
       try {
         const response = await ins.post("/vnpay/create_payment_url", {

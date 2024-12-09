@@ -20,8 +20,11 @@ const AdminSidebar = () => {
 
   useEffect(() => {
     socket.on("orderCreated", (data) => {
-      toastr.success(data.message, "Thành công");
-
+      toastr.success(data.message, "Thành công", {
+        onclick: () => {
+          window.location.href = "/admin/qldh";  
+        }
+      });  
       // Cập nhật trạng thái đã hiển thị thông báo
       hasShownMessage[data.orderId] = true;
       localStorage.setItem("hasShownMessage", JSON.stringify(hasShownMessage));
