@@ -163,11 +163,6 @@ const Header = () => {
         </ul>
       </nav>
       <div className="user-options">
-        <input
-          type="text"
-          placeholder="Tìm kiếm sản phẩm..."
-          className="search-bar"
-        />
         {!localStorage.getItem("accessToken") ? (
           <>
             <Link to="/login" className="text-decoration-none">
