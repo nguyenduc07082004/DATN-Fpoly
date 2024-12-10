@@ -189,7 +189,7 @@ const Deals: React.FC = () => {
 
   return (
     <section className="mt-5">
-      <h2>Khuyến mãi Online</h2>
+      <h2>Sản phẩm</h2>
       <ProductList products={products} />
 
       {/* Phần video */}
