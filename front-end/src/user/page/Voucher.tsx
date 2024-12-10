@@ -45,6 +45,7 @@ const Voucher: React.FC = () => {
 
   return (
     <Container maxWidth="lg" sx={{ mt: 5 }}>
+      <div className="container-fluid rounded shadow-sm my-4 p-4" style={{ backgroundColor: "#eaeaea" }}>
       <Typography variant="h4" gutterBottom>
         Mã giảm giá
       </Typography>
@@ -122,6 +123,7 @@ const Voucher: React.FC = () => {
         onChange={handlePageChange}
         sx={{ mt: 3, display: "flex", justifyContent: "center" }}
       />
+      </div>
     </Container>
   );
 };

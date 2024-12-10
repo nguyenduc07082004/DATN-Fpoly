@@ -143,7 +143,7 @@ const Categories: React.FC = () => {
   };
 
   return (
-    <section className="category-section">
+    <section className="category-section" style={{ backgroundColor: "#eaeaea" }}>
       <h2 className="category-title">Danh mục sản phẩm </h2>
       <div className="category-buttons">
         {/* Nút Tất cả */}
@@ -188,8 +188,8 @@ const Deals: React.FC = () => {
   }, []);
 
   return (
-    <section className="mt-5">
-      <h2>Sản phẩm</h2>
+    <section className="mt-5" style={{ backgroundColor: "#eaeaea" }}>
+      <h2>Khuyến mãi Online</h2>
       <ProductList products={products} />
 
       {/* Phần video */}
@@ -250,7 +250,7 @@ const Home: React.FC = () => {
       <section className="mt-5">
         <h2>Khuyến mãi giới thiệu điện thoại</h2>
         <div className="promo-article">
-          <img src={image} alt="Samsung Galaxy S24 Ultra" className="float-end" />
+          <img src={image} alt="Samsung Galaxy S24 Ultra" className="float-end" width="280px"/>
           <p>
             🌟 <strong>Đón chào dòng điện thoại mới nhất!</strong> Chúng tôi hiện đang có chương
             trình khuyến mãi hấp dẫn cho các sản phẩm điện thoại cao cấp như{" "}
