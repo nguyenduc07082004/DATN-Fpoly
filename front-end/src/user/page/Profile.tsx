@@ -151,7 +151,7 @@ const Profile = () => {
             </div>
           </div>
           <div className="mb-3 row">
-            <label className="col-form-label col-sm-3">Số điện thoại:</label>
+            <label className="col-form-label col-sm-3">Địa chỉ:</label>
             <div className="col-sm-9">
               {isEditing ? (
                 <input
