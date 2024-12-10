@@ -1,76 +1,64 @@
 import { Link } from "react-router-dom";
 import Logo from "../../../logo.png";
 import "../css/Style.css";
-import {
-  AuthContext,
-  AuthContextType,
-  useAuth,
-} from "../../api/contexts/AuthContext";
-import { useContext , useEffect , useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCartShopping } from "@fortawesome/free-solid-svg-icons";
+import { faCartShopping, faUser } from "@fortawesome/free-solid-svg-icons";
+import { AuthContext, AuthContextType, useAuth } from "../../api/contexts/AuthContext";
 import { CartContext, CartContextType } from "../../api/contexts/CartContext";
 import ins from "../../api";
 import { baseURL } from "../../api";
 import io from "socket.io-client";
 import toastr from "toastr";
+
 const Header = () => {
   const { logout } = useAuth();
   const { user } = useContext(AuthContext) as AuthContextType;
   const [isNoti, setIsNoti] = useState(false);
   const { state } = useContext(CartContext) as CartContextType;
   const socket = io(baseURL);
+
   interface OrderStatusUpdateData {
     userId: string;
     orderId: string;
     status: string;
     message: string;
   }
-  
+
   const debounceTimeouts: Record<string, NodeJS.Timeout> = {};
   const shownMessages: Record<string, boolean> = JSON.parse(localStorage.getItem("shownMessages") || "{}");
-  
+
   useEffect(() => {
     const handleOrderStatusUpdated = (data: OrderStatusUpdateData) => {
-      // Kiểm tra nếu thông báo này là của user hiện tại
       if (data.userId !== user._id) {
-        return;  // Nếu không phải của người dùng hiện tại, không làm gì
+        return;
       }
 
       const { orderId, message } = data;
 
-      // Nếu thông báo cho orderId này đã được hiển thị, không làm gì
       if (shownMessages[orderId]) {
         return;
       }
 
-      // Nếu chưa hiển thị thông báo, kiểm tra debounce
       if (debounceTimeouts[orderId]) {
         clearTimeout(debounceTimeouts[orderId]);
       }
 
-      // Đặt timeout để trì hoãn việc hiển thị toastr
       debounceTimeouts[orderId] = setTimeout(() => {
         toastr.success(message, "Thành công");
-
-        // Đánh dấu thông báo đã được hiển thị
         shownMessages[orderId] = true;
         localStorage.setItem("shownMessages", JSON.stringify(shownMessages));
-
-        // Cập nhật trạng thái thông báo
         setIsNoti(true);
       }, 500);
     };
 
-    // Lắng nghe sự kiện orderStatusUpdated và xử lý sự kiện
     socket.off("orderStatusUpdated", handleOrderStatusUpdated);
     socket.on("orderStatusUpdated", handleOrderStatusUpdated);
 
-    // Cleanup khi component unmount hoặc khi socket bị off
     return () => {
       socket.off("orderStatusUpdated", handleOrderStatusUpdated);
     };
-  }, [user, isNoti]); 
+  }, [user, isNoti]);
 
   const totalProduct = state.products.reduce(
     (acc, item) => acc + item.quantity,
@@ -107,56 +95,32 @@ const Header = () => {
       <nav>
         <ul>
           <li>
-            <Link
-              to="/"
-              className="text-decoration-none"
-              style={{ color: "white" }}
-            >
+            <Link to="/" className="text-decoration-none" style={{ color: "white" }}>
               Trang chủ
             </Link>
           </li>
           <li>
-            <Link
-              to="/other"
-              className="text-decoration-none"
-              style={{ color: "white" }}
-            >
+            <Link to="/other" className="text-decoration-none" style={{ color: "white" }}>
               Sản phẩm
             </Link>
           </li>
           <li>
-            <Link
-              to="/introPage"
-              className="text-decoration-none"
-              style={{ color: "white" }}
-            >
+            <Link to="/introPage" className="text-decoration-none" style={{ color: "white" }}>
               Giới thiệu
             </Link>
           </li>
           <li>
-            <Link
-              to="/contactPage"
-              className="text-decoration-none"
-              style={{ color: "white" }}
-            >
+            <Link to="/contactPage" className="text-decoration-none" style={{ color: "white" }}>
               Liên hệ
             </Link>
           </li>
           <li>
-            <Link
-              to="/orderplace"
-              className="text-decoration-none"
-              style={{ color: "white" }}
-            >
+            <Link to="/orderplace" className="text-decoration-none" style={{ color: "white" }}>
               Đơn hàng
             </Link>
           </li>
           <li>
-            <Link
-              to="/voucher"
-              className="text-decoration-none"
-              style={{ color: "white" }}
-            >
+            <Link to="/voucher" className="text-decoration-none" style={{ color: "white" }}>
               Mã Giảm Giá
             </Link>
           </li>
@@ -181,6 +145,7 @@ const Header = () => {
               data-bs-toggle="dropdown"
               aria-expanded="false"
             >
+              <FontAwesomeIcon icon={faUser} style={{ marginRight: "5px" }} />
               <strong>
                 {JSON.parse(localStorage.getItem("user") || "{}").last_name}
               </strong>
