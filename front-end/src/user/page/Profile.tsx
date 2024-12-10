@@ -21,6 +21,7 @@ const Profile = () => {
         last_name: userData.last_name,
         email: userData.email,
         phone: userData.phone,
+        address:userData.address
       });
     } else {
       navigate("/login");
@@ -38,6 +39,7 @@ const Profile = () => {
       last_name: userData.last_name,
       email: userData.email,
       phone: userData.phone,
+      address:userData.address
     });
   };
 
@@ -74,7 +76,7 @@ const Profile = () => {
     <div className="container py-5">
       <h1 className="text-center mb-4">Thông tin người dùng</h1>
       <div className="row align-items-center">
-        <div className="col-md-4 text-center mb-4">
+        <div className="text-center mb-4 col-md-4">
           <img
             src="https://img.freepik.com/free-vector/businessman-character-avatar-isolated_24877-60111.jpg?semt=ais_hybrid"
             alt="Profile"
@@ -83,8 +85,8 @@ const Profile = () => {
           />
         </div>
         <div className="col-md-8">
-          <div className="row mb-3">
-            <label className="col-sm-3 col-form-label">Họ:</label>
+          <div className="mb-3 row">
+            <label className="col-form-label col-sm-3">Họ:</label>
             <div className="col-sm-9">
               {isEditing ? (
                 <input
@@ -99,8 +101,8 @@ const Profile = () => {
               )}
             </div>
           </div>
-          <div className="row mb-3">
-            <label className="col-sm-3 col-form-label">Tên:</label>
+          <div className="mb-3 row">
+            <label className="col-form-label col-sm-3">Tên:</label>
             <div className="col-sm-9">
               {isEditing ? (
                 <input
@@ -115,8 +117,8 @@ const Profile = () => {
               )}
             </div>
           </div>
-          <div className="row mb-3">
-            <label className="col-sm-3 col-form-label">Email:</label>
+          <div className="mb-3 row">
+            <label className="col-form-label col-sm-3">Email:</label>
             <div className="col-sm-9">
               {isEditing ? (
                 <input
@@ -132,8 +134,8 @@ const Profile = () => {
               )}
             </div>
           </div>
-          <div className="row mb-3">
-            <label className="col-sm-3 col-form-label">Số điện thoại:</label>
+          <div className="mb-3 row">
+            <label className="col-form-label col-sm-3">Số điện thoại:</label>
             <div className="col-sm-9">
               {isEditing ? (
                 <input
@@ -148,9 +150,25 @@ const Profile = () => {
               )}
             </div>
           </div>
+          <div className="mb-3 row">
+            <label className="col-form-label col-sm-3">Số điện thoại:</label>
+            <div className="col-sm-9">
+              {isEditing ? (
+                <input
+                  type="text"
+                  name="phone"
+                  value={user.address}
+                  onChange={handleInputChange}
+                  className="form-control"
+                />
+              ) : (
+                <p className="form-control-plaintext">{user?.address}</p>
+              )}
+            </div>
+          </div>
         </div>
       </div>
-      <div className="text-center mt-4">
+      <div className="mt-4 text-center">
         {isEditing ? (
           <>
             <button

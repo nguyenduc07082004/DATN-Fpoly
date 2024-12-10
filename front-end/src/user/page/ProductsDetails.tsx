@@ -248,7 +248,7 @@ const handleMainImageChange = (image:{url:string}) => {
   }
 
   return (
-    <div className="container-xl bg-white rounded shadow-sm p-4">
+    <div className="container-xl bg-current rounded shadow-sm p-4" style={{ backgroundColor: "#eaeaea" }}>
     <Container maxWidth="lg" sx={{ mt: 4 }}>
   <Grid container spacing={4}>
     {/* Phần hình ảnh */}
