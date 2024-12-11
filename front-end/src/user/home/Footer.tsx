@@ -1,6 +1,6 @@
 import React from "react";
 
-import '@fortawesome/fontawesome-free/css/all.min.css';
+import "@fortawesome/fontawesome-free/css/all.min.css";
 
 const Footer = () => {
   return (
@@ -36,9 +36,7 @@ const Footer = () => {
             Chúng tôi cung cấp các dòng sản phẩm điện thoại thông minh và phụ
             kiện chính hãng với giá tốt nhất thị trường.
           </p>
-          <p>
-            Địa chỉ: 123 Đường ABC, Quận 1, TP. Hồ Chí Minh
-          </p>
+          <p>Trịnh Văn Bô , Nam Từ Liêm , Hà Nội , Việt Nam</p>
         </div>
 
         {/* Customer Support Section */}
@@ -86,8 +84,11 @@ const Footer = () => {
             Liên Hệ
           </h6>
           <p>
-            <i className="fas fa-map-marker-alt" style={{ marginRight: "10px" }}></i>
-            123 Đường ABC, TP. Hồ Chí Minh
+            <i
+              className="fas fa-map-marker-alt"
+              style={{ marginRight: "10px" }}
+            ></i>
+            Trịnh Văn Bô , Nam Từ Liêm , Hà Nội , Việt Nam
           </p>
           <p>
             <i className="fas fa-envelope" style={{ marginRight: "10px" }}></i>
