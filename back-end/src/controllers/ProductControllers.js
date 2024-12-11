@@ -2,8 +2,8 @@ import * as productService from "../services/ProductService.js";
 import  getMessage from "../utils/getMessage.js"
 import Product from "../models/ProductModels.js"
 import VariantImage from "../models/VariantImageModels.js"
-import mongoose from "mongoose";
- // Lấy danh sách sản phẩm
+import {io} from "../../index.js"
+  // Lấy danh sách sản phẩm
  export const getProducts = async (req, res, next) => {
   try {
     const products = await productService.getAllProducts(); 
@@ -40,7 +40,7 @@ export const addProduct = async (req, res) => {
       image: image_filename,
       default_price, 
     });
-
+    io.emit("new_product", newProduct);
     res.status(201).json({
       message: getMessage(lang, "success", "ADD_PRODUCT_SUCCESS"),
       data: newProduct,

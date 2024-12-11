@@ -1,4 +1,5 @@
 import Voucher from "../models/VoucherModels.js"
+import {io } from "../../index.js"
 
 export const getAllVouchers = async (req, res) => {
     try {
@@ -96,7 +97,7 @@ export const createVoucher = async (req, res) => {
         // Nếu hợp lệ, tạo voucher mới
         const voucher = new Voucher(req.body);
         await voucher.save();
-
+        io.emit("new_voucher", voucher)
         res.status(201).json(voucher);
     } catch (error) {
         console.error(error);

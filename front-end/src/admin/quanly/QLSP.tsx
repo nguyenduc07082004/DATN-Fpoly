@@ -1,9 +1,8 @@
 import "../.././App.scss";
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 import { ProdContext } from "../../api/contexts/ProductsContexts";
 import { Link } from "react-router-dom";
 import { baseURL } from "../../api";
-
 const QLSP = () => {
   const {
     onDel,
@@ -14,7 +13,7 @@ const QLSP = () => {
     currentPage,
     totalPages,
     indexOfFirstProduct,
-    searchQuery,
+    searchQuery
   } = useContext(ProdContext);
 
   return (
