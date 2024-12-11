@@ -1,4 +1,4 @@
-import { useContext, useEffect } from "react";
+import { useContext, useEffect, useState } from "react";
 import {
   OrderContext,
   OrderContextType,
@@ -13,12 +13,12 @@ import {
   TableRow,
   Paper,
   Button,
+  TablePagination, // Thêm TablePagination
 } from "@mui/material";
 import {
   getStatusColor,
   getButtonClass,
   getPaymentStatusColor,
-  getPaymentStatusButtonClass,
   getStatusText,
 } from "../../utils/colorUtils";
 import Swal from "sweetalert2";
@@ -27,14 +27,20 @@ import { Link } from "react-router-dom";
 const QLDH = () => {
   const { state, fetchOrder, updateOrderStatus, updatePaymentStatus } =
     useContext(OrderContext) as OrderContextType;
+
+  // Thêm state cho phân trang
+  const [page, setPage] = useState(1); // Trang hiện tại
+  const [rowsPerPage, setRowsPerPage] = useState(10); // Số lượng đơn hàng mỗi trang
+
   useEffect(() => {
-    fetchOrder();
-  }, []);
+    // Gọi fetchOrder khi page hoặc rowsPerPage thay đổi
+    fetchOrder(page, rowsPerPage);
+  }, [page, rowsPerPage]);
 
   const handleStatusChange = async (orderId: string, newStatus: string) => {
     try {
       await updateOrderStatus(orderId, newStatus);
-      fetchOrder();
+      fetchOrder(page, rowsPerPage); // Cập nhật lại đơn hàng sau khi thay đổi trạng thái
     } catch (error) {
       console.error("Cập nhật trạng thái đơn hàng thất bại: ", error);
     }
@@ -46,7 +52,7 @@ const QLDH = () => {
   ) => {
     try {
       await updatePaymentStatus(orderId, newStatus);
-      fetchOrder();
+      fetchOrder(page, rowsPerPage); // Cập nhật lại danh sách đơn hàng sau khi thay đổi trạng thái thanh toán
     } catch (error) {
       console.error("Cập nhật trạng thái thanh toán thất bại: ", error);
     }
@@ -73,6 +79,19 @@ const QLDH = () => {
     Cancelled: [],
   };
 
+  // Hàm xử lý thay đổi trang
+  const handleChangePage = (event: unknown, newPage: number) => {
+    setPage(newPage + 1); // Pagination trong MUI bắt đầu từ 0
+  };
+
+  // Hàm xử lý thay đổi số lượng hàng mỗi trang
+  const handleChangeRowsPerPage = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(1); // Reset về trang đầu khi thay đổi số hàng mỗi trang
+  };
+
   return (
     <div className="order-management">
       <Typography variant="h4" className="m-3">
@@ -96,7 +115,7 @@ const QLDH = () => {
           <TableBody>
             {state.products.map((order, index) => (
               <TableRow key={order._id}>
-                <TableCell>{index + 1}</TableCell>
+                <TableCell>{(page - 1) * rowsPerPage + index + 1}</TableCell>
                 <TableCell>{order._id}</TableCell>
                 <TableCell>{order.receiver_name}</TableCell>
                 <TableCell>{order.receiver_address}</TableCell>
@@ -186,6 +205,16 @@ const QLDH = () => {
           </TableBody>
         </Table>
       </TableContainer>
+      <TablePagination
+        rowsPerPageOptions={[10, 25, 50]}
+        component="div"
+        count={state.totalOrders}
+        rowsPerPage={rowsPerPage}
+        page={page - 1}
+        onPageChange={handleChangePage}
+        onRowsPerPageChange={handleChangeRowsPerPage}
+        labelRowsPerPage="Số lượng mỗi trang"
+      />
     </div>
   );
 };

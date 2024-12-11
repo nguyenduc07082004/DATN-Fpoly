@@ -2,7 +2,12 @@ import { useContext, useEffect, useState } from "react";
 import { CartContext, CartContextType } from "../../api/contexts/CartContext";
 import { CartItem } from "../../api/reducers/CartReducer";
 import { useNavigate } from "react-router-dom";
-import { FaMinusCircle, FaPlusCircle, FaShoppingCart, FaTrash } from "react-icons/fa";
+import {
+  FaMinusCircle,
+  FaPlusCircle,
+  FaShoppingCart,
+  FaTrash,
+} from "react-icons/fa";
 import Swal from "sweetalert2";
 import ins from "../../api";
 
@@ -12,14 +17,10 @@ const Cart = () => {
   ) as CartContextType;
   const navigate = useNavigate();
   const token = localStorage.getItem("accessToken");
- 
 
   useEffect(() => {
     fetchCart();
   }, []);
-
-
-
   const handleRemoveFromCart = (variantId: string) => {
     removeFromCart(variantId);
   };
@@ -51,21 +52,37 @@ const Cart = () => {
   const handleCheckout = async () => {
     try {
       if (!token) {
-        alert("Vui lòng đăng nhập để thanh toán");
-        navigate("/login");
+        Swal.fire({
+          icon: "warning",
+          title: "Vui lòng đăng nhập",
+          text: "Vui lòng đăng nhập trước khi thanh toán",
+          confirmButtonText: "Đăng nhập",
+          cancelButtonText: "Đóng",
+          showCancelButton: true,
+        }).then((result) => {
+          if (result.isConfirmed) {
+            navigate("/login");
+          }
+        });
+      }
+      if (state.products.length === 0 ) {
+        Swal.fire({
+          icon: "warning",
+          title: "Giỏ hàng trống",
+          text: "Vui lòng thêm sản phẩm vào giỏ hàng trước khi thanh toán",
+        });
       } else {
-          navigate("/vnpay");
+        navigate("/vnpay");
       }
     } catch (error: any) {
       Swal.fire({
         icon: "error",
         title: "Oops...",
-        text: error.response?.data?.message || "Đã xảy ra lỗi, vui lòng thử lại!",
+        text:
+          error.response?.data?.message || "Đã xảy ra lỗi, vui lòng thử lại!",
       });
     }
   };
-  
-  
 
   // Tính toán tổng tiền sau khi giảm giá
   return (
@@ -109,33 +126,43 @@ const Cart = () => {
           </tr>
         </thead>
         <tbody>
-          {state.products.map((product: CartItem, index: number) => (
-            <tr key={index}>
-              <td className="row-4">{product.product?.title}</td>
-              <td className="row-3">{product.color}</td>
-              <td className="row-3">{product.storage}</td>
-              <td className="row-3">
-                <FaMinusCircle
-                  onClick={() => handleDecreaseQuantity(product)}
-                  className="text-danger"
-                />{" "}
-                {product?.quantity}{" "}
-                <FaPlusCircle
-                  onClick={() => handleIncreaseQuantity(product)}
-                  className="text-primary"
-                />
-              </td>
-              <td>{product?.price}</td>
-              <td className="row-4">{(product.price * product.quantity).toLocaleString()}</td>
-              <td>
-                <FaTrash
-                  onClick={() => handleRemoveFromCart(product.variantId)}
-                  className="text-danger"
-                  style={{ cursor: "pointer" }}
-                />
+          {state.products.length > 0 ? (
+            state.products.map((product: CartItem, index: number) => (
+              <tr key={index}>
+                <td className="row-4">{product.product?.title}</td>
+                <td className="row-3">{product.color}</td>
+                <td className="row-3">{product.storage}</td>
+                <td className="row-3">
+                  <FaMinusCircle
+                    onClick={() => handleDecreaseQuantity(product)}
+                    className="text-danger"
+                  />{" "}
+                  {product?.quantity}{" "}
+                  <FaPlusCircle
+                    onClick={() => handleIncreaseQuantity(product)}
+                    className="text-primary"
+                  />
+                </td>
+                <td>{product?.price}</td>
+                <td className="row-4">
+                  {(product.price * product.quantity).toLocaleString()}
+                </td>
+                <td>
+                  <FaTrash
+                    onClick={() => handleRemoveFromCart(product.variantId)}
+                    className="text-danger"
+                    style={{ cursor: "pointer" }}
+                  />
+                </td>
+              </tr>
+            ))
+          ) : (
+            <tr>
+              <td colSpan={7} style={{ textAlign: "center", padding: "20px" }}>
+                Giỏ hàng trống
               </td>
             </tr>
-          ))}
+          )}
         </tbody>
       </table>
 

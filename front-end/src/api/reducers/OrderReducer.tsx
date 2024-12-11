@@ -16,10 +16,11 @@ export type CartItem = {
 
 export type State = {
   products: CartItem[];
+  totalOrders: number
 };
 
 type OrderAction =
-  | { type: "GET_ORDER"; payload: { products: CartItem[] } }
+  | { type: "GET_ORDER"; payload: { products: CartItem[], totalOrders: number } }
   | {
       type: "UPDATE_ORDER_STATUS";
       payload: { orderId: string; status: string };
@@ -29,6 +30,7 @@ type OrderAction =
 
 export const initialState: State = {
   products: [],
+  totalOrders: 0
 };
 
 const orderReducer = (state: State, action: OrderAction): State => {
@@ -37,6 +39,7 @@ const orderReducer = (state: State, action: OrderAction): State => {
       return {
         ...state,
         products: action.payload.products,
+        totalOrders: action.payload.totalOrders,
       };
 
     case "UPDATE_ORDER_STATUS":

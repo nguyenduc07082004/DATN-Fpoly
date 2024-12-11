@@ -1,6 +1,6 @@
 import Category from "../models/CategoryModels.js";
 import getMessage from "../utils/getMessage.js";
-
+import {io} from "../../index.js"
 // Lấy danh sách danh mục
 export const getCategory = async (req, res) => {
   const lang = req.lang;
@@ -68,7 +68,7 @@ export const addCategory = async (req, res) => {
     });
 
     await newCategory.save();
-
+    io.emit("new_category", newCategory);
     res.status(201).json({
       message: getMessage(lang, 'success', 'ADD_CATEGORY_SUCCESS') || "Thêm danh mục thành công",
       data: newCategory,

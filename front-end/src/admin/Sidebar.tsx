@@ -29,11 +29,8 @@ const AdminSidebar = () => {
       hasShownMessage[data.orderId] = true;
       localStorage.setItem("hasShownMessage", JSON.stringify(hasShownMessage));
 
-      // Gọi lại hàm fetchOrder để tải lại danh sách đơn hàng
       fetchOrder();
     });
-
-    // Clean up listener khi component unmount
     return () => {
       socket.off("orderCreated");
     };

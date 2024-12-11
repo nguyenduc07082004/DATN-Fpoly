@@ -41,7 +41,6 @@ export const checkout = async (req, res, next) => {
         const minOrderValue = Number(discount.min_order_value); // Giá trị đơn hàng tối thiểu
         const maxDiscountAmount = Number(discount.max_discount_amount); // Giới hạn giảm giá tối đa
     
-        console.log("Voucher found:", discount);
     
         // Kiểm tra xem totalPrice có đủ điều kiện để áp dụng voucher không
         if (totalPrice >= minOrderValue) {
@@ -50,7 +49,6 @@ export const checkout = async (req, res, next) => {
     
           // Kiểm tra nếu discountValue vượt quá giới hạn giảm giá tối đa thì áp dụng maxDiscountAmount
           if (discountValue > maxDiscountAmount) {
-            console.log(`Discount exceeds maximum limit, applying max discount of ${maxDiscountAmount}`);
             discountValue = maxDiscountAmount; // Giới hạn giá trị giảm giá
           } else {
             console.log(`Applying discount: ${discountValue}`);
@@ -142,29 +140,56 @@ export const checkout = async (req, res, next) => {
 
 export const getOrders = async (req, res) => {
   if (!req.user) {
-    return res.status(401).json({ message: "User not authenticated" });
+    return res.status(401).json({ message: "Unauthorized" });
   }
+
+  const page = parseInt(req.query.page) || 1;  // Trang hiện tại, mặc định là trang 1
+  const limit = parseInt(req.query.limit) || 10;  // Số lượng đơn hàng mỗi trang, mặc định là 10
+  
+  const skip = (page - 1) * limit;  // Tính số bản ghi cần bỏ qua
+
   try {
-    const order = await Order.find()
+    const orders = await Order.find()
       .populate({
         path: "items", 
         populate: { 
           path: "product variantId", 
           select: "title description image"
         }
-      }).sort({created_at:-1})
+      })
+      .sort({ created_at: -1 })  // Sắp xếp theo ngày tạo giảm dần
+      .skip(skip)  // Bỏ qua số bản ghi đầu tiên dựa trên trang
+      .limit(limit)  // Giới hạn số bản ghi trên mỗi trang
       .exec();
 
-    if (!order || order.length === 0) {
-      return res.status(404).json({ message: "Đơn hàng không tồn tại" });
+    const totalOrders = await Order.countDocuments();  
+    const totalPages = Math.ceil(totalOrders / limit); 
+
+    // Trả về kết quả bao gồm thông tin phân trang, nếu có đơn hàng
+    if (orders.length === 0) {
+      return res.status(200).json({
+        orders: [], 
+        page,
+        totalPages,
+        totalOrders,
+      });
     }
 
-    res.status(200).json(order);
+    // Trả về đơn hàng và thông tin phân trang
+    res.status(200).json({
+      orders,
+      page,
+      totalPages,
+      totalOrders,
+    });
+
   } catch (error) {
     console.error("Error getting order details:", error);
     res.status(500).json({ message: "Error getting order details", error });
   }
 };
+
+
 
 export const getOrderDetail = async (req, res) => {
   const { id } = req.params;

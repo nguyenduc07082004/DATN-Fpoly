@@ -111,25 +111,32 @@ const Vnpay = () => {
     const checkoutData = {
       discountCode,
     };
-    // Hộp thoại xác nhận
-    if (paymentMethod === "COD") {
-      Swal.fire({
-        icon: "success",
-        title: "Đặt hàng thành công!",
-        text: "Vui lòng chờ xác nhận đơn hàng",
-        confirmButtonText: "Ok",
-      }).then(async (result) => {
-        if (result.isConfirmed) {
-          await checkout(checkoutData);
+  
+    try {
+      if (paymentMethod === "COD") {
+        const response = await checkout(checkoutData);
+  
+        if (response.status === 201) {
+          const responseData = response.data; 
+          Swal.fire({
+            icon: "success",
+            title: "Đặt hàng thành công!",
+            text: responseData.message || "Đơn hàng đã được đặt thành công!",
+          });
           setTotalPrice(0);
           setDiscountCode("");
           setDiscountValue(0);
           setDiscountAmount(0);
+        } else {
+          Swal.fire({
+            icon: "error",
+            title: "Có lỗi xảy ra",
+            text: response.data.error || "Không thể xử lý đơn hàng.",
+          });
         }
-      });
-    }
-    if (paymentMethod === "CreditCard") {
-      try {
+      }
+  
+      if (paymentMethod === "CreditCard") {
         const response = await ins.post("/vnpay/create_payment_url", {
           orderType: "billpayment",
           amount: totalPrice,
@@ -139,19 +146,37 @@ const Vnpay = () => {
           userId: user._id,
           discountCode: discountCode,
         });
-
-        // Chuyển hướng đến URL thanh toán
-        window.location.href = response.data.data;
-      } catch (error) {
-        console.error("Error creating payment:", error);
+  
+        if (response.status === 200) {
+          const paymentUrl = response.data.data;
+          Swal.fire({
+            icon: "success",
+            title: "Tạo thanh toán thành công!",
+            text: "Đang chuyển hướng đến trang thanh toán...",
+          });
+  
+          window.location.href = paymentUrl;
+        } else {
+          Swal.fire({
+            icon: "error",
+            title: "Có lỗi xảy ra",
+            text: response.data.error || "Không thể tạo thanh toán.",
+          });
+        }
       }
+    } catch (error : any) {
+      Swal.fire({
+        icon: "error",
+        title: "Lỗi hệ thống",
+        text: error.response.data.message || "Đã xảy ra lỗi không xác định.",
+      });
     }
   };
+  
   const handleDeadPayment = async () => {
-    // Hộp thoại xác nhận
     const isConfirmed = window.confirm("Bạn có chắc muốn hủy đơn? ");
     if (!isConfirmed) {
-      return; // Nếu người dùng không đồng ý, kết thúc hàm
+      return; 
     }
     navigate("/cart");
   };

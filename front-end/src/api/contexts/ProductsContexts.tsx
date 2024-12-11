@@ -3,8 +3,8 @@ import { createContext, useEffect, useReducer, useState } from "react";
 import productsReducer, { initialState } from "../reducers/ProductsReducers";
 import ins from "..";
 import { Products } from "../../interfaces/Products";
-import axios from "axios";
-
+import { baseURL } from "..";
+import io from "socket.io-client";
 export type ProdContextType = {
   onDel: (_id: string) => void;
   dispatch: React.Dispatch<any>;
@@ -21,6 +21,7 @@ export type ProdContextType = {
   onChangeHandler: (event: any) => void;
   setImage: React.Dispatch<React.SetStateAction<boolean>>;
   data1: any;
+  fetchProducts: () => void;
 };
 
 export const ProdContext = createContext({} as ProdContextType);
@@ -40,11 +41,12 @@ export const ProdProvider = ({ children }: { children: React.ReactNode }) => {
     quantity: "",
     description: "",
   });
+
+  const socket = io(baseURL);
   const onChangeHandler = (event: any) => {
     const name = event.target.name;
     const value = event.target.value;
     setData((data1) => ({ ...data1, [name]: value }));
-    console.log(name, value);
   };
   //Tìm kiếm sản phẩm
   const handleSearch = (event: any) => {
@@ -80,11 +82,16 @@ export const ProdProvider = ({ children }: { children: React.ReactNode }) => {
   const fetchProducts = async () => {
     const { data } = await ins.get("/products");
     dispatch({ type: "LIST_PRODUCTS", payload: data });
-    console.log(data);
   };
 
   useEffect(() => {
     fetchProducts();
+    socket.on("orderCreated", (data) => {
+      fetchProducts();
+    });
+    return () => {
+      socket.off("orderCreated");
+    };
   }, []);
 
   //Logic xóa sản phẩm
@@ -116,6 +123,7 @@ export const ProdProvider = ({ children }: { children: React.ReactNode }) => {
         indexOfFirstProduct,
         searchQuery,
         productsPerPage,
+        fetchProducts
       }}
     >
       {children}

@@ -9,9 +9,10 @@ import { Products } from "../../interfaces/Products";
 import { Link } from "react-router-dom";
 import { baseURL } from "../../api";
 import ins from "../../api";
+import io from "socket.io-client";
 
 const bannerImages = [banner1, banner2, banner3, ];
-
+const socket = io(baseURL);
 // Banner Component
 const MainBanner: React.FC = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -106,7 +107,6 @@ const Categories: React.FC = () => {
   const [categories, setCategories] = useState<{ _id: string; name: string }[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<string>();
   const [products, setProducts] = useState<Products[]>([]);
-
   const fetchCategories = async () => {
     try {
       const response = await ins.get(`${baseURL}/categories`);
@@ -135,7 +135,18 @@ const Categories: React.FC = () => {
 
   useEffect(() => {
     fetchCategories();
-    fetchProducts(selectedCategory); // Fetch products based on selected category or no category (for "Tất cả")
+    fetchProducts(selectedCategory); 
+    socket.on('new_category' , (data) => {
+      fetchCategories();
+    })
+    socket.on('new_product' , (data) => {
+      fetchProducts(selectedCategory);
+    })
+    return () => {
+      socket.off('new_product');
+      socket.off('new_category');
+    }
+   
   }, [selectedCategory]);
 
   const handleAllCategories = () => {
@@ -175,17 +186,26 @@ const Categories: React.FC = () => {
 // Deals Component
 const Deals: React.FC = () => {
   const [products, setProducts] = useState<Products[]>([]);
+  const fetchProducts = async () => {
+    try {
+      const response = await ins.get(`${baseURL}/products`);
+      if (response.status >= 200 && response.status < 300) {
+        setProducts(response.data);
+      }
+    } catch (err) {
+      console.error((err as Error).message);
+    }
+  }
 
   useEffect(() => {
-    ins
-      .get(`${baseURL}/products`)
-      .then((response) => {
-        setProducts(response.data);
-      })
-      .catch((error) => {
-        console.error("Đã xảy ra lỗi khi lấy dữ liệu sản phẩm: ", error);
-      });
-  }, []);
+    fetchProducts();
+    socket.on('new_product' , (data) => {
+      fetchProducts();
+    })
+    return () => {
+      socket.off('new_product');
+    }
+},[]);
 
   return (
     <section className="mt-5" style={{ backgroundColor: "#eaeaea" }}>
