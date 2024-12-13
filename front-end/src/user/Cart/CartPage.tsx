@@ -72,14 +72,17 @@ const Cart = () => {
           text: "Vui lòng thêm sản phẩm vào giỏ hàng trước khi thanh toán",
         });
       } else {
-        navigate("/vnpay");
+        const res = await ins.post("/products/check-stock" , {cartItems:state.products});
+        if (res.status === 200) {
+          navigate("/vnpay");
+        }
       }
     } catch (error: any) {
       Swal.fire({
         icon: "error",
         title: "Oops...",
         text:
-          error.response?.data?.message || "Đã xảy ra lỗi, vui lòng thử lại!",
+          error.response?.data?.unavailableVariants[0].message || "Đã xảy ra lỗi, vui lòng thử lại!",
       });
     }
   };

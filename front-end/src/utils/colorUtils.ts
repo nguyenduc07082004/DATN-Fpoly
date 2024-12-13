@@ -9,6 +9,8 @@ export const getStatusColor = (status: string) => {
         return "yellow";
       case "Delivered":
         return "green";
+      case "Success":
+        return "green";
       case "Cancelled":
         return "red";
       default:
@@ -43,7 +45,7 @@ export const getStatusColor = (status: string) => {
       : "btn btn-sm btn-warning mx-1"; 
   };
   
-type OrderStatus = "Pending" | "Confirmed" | "In delivery" | "Delivered" | "Cancelled";
+type OrderStatus = "Pending" | "Confirmed" | "In delivery" | "Delivered" | "Cancelled" | "Success";
 
 
 export const orderStatusColors: Record<OrderStatus, string> = {
@@ -51,6 +53,7 @@ export const orderStatusColors: Record<OrderStatus, string> = {
   "Confirmed": "text-primary",
   "In delivery": "text-info",
   "Delivered": "text-success",
+  "Success" : "text-success",
   "Cancelled": "text-danger",
 };
 
@@ -63,6 +66,8 @@ export const getStatusText = (status:string) => {
     case "In Delivery":
       return "Vận chuyển";
     case "Delivered":
+      return "Đã giao hàng";
+    case "Success":
       return "Hoàn thành đơn hàng";
     case "Cancelled":
       return "Huỷ";

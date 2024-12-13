@@ -13,7 +13,7 @@ const OrderDetail = () => {
   useEffect(() => {
     const fetchOrderDetail = async () => {
       try {
-        const response = await ins.get(`${baseURL}/orders/${id}`);
+        const response = await ins.get(`${baseURL}/orders/order/${id}`);
         const data = response.data;
         setOrder(data);
       } catch (error) {
@@ -86,12 +86,6 @@ const OrderDetail = () => {
                 </td>
                 <td>{order.voucher}</td>
               </tr>
-              <tr>
-                <td>
-                  <b>Giá trị giảm giá:</b>
-                </td>
-                <td>{order.discount_value.toLocaleString("vi", { style: "currency", currency: "VND" })}</td>
-              </tr>
             </>
           )}
           <tr>
@@ -158,6 +152,25 @@ const OrderDetail = () => {
       <h3>Thông tin thanh toán</h3>
       <table className="table">
         <tbody>
+        <tr>
+            <td>
+            <b>Tổng tiền đơn hàng:</b>
+            </td>
+            <td className="text-danger fw-bold">
+              {order.items.reduce((total: number, item: any) => total + item.quantity * item.price, 0).toLocaleString("vi", {
+                style: "currency",
+                currency: "VND",
+            })}
+            </td>
+          </tr>
+        {order.voucher && order.discount_value !== 0 && (
+        <tr>
+                <td>
+                  <b className="fw-bold">Giá trị giảm giá:</b>
+                </td>
+                <td className="fw-bold text-info">{order.discount_value.toLocaleString("vi", { style: "currency", currency: "VND" })}</td>
+              </tr>
+        )}
           <tr>
             <td>
               <b>Tổng tiền:</b>

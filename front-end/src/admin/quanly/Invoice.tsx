@@ -96,17 +96,15 @@ const InvoiceList = () => {
       <table className="table">
         <thead>
           <tr>
-            <th>ID</th>
-            <th>Order ID</th>
-            <th>Total</th>
-            <th>Created At</th>
-            <th>Action</th>
+            <th>Mã đơn hàng</th>
+            <th>Tổng tiền</th>
+            <th>Ngày thanh toán</th>
+            <th>Chức năng</th>
           </tr>
         </thead>
         <tbody>
           {invoices.map((invoice: any) => (
             <tr key={invoice._id}>
-              <td>{invoice._id}</td>
               <td>{invoice.orderId}</td>
               <td>{invoice.totalAmount.toLocaleString("vi", { style: "currency", currency: "VND" })}</td>
               <td>{new Date(invoice.createdAt).toLocaleDateString()}</td>

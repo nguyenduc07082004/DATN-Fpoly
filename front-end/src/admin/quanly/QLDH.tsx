@@ -173,11 +173,9 @@ const QLDH = () => {
                     <button
                       style={{
                         display:
-                          order.status === "Cancelled" ||
-                          order.status === "Delivered"
-                            ? "none"
-                            : "inline-block",
+                         "inline-block",
                       }}
+                      className="btn btn-sm"
                     >
                       <span
                         style={{

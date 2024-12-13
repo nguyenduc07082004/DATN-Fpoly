@@ -13,7 +13,7 @@ const OrderDetail = () => {
   useEffect(() => {
     const fetchOrderDetail = async () => {
       try {
-        const response = await ins.get(`${baseURL}/orders/${id}`);
+        const response = await ins.get(`${baseURL}/orders/order/${id}`);
         const data = response.data;
         setOrder(data);
       } catch (error) {
@@ -81,12 +81,6 @@ const OrderDetail = () => {
                 </td>
                 <td>{order.voucher}</td>
               </tr>
-              <tr>
-                <td>
-                  <b>Giá trị giảm giá:</b>
-                </td>
-                <td>{order.discount_value.toLocaleString("vi", { style: "currency", currency: "VND" })}</td>
-              </tr>
             </>
           )}
           <tr>
@@ -139,6 +133,7 @@ const OrderDetail = () => {
                   currency: "VND",
                 })}
               </td>
+              
               <td className="text-danger fw-bold">
                 {(item.quantity * item.price).toLocaleString("vi", {
                   style: "currency",
@@ -155,7 +150,26 @@ const OrderDetail = () => {
         <tbody>
           <tr>
             <td>
-              <b>Tổng tiền:</b>
+            <b>Tổng tiền đơn hàng:</b>
+            </td>
+            <td className="text-danger fw-bold">
+              {order.items.reduce((total: number, item: any) => total + item.quantity * item.price, 0).toLocaleString("vi", {
+                style: "currency",
+                currency: "VND",
+            })}
+            </td>
+          </tr>
+        {order.voucher && order.discount_value !== 0 && (
+        <tr>
+                <td>
+                  <b className="fw-bold">Giá trị giảm giá:</b>
+                </td>
+                <td className="fw-bold text-info">{order.discount_value.toLocaleString("vi", { style: "currency", currency: "VND" })}</td>
+              </tr>
+        )}
+          <tr>
+            <td>
+              <b>Thanh toán:</b>
             </td>
             <td className="text-danger fw-bold">
               {order.total_price.toLocaleString("vi", {

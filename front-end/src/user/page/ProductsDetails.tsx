@@ -29,7 +29,10 @@ const colorMapping = {
   Trắng: "#FFFFFF",  
   Xanh: "#0000FF",   
   Hồng: "#FFC0CB",  
-  
+  Đỏ: "#FF0000",
+  Vàng: "#FFFF00",
+  XanhLá: "#00FF00",
+  Bạc: "#808080",
 };
 
 const ProductDetails = () => {

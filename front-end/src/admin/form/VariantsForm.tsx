@@ -215,6 +215,10 @@ const VariantsForm = () => {
                 <option value="Trắng">Trắng</option>
                 <option value="Hồng">Hồng</option>
                 <option value="Xanh">Xanh</option>
+                <option value="Đỏ">Đỏ</option>
+                <option value="Vàng">Vàng</option>
+                <option value="XanhLá">Xanh Lá</option>
+                <option value="Bạc">Bạc</option>
               </select>
             </div>
 

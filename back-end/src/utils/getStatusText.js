@@ -7,6 +7,8 @@ export const getStatusText = (status) => {
       case "In Delivery":
         return "Vận chuyển";
       case "Delivered":
+        return "Đã giao hàng"
+      case "Success" :
         return "Hoàn thành đơn hàng";
       case "Cancelled":
         return "Huỷ";
