@@ -12,6 +12,7 @@ import {
 } from "chart.js";
 import ins from "../../api";
 import { baseURL } from "../../api";
+import { getStatusText } from "../../utils/colorUtils";
 ChartJS.register(
   CategoryScale,
   LinearScale,
@@ -67,6 +68,8 @@ const TrangChu = () => {
       console.log(error);
     }
   };
+
+  console.log(products,"dasok")
 
   console.log(dataDashboard);
   useEffect(() => {
@@ -232,7 +235,7 @@ const TrangChu = () => {
                                   : "bg-danger"
                               }`}
                             >
-                              {order?.status}
+                              {getStatusText(order?.status)}
                             </span>
                           </td>
                           <td className="col-2">
@@ -257,19 +260,19 @@ const TrangChu = () => {
                   // Hiển thị loading khi dữ liệu chưa được tải
                   <li className="list-group-item text-center">
                     <div className="spinner-border text-primary" role="status">
-                      <span className="visually-hidden">Loading...</span>
+                      <span className="visually-hidden">Đang tải...</span>
                     </div>
                   </li>
                 ) : (
                   // Hiển thị sản phẩm khi dữ liệu đã được tải
                   products
-                    .filter((product) => product.totalStock < 5) // Lọc sản phẩm có totalStock < 5
+                    .filter((product) => product.totalStock < 5).slice(0,10) // Lọc sản phẩm có totalStock < 5
                     .map((product, index) => (
                       <li
                         key={index}
                         className="list-group-item d-flex justify-content-between align-items-center"
                       >
-                        {product._id.title}{" "}
+                        {product._id.title}{" "}({product._id.color},{" "}{product._id.storage}{" "})
                         <span className="badge bg-danger">
                           {product.totalStock} Sản phẩm
                         </span>

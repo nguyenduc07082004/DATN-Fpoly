@@ -27,7 +27,9 @@ const OrderPlace = () => {
     message: string;
   }
   const debounceTimeouts: Record<string, NodeJS.Timeout> = {};
-  const shownMessages: Record<string, boolean> = JSON.parse(localStorage.getItem("shownMessages") || "{}");
+  const shownMessages: Record<string, boolean> = JSON.parse(
+    localStorage.getItem("shownMessages") || "{}"
+  );
   const socket = io(baseURL);
   const navigate = useNavigate();
 
@@ -50,7 +52,6 @@ const OrderPlace = () => {
     fetchOrderData(currentPage);
 
     const handleOrderStatusUpdated = (data: OrderStatusUpdateData) => {
-
       if (data.userId !== userId) {
         return;
       }
@@ -70,14 +71,13 @@ const OrderPlace = () => {
       }, 500);
     };
 
-    socket.off("orderStatusUpdated", handleOrderStatusUpdated); 
+    socket.off("orderStatusUpdated", handleOrderStatusUpdated);
     socket.on("orderStatusUpdated", handleOrderStatusUpdated);
 
     return () => {
-      socket.off("orderStatusUpdated", handleOrderStatusUpdated); 
+      socket.off("orderStatusUpdated", handleOrderStatusUpdated);
     };
-  }, [userId, currentPage]); 
-
+  }, [userId, currentPage]);
 
   const handlePageChange = (newPage: number) => {
     setCurrentPage(newPage);
@@ -156,6 +156,28 @@ const OrderPlace = () => {
     navigate(`/orderplace/${id}`);
   };
 
+  const handleConfirmOrder = async (orderId: string) => {
+    try {
+      const status = "Success";
+      const response = await ins.patch(`/orders/${orderId}`, { status });
+      if (response.status === 200) {
+        fetchOrderData(currentPage);
+        Swal.fire({
+          icon: "success",
+          title: "Thành công",
+          text: "Xây dựng đơn hàng thanh cong",
+        });
+      }
+    } catch (error) {
+      console.error("Error confirming order:", error);
+      Swal.fire({
+        icon: "error",
+        title: "Lỗi",
+        text: "Có lị xây ra khi xây dựng đơn hàng.",
+      });
+    }
+  };
+
   return (
     <div className="container-xl bg-white rounded shadow-sm p-4">
       <h1 className="my-4 text-center">Danh sách đơn hàng</h1>
@@ -170,7 +192,7 @@ const OrderPlace = () => {
                 <th>#</th>
                 <th>Mã đơn hàng</th>
                 <th>Sản phẩm</th>
-                <th>Tổng số lượng</th>
+                <th>Trạng thái thanh toán</th>
                 <th>Trạng thái</th>
                 <th>Thành tiền</th>
                 <th>Hành động</th>
@@ -190,10 +212,11 @@ const OrderPlace = () => {
                     ))}
                   </td>
                   <td>
-                    {order.items.reduce(
-                      (total: number, item: any) => total + item.quantity,
-                      0
-                    )}
+                    {order.payment_status === "unpaid" ? (
+                      <span className="bg-warning badge">Chưa thanh toán</span>
+                    ) : order.payment_status === "paid" ? (
+                      <span className="bg-info badge">Đã thanh toán</span>
+                    ) : null}
                   </td>
                   <td>
                     {order.status === "Pending" ? (
@@ -204,9 +227,13 @@ const OrderPlace = () => {
                       <span className="bg-success badge">Giao thành công</span>
                     ) : order.status === "Confirmed" ? (
                       <span className="bg-info badge">Đã xác nhận</span>
-                    ) : (
+                    ) : order.status === "Success" ? (
+                      <span className="bg-success badge">
+                        Hoàn thành đơn hàng
+                      </span>
+                    ) : order.status === "Cancelled" ? (
                       <span className="bg-danger badge">Đã huỷ</span>
-                    )}
+                    ) : null}
                   </td>
                   <td>{order.total_price.toLocaleString()} VND</td>
                   <td>
@@ -216,20 +243,33 @@ const OrderPlace = () => {
                     >
                       Chi tiết
                     </button>
-                    <button
-                      className="btn btn-warning btn-sm me-2"
-                      onClick={() => handleShowModal(order)}
-                      disabled={order.status !== "Pending"}
-                    >
-                      Sửa
-                    </button>
-                    <button
-                      className="btn btn-danger btn-sm"
-                      onClick={() => handleDeleteOrder(order._id)}
-                      disabled={order.status !== "Pending"}
-                    >
-                      Huỷ
-                    </button>
+                    {order.status === "Pending" && (
+                      <>
+                        <button
+                          className="btn btn-warning btn-sm me-2"
+                          onClick={() => handleShowModal(order)}
+                          disabled={order.status !== "Pending"}
+                        >
+                          Sửa
+                        </button>
+                        <button
+                          className="btn btn-danger btn-sm"
+                          onClick={() => handleDeleteOrder(order._id)}
+                          disabled={order.status !== "Pending"}
+                        >
+                          Huỷ
+                        </button>
+                      </>
+                    )}
+
+                    {order.status === "Delivered" && (
+                      <button
+                        className="btn btn-success btn-sm"
+                        onClick={() => handleConfirmOrder(order._id)}
+                      >
+                        Xác nhận đơn hàng
+                      </button>
+                    )}
                   </td>
                 </tr>
               ))}

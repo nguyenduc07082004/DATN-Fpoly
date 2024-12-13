@@ -171,8 +171,11 @@ const QLDH = () => {
                   <Typography variant="body2" color="textSecondary">
                     <span
                       style={{
+                        display:
+                         "inline-block",
                         color: getPaymentStatusColor(order.payment_status),
                       }}
+                      className="btn btn-sm"
                     >
                       {order.payment_status === "paid"
                         ? "Đã thanh toán"

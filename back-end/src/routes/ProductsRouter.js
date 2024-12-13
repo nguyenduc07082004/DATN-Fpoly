@@ -11,7 +11,8 @@ import {
   getFilteredProducts,
   getVariantByProductId,
   deleteVariant,
-  updateVariant
+  updateVariant , 
+  checkStock
 } from "../controllers/ProductControllers.js";
 import multer from "multer";
 // Lấy danh sách sản phẩm (không cần xác thực)
@@ -42,6 +43,7 @@ ProductRouter.post(
   upload.array("images", 3), 
   createVariant
 );
+ProductRouter.post("/check-stock" , checkStock)
 
 // Cập nhật sản phẩm (yêu cầu xác thực)
 ProductRouter.put(

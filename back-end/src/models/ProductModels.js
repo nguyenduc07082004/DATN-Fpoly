@@ -4,7 +4,7 @@ const variantSchema = new Schema({
   sku: { type: String, unique: true, sparse: true }, 
   color: {
     type: String,
-    enum: ["Đen", "Trắng", "Hồng", "Xanh"],
+    enum: ["Đen", "Trắng", "Hồng", "Xanh" , "Đỏ" , "Vàng" , "XanhLá" , "Bạc"],
   },
   storage: {
     type: String,

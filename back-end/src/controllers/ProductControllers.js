@@ -368,3 +368,59 @@ export const deleteVariant = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+
+
+export const checkStock = async (req, res) => {
+  try {
+    const cartItems = req.body.cartItems; 
+
+    if (!cartItems || cartItems.length === 0) {
+      return res.status(400).json({ message: "Giỏ hàng không được để trống." });
+    }
+
+    const unavailableVariants = [];
+
+    for (const item of cartItems) {
+      const { variantId, quantity } = item;
+
+      const product = await Product.findOne({
+        "variants._id": variantId,
+      }).lean();
+
+      if (!product) {
+        unavailableVariants.push({ variantId, message: "Không tìm thấy sản phẩm." });
+        continue;
+      }
+
+      const variant = product.variants.find((v) => v._id.toString() === variantId);
+      if (!variant) {
+        unavailableVariants.push({ variantId, message: "Không tìm thấy biến thể." });
+        continue;
+      }
+
+      if (variant.quantity < quantity) {
+        unavailableVariants.push({
+          variantId,
+          name: product.title,
+          color: variant.color,
+          storage: variant.storage,
+          available: variant.quantity,
+          requested: quantity,
+          message: `${product.title} (${variant.color}, ${variant.storage}) không đủ số lượng. Còn lại: ${variant.quantity}, yêu cầu: ${quantity}.`,
+        });
+      }
+    }
+
+    if (unavailableVariants.length > 0) {
+      return res.status(400).json({
+        message: "Một số sản phẩm không đủ số lượng.",
+        unavailableVariants,
+      });
+    }
+
+    return res.status(200).json({ message: "Tất cả sản phẩm đều đủ số lượng." });
+  } catch (error) {
+    console.error("Error in checkStock:", error);
+    return res.status(500).json({ message: "Lỗi hệ thống. Vui lòng thử lại sau." });
+  }
+};
