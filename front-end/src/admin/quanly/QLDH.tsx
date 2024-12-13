@@ -169,26 +169,15 @@ const QLDH = () => {
                 </TableCell>
                 <TableCell>
                   <Typography variant="body2" color="textSecondary">
-                    <strong>Trạng thái thanh toán:</strong>{" "}
-                    <button
+                    <span
                       style={{
-                        display:
-                          order.status === "Cancelled" ||
-                          order.status === "Delivered"
-                            ? "none"
-                            : "inline-block",
+                        color: getPaymentStatusColor(order.payment_status),
                       }}
                     >
-                      <span
-                        style={{
-                          color: getPaymentStatusColor(order.payment_status),
-                        }}
-                      >
-                        {order.payment_status === "paid"
-                          ? "Đã thanh toán"
-                          : "Chưa thanh toán"}
-                      </span>
-                    </button>
+                      {order.payment_status === "paid"
+                        ? "Đã thanh toán"
+                        : "Chưa thanh toán"}
+                    </span>
                   </Typography>
                 </TableCell>
 
