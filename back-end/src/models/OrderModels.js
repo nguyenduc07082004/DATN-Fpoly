@@ -13,6 +13,7 @@ const orderSchema = new Schema({
   items: [{ type: Schema.Types.ObjectId, ref: "OrderItem" }],  
   created_at: { type: Date, default: Date.now },
   updated_at: { type: Date, default: Date.now },
+  delivered_at: { type: Date, default: null },
 });
 
 export default model("Order", orderSchema);
