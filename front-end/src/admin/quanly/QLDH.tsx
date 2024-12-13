@@ -174,8 +174,6 @@ const QLDH = () => {
                         display:
                          "inline-block",
                         color: getPaymentStatusColor(order.payment_status),
-                        display:
-                         "inline-block",
                       }}
                       className="btn btn-sm"
                     >
