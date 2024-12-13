@@ -65,14 +65,16 @@ const Cart = () => {
           }
         });
       }
-      if (state.products.length === 0 ) {
+      if (state.products.length === 0) {
         Swal.fire({
           icon: "warning",
           title: "Giỏ hàng trống",
           text: "Vui lòng thêm sản phẩm vào giỏ hàng trước khi thanh toán",
         });
       } else {
-        const res = await ins.post("/products/check-stock" , {cartItems:state.products});
+        const res = await ins.post("/products/check-stock", {
+          cartItems: state.products,
+        });
         if (res.status === 200) {
           navigate("/vnpay");
         }
@@ -82,7 +84,8 @@ const Cart = () => {
         icon: "error",
         title: "Oops...",
         text:
-          error.response?.data?.unavailableVariants[0].message || "Đã xảy ra lỗi, vui lòng thử lại!",
+          error.response?.data?.unavailableVariants[0].message ||
+          "Đã xảy ra lỗi, vui lòng thử lại!",
       });
     }
   };
@@ -123,7 +126,7 @@ const Cart = () => {
             <th className="col-3">Màu sắc</th>
             <th className="col-3">Dung lượng</th>
             <th className="col-3">Số lượng</th>
-            <th className="col-2">Đơn Giá</th>
+            <th className="col-3">Đơn Giá</th>
             <th className="col-2">Giá</th>
             <th className="col-1">Xóa</th>
           </tr>

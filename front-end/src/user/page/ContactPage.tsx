@@ -31,7 +31,8 @@ const ContactPage: React.FC = () => {
   const [shop] = useState<Shop>({
     Logo: Logo, // Đảm bảo logo đã được import chính xác
     Name: "Smart Shop",
-    Address: "123 Đường Lê Văn Lương, Quận Thanh Xuân, Hà Nội", // Địa chỉ cụ thể
+    Address:
+      "Tòa nhà FPT Polytechnic., Cổng số 2, 13 P. Trịnh Văn Bô, Xuân Phương, Nam Từ Liêm, Hà Nội", // Địa chỉ cụ thể
     Phone: "012345678",
     Hotline: "012345678",
     Fax: "0123456789",

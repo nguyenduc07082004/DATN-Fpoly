@@ -8,7 +8,6 @@ import QLTK from "./QLTK";
 import QLBL from "./QLBL";
 import QLDM from "./QLDM";
 import QLDH from "./QLDH";
-import TK from "./TK";
 import TrangChu from "./TrangChu";
 import CateForm from "../form/CateForm";
 import { useContext } from "react";
@@ -48,7 +47,6 @@ function Dashboard() {
             <Route path="/qldh" element={<QLDH />} />
             <Route path="/qlvc" element={<QLVC />} />
             <Route path="/qldh/:id" element={<OrderDetails />} />
-            <Route path="/tk" element={<TK />} />
             <Route path="/details/:id" element={<Details />} />
             <Route path="/details/:id/variant/add" element={<VariantsForm />} />
             <Route

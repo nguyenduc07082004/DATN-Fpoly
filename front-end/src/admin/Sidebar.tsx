@@ -1,8 +1,5 @@
-import { useContext , useEffect } from "react";
-import {
-  OrderContext,
-  OrderContextType,
-} from "../api/contexts/OrdersContext";
+import { useContext, useEffect } from "react";
+import { OrderContext, OrderContextType } from "../api/contexts/OrdersContext";
 import { Link } from "react-router-dom";
 import ".././App.scss";
 import { useAuth } from "../api/contexts/AuthContext";
@@ -11,8 +8,8 @@ import { baseURL } from "../api";
 import toastr from "toastr";
 const AdminSidebar = () => {
   const { logout } = useAuth();
-  const {fetchOrder} =
-    useContext(OrderContext) as OrderContextType;  const socket = io(baseURL);
+  const { fetchOrder } = useContext(OrderContext) as OrderContextType;
+  const socket = io(baseURL);
   let hasShownMessage = JSON.parse(
     localStorage.getItem("hasShownMessage") || "{}"
   );
@@ -22,9 +19,9 @@ const AdminSidebar = () => {
     socket.on("orderCreated", (data) => {
       toastr.success(data.message, "Thành công", {
         onclick: () => {
-          window.location.href = "/admin/qldh";  
-        }
-      });  
+          window.location.href = "/admin/qldh";
+        },
+      });
       // Cập nhật trạng thái đã hiển thị thông báo
       hasShownMessage[data.orderId] = true;
       localStorage.setItem("hasShownMessage", JSON.stringify(hasShownMessage));
@@ -85,21 +82,6 @@ const AdminSidebar = () => {
                 <path d="M2.95.4a1 1 0 0 1 .8-.4h8.5a1 1 0 0 1 .8.4l2.85 3.8a.5.5 0 0 1 .1.3V15a1 1 0 0 1-1 1H1a1 1 0 0 1-1-1V4.5a.5.5 0 0 1 .1-.3zM7.5 1H3.75L1.5 4h6zm1 0v3h6l-2.25-3zM15 5H1v10h14z" />
               </svg>
               Quản lý sản phẩm
-            </Link>
-          </li>
-          <li>
-            <Link to="/admin/tk" className="nav-link text-white">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="16"
-                height="16"
-                fill="currentColor"
-                className="bi bi-bar-chart me-2"
-                viewBox="0 0 16 16"
-              >
-                <path d="M4 11H2v3h2zm5-4H7v7h2zm5-5v12h-2V2zm-2-1a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1zM6 7a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v7a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1zm-5 4a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1z" />
-              </svg>
-              Thống kê
             </Link>
           </li>
           <li>

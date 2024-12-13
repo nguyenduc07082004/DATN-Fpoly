@@ -23,11 +23,25 @@ ChartJS.register(
   Legend
 );
 
+import {
+  Modal,
+  Button,
+  Typography,
+  Box,
+  TableContainer,
+  Table,
+  TableHead,
+  TableRow,
+  TableCell,
+  TableBody,
+  Paper,
+} from "@mui/material";
+
 const TrangChu = () => {
-  const [dataDashboard, setDataDashBoard] = useState<any>([]);
   const [salesData, setSalesData] = useState<any>([]);
   const [recentOrders, setRecentOrders] = useState<any>([]);
   const [products, setProducts] = useState<any>([]);
+  const [topSellers, setTopSellers] = useState<any>([]);
   const [loading, setLoading] = useState(true);
   const [stats, setStats] = useState({
     totalOrders: 0,
@@ -39,6 +53,10 @@ const TrangChu = () => {
     totalUser: 0,
     totalUserOnline: 0,
   });
+
+  const [showModal, setShowModal] = useState(false); // Điều khiển modal
+  const [selectedProduct, setSelectedProduct] = useState<any>(null); // Lưu thông tin chi tiết sản phẩm
+  const [productDetails, setProductDetails] = useState<any>(null);
   const getData = async () => {
     try {
       const response = await ins.get(`${baseURL}/dashboard`);
@@ -69,177 +87,236 @@ const TrangChu = () => {
     }
   };
 
-  console.log(products,"dasok")
+  const getTopSellingProducts = async () => {
+    try {
+      const response = await ins.get(`${baseURL}/orders/top-selling`);
+      const data = response.data;
+      if (response.status === 200) {
+        setTopSellers(data.data);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
-  console.log(dataDashboard);
+  const getProductDetails = async (productId: string) => {
+    try {
+      const response = await ins.get(
+        `${baseURL}/orders/product-variants/${productId}`
+      );
+      if (response.status === 200) {
+        setProductDetails(response.data.data);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleShowModal = (product: any) => {
+    setSelectedProduct(product);
+    getProductDetails(product.product_id);
+    setShowModal(true);
+  };
+
+  const handleCloseModal = () => {
+    setShowModal(false);
+    setSelectedProduct(null);
+    setProductDetails(null);
+  };
+
   useEffect(() => {
     getData();
+    getTopSellingProducts();
   }, []);
 
+  const chartData = {
+    labels: salesData.map((item: any) => item._id),
+    datasets: [
+      {
+        label: "Tổng doanh số (VND)",
+        data: salesData.map((item: any) => item.totalSales),
+        fill: false,
+        borderColor: "rgba(75, 192, 192, 1)",
+        borderWidth: 2,
+        pointRadius: 5,
+      },
+    ],
+  };
+
+  const options = {
+    responsive: true,
+    plugins: {
+      title: {
+        display: true,
+        text: "Tổng quan về doanh số theo ngày",
+      },
+      tooltip: {
+        mode: "index",
+        intersect: false,
+      },
+    },
+    scales: {
+      x: {
+        title: {
+          display: true,
+          text: "Ngày",
+        },
+      },
+      y: {
+        title: {
+          display: true,
+          text: "Tổng doanh số (VND)",
+        },
+        beginAtZero: true,
+      },
+    },
+  };
+
   return (
-    <div className="container-fluid">
-      <main className="w-100">
-        {/* Header */}
-        <header className="d-flex justify-content-between align-items-center p-4 bg-white shadow-sm">
-          <h1 className="text-primary">Bảng Tổng Hợp</h1>
-        </header>
-
-        {/* Statistics Section */}
-        <section className="p-4">
-          <div className="row g-3 mb-4">
-            {/* Tổng đơn hàng */}
-            <div className="col-lg-3 col-md-6">
-              <div className="card text-center shadow-sm">
-                <div className="card-body">
-                  <h3 className="card-title text-primary">
-                    {stats.totalOrders}
-                  </h3>
-                  <p className="card-text">Tổng đơn hàng</p>
-                </div>
-              </div>
-            </div>
-
-            {/* Tổng sản phẩm */}
-            <div className="col-lg-3 col-md-6">
-              <div className="card text-center shadow-sm">
-                <div className="card-body">
-                  <h3 className="card-title text-success">
-                    {stats.totalProducts}
-                  </h3>
-                  <p className="card-text">Tổng sản phẩm</p>
-                </div>
-              </div>
-            </div>
-
-            {/* Tổng đơn đang chờ */}
-            <div className="col-lg-3 col-md-6">
-              <div className="card text-center shadow-sm">
-                <div className="card-body">
-                  <h3 className="card-title text-warning">
-                    {stats.totalOrdersPending}
-                  </h3>
-                  <p className="card-text">Đơn hàng chờ</p>
-                </div>
-              </div>
-            </div>
-
-            {/* Tổng đơn chưa thanh toán */}
-            <div className="col-lg-3 col-md-6">
-              <div className="card text-center shadow-sm">
-                <div className="card-body">
-                  <h3 className="card-title text-danger">
-                    {stats.totalOrdersUnpaid}
-                  </h3>
-                  <p className="card-text">Đơn hàng chưa thanh toán</p>
-                </div>
-              </div>
-            </div>
-
-            {/* Tổng doanh thu */}
-            <div className="col-lg-3 col-md-6">
-              <div className="card text-center shadow-sm">
-                <div className="card-body">
-                  <h3 className="card-title text-info">
-                    {stats.totalRevenue.toLocaleString("vi-VN")} VND
-                  </h3>
-                  <p className="card-text">Doanh thu</p>
-                </div>
-              </div>
-            </div>
-
-            {/* Tổng đơn hủy */}
-            <div className="col-lg-3 col-md-6">
-              <div className="card text-center shadow-sm">
-                <div className="card-body">
-                  <h3 className="card-title text-danger">
-                    {stats.totalOrderCancel}
-                  </h3>
-                  <p className="card-text">Đơn hàng huỷ</p>
-                </div>
-              </div>
-            </div>
-
-            {/* Tổng người dùng */}
-            <div className="col-lg-3 col-md-6">
-              <div className="card text-center shadow-sm">
-                <div className="card-body">
-                  <h3 className="card-title text-primary">{stats.totalUser}</h3>
-                  <p className="card-text">Số lượng người dùng</p>
-                </div>
-              </div>
-            </div>
-
-            {/* Tổng người dùng online */}
-            <div className="col-lg-3 col-md-6">
-              <div className="card text-center shadow-sm">
-                <div className="card-body">
-                  <h3 className="card-title text-success">
-                    {stats.totalUserOnline}
-                  </h3>
-                  <p className="card-text">Người dùng online</p>
-                </div>
+    <div
+      className="bg-light content1 rounded-3"
+      style={{ height: "120rem", width: "1170px" }}
+    >
+      <section className="p-4">
+        <div className="row g-3 mb-4">
+          {/* Tổng đơn hàng */}
+          <div className="col-lg-3 col-md-6">
+            <div className="card text-center shadow-sm">
+              <div className="card-body">
+                <h3 className="card-title text-primary">{stats.totalOrders}</h3>
+                <p className="card-text">Tổng đơn hàng</p>
               </div>
             </div>
           </div>
-        </section>
 
-        <section className="p-4">
+          {/* Tổng sản phẩm */}
+          <div className="col-lg-3 col-md-6">
+            <div className="card text-center shadow-sm">
+              <div className="card-body">
+                <h3 className="card-title text-success">
+                  {stats.totalProducts}
+                </h3>
+                <p className="card-text">Tổng sản phẩm</p>
+              </div>
+            </div>
+          </div>
+
+          {/* Tổng đơn đang chờ */}
+          <div className="col-lg-3 col-md-6">
+            <div className="card text-center shadow-sm">
+              <div className="card-body">
+                <h3 className="card-title text-warning">
+                  {stats.totalOrdersPending}
+                </h3>
+                <p className="card-text">Đơn hàng chờ</p>
+              </div>
+            </div>
+          </div>
+
+          {/* Tổng đơn chưa thanh toán */}
+          <div className="col-lg-3 col-md-6">
+            <div className="card text-center shadow-sm">
+              <div className="card-body">
+                <h3 className="card-title text-danger">
+                  {stats.totalOrdersUnpaid}
+                </h3>
+                <p className="card-text">Đơn hàng chưa thanh toán</p>
+              </div>
+            </div>
+          </div>
+
+          {/* Tổng doanh thu */}
+          <div className="col-lg-3 col-md-6">
+            <div className="card text-center shadow-sm">
+              <div className="card-body">
+                <h3 className="card-title text-info">
+                  {stats.totalRevenue.toLocaleString("vi-VN")} VND
+                </h3>
+                <p className="card-text">Doanh thu</p>
+              </div>
+            </div>
+          </div>
+
+          {/* Tổng đơn hủy */}
+          <div className="col-lg-3 col-md-6">
+            <div className="card text-center shadow-sm">
+              <div className="card-body">
+                <h3 className="card-title text-danger">
+                  {stats.totalOrderCancel}
+                </h3>
+                <p className="card-text">Đơn hàng huỷ</p>
+              </div>
+            </div>
+          </div>
+
+          {/* Tổng người dùng */}
+          <div className="col-lg-3 col-md-6">
+            <div className="card text-center shadow-sm">
+              <div className="card-body">
+                <h3 className="card-title text-primary">{stats.totalUser}</h3>
+                <p className="card-text">Số lượng người dùng</p>
+              </div>
+            </div>
+          </div>
+
+          {/* Tổng người dùng online */}
+          <div className="col-lg-3 col-md-6">
+            <div className="card text-center shadow-sm">
+              <div className="card-body">
+                <h3 className="card-title text-success">
+                  {stats.totalUserOnline}
+                </h3>
+                <p className="card-text">Người dùng online</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="p-4">
+        <div>
+          {/* Biểu đồ doanh thu */}
           <div className="card shadow-sm mb-4">
             <div className="card-body">
-              <h2 className="card-title">Đơn hàng gần đây</h2>
-              {/* Kiểm tra nếu đang tải dữ liệu */}
+              <h2 className="card-title">Doanh thu bán hàng</h2>
               {loading ? (
-                <div className="text-center">
-                  <div className="spinner-border" role="status">
-                    <span className="visually-hidden">Loading...</span>
-                  </div>
-                  <p>Loading...</p>
-                </div>
+                <p>Loading...</p>
               ) : (
-                <table className="table table-hover">
+                <Line data={chartData} options={options as any} />
+              )}
+            </div>
+          </div>
+
+          {/* Bảng thống kê Top 5 sản phẩm bán chạy nhất */}
+          <div className="card shadow-sm">
+            <div className="card-body">
+              <h2 className="card-title">Top 5 Sản Phẩm Bán Chạy Nhất</h2>
+              {loading ? (
+                <p>Loading...</p>
+              ) : (
+                <table className="table">
                   <thead>
                     <tr>
-                      <th className="col-2">Mã đơn hàng</th>
-                      <th className="col-2">Khách hàng</th>
-                      <th className="col-4">Sản phẩm</th>
-                      <th className="col-2">Trạng thái</th>
-                      <th className="col-2">Tổng tiền</th>
+                      <th scope="col">STT</th>
+                      <th scope="col">Tên sản phẩm</th>
+                      <th scope="col">Số lượng bán</th>
+                      <th scope="col">Chi tiết</th>
                     </tr>
                   </thead>
                   <tbody>
-                    {/* Loop through each order */}
-                    {recentOrders.length > 0 &&
-                      recentOrders?.map((order) => (
-                        <tr key={order._id}>
-                          <td className="col-2">{order._id}</td>
-                          <td className="col-2">{order.receiver_name}</td>
-                          <td className="col-4">
-                            {/* Display detailed item information */}
-                            {order?.items?.map((item, itemIndex) => (
-                              <div key={itemIndex}>
-                                {item?.product?.title} ({item?.color},{" "}
-                                {item?.storage})
-                              </div>
-                            ))}
-                          </td>
-                          <td className="col-2">
-                            {/* Show order status */}
-                            <span
-                              className={`badge ${
-                                order?.status === "Completed"
-                                  ? "bg-success"
-                                  : order?.status === "Pending"
-                                  ? "bg-warning"
-                                  : order?.status === "In Delivery"
-                                  ? "bg-info"
-                                  : "bg-danger"
-                              }`}
+                    {topSellers.length > 0 &&
+                      topSellers.slice(0, 5).map((product, index) => (
+                        <tr key={product.product_id}>
+                          <th scope="row">{index + 1}</th>
+                          <td>{product.name}</td>
+                          <td>{product.totalSold}</td>
+                          <td>
+                            <button
+                              className="btn btn-primary"
+                              onClick={() => handleShowModal(product)}
                             >
-                              {getStatusText(order?.status)}
-                            </span>
-                          </td>
-                          <td className="col-2">
-                            {order?.total_price.toLocaleString("vi-VN")} VND
+                              Xem chi tiết
+                            </button>
                           </td>
                         </tr>
                       ))}
@@ -248,43 +325,507 @@ const TrangChu = () => {
               )}
             </div>
           </div>
-        </section>
+        </div>
 
-        {/* Top Customers */}
-        <section className="p-4">
-          <div className="card shadow-sm">
-            <div className="card-body">
-              <h2 className="card-title">Cảnh báo tồn kho</h2>
-              <ul className="list-group list-group-flush">
-                {loading ? (
-                  // Hiển thị loading khi dữ liệu chưa được tải
-                  <li className="list-group-item text-center">
-                    <div className="spinner-border text-primary" role="status">
-                      <span className="visually-hidden">Đang tải...</span>
-                    </div>
-                  </li>
-                ) : (
-                  // Hiển thị sản phẩm khi dữ liệu đã được tải
-                  products
-                    .filter((product) => product.totalStock < 5).slice(0,10) // Lọc sản phẩm có totalStock < 5
-                    .map((product, index) => (
-                      <li
-                        key={index}
-                        className="list-group-item d-flex justify-content-between align-items-center"
-                      >
-                        {product._id.title}{" "}({product._id.color},{" "}{product._id.storage}{" "})
-                        <span className="badge bg-danger">
-                          {product.totalStock} Sản phẩm
-                        </span>
-                      </li>
-                    ))
-                )}
-              </ul>
-            </div>
+        {/* Modal hiển thị thông tin chi tiết sản phẩm */}
+        <Modal
+          open={showModal}
+          onClose={handleCloseModal}
+          aria-labelledby="product-modal-title"
+          aria-describedby="product-modal-description"
+        >
+          <Box
+            sx={{
+              position: "absolute",
+              top: "50%",
+              left: "50%",
+              transform: "translate(-50%, -50%)",
+              bgcolor: "background.paper",
+              border: "2px solid #000",
+              boxShadow: 24,
+              p: 4,
+              maxWidth: 800,
+              width: "100%",
+            }}
+          >
+            <Typography id="product-modal-title" variant="h6" component="h2">
+              Chi tiết sản phẩm
+            </Typography>
+            {productDetails ? (
+              <div>
+                <p>
+                  <strong>Tên sản phẩm:</strong>{" "}
+                  {
+                    topSellers.find(
+                      (p: any) => p.product_id === selectedProduct.product_id
+                    ).name
+                  }
+                </p>
+                <p>
+                  <strong>Số lượng bán:</strong>{" "}
+                  {
+                    topSellers.find(
+                      (p: any) => p.product_id === selectedProduct.product_id
+                    ).totalSold
+                  }
+                </p>
+                <p>
+                  <strong>Thông tin chi tiết:</strong>
+                </p>
+
+                {/* Bảng hiển thị chi tiết sản phẩm */}
+                <TableContainer component={Paper} sx={{ mt: 2 }}>
+                  <Table
+                    sx={{ minWidth: 650 }}
+                    aria-label="product details table"
+                  >
+                    <TableHead>
+                      <TableRow>
+                        <TableCell>
+                          <strong>Số lượng</strong>
+                        </TableCell>
+                        <TableCell>
+                          <strong>Bộ nhớ</strong>
+                        </TableCell>
+                        <TableCell>
+                          <strong>Màu</strong>
+                        </TableCell>
+                      </TableRow>
+                    </TableHead>
+                    <TableBody>
+                      {productDetails.length > 0 ? (
+                        productDetails.map((detail: any, index: number) => (
+                          <TableRow key={index}>
+                            <TableCell>{detail.totalQuantity}</TableCell>
+                            <TableCell>{detail.storage}</TableCell>
+                            <TableCell>{detail.color}</TableCell>
+                          </TableRow>
+                        ))
+                      ) : (
+                        <TableRow>
+                          <TableCell colSpan={3} align="center">
+                            <Typography variant="body2" color="textSecondary">
+                              Không có chi tiết nào.
+                            </Typography>
+                          </TableCell>
+                        </TableRow>
+                      )}
+                    </TableBody>
+                  </Table>
+                </TableContainer>
+              </div>
+            ) : null}
+            <Button onClick={handleCloseModal} color="primary">
+              Đóng
+            </Button>
+          </Box>
+        </Modal>
+      </section>
+      <section className="p-4">
+        <div className="card shadow-sm mb-4">
+          <div className="card-body">
+            <h2 className="card-title">Đơn hàng gần đây</h2>
+            {/* Kiểm tra nếu đang tải dữ liệu */}
+            {loading ? (
+              <div className="text-center">
+                <div className="spinner-border" role="status">
+                  <span className="visually-hidden">Loading...</span>
+                </div>
+                <p>Loading...</p>
+              </div>
+            ) : (
+              <table className="table table-hover">
+                <thead>
+                  <tr>
+                    <th className="col-2">Mã đơn hàng</th>
+                    <th className="col-2">Khách hàng</th>
+                    <th className="col-4">Sản phẩm</th>
+                    <th className="col-2">Trạng thái</th>
+                    <th className="col-2">Tổng tiền</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {/* Loop through each order */}
+                  {recentOrders.length > 0 &&
+                    recentOrders?.map((order) => (
+                      <tr key={order._id}>
+                        <td className="col-2">{order._id}</td>
+                        <td className="col-2">{order.receiver_name}</td>
+                        <td className="col-4">
+                          {/* Display detailed item information */}
+                          {order?.items?.map((item, itemIndex) => (
+                            <div key={itemIndex}>
+                              {item?.product?.title} ({item?.color},{" "}
+                              {item?.storage})
+                            </div>
+                          ))}
+                        </td>
+                        <td className="col-2">
+                          {/* Show order status */}
+                          <span
+                            className={`badge ${
+                              order?.status === "Completed"
+                                ? "bg-success"
+                                : order?.status === "Pending"
+                                ? "bg-warning"
+                                : order?.status === "In Delivery"
+                                ? "bg-info"
+                                : "bg-danger"
+                            }`}
+                          >
+                            {getStatusText(order?.status)}
+                          </span>
+                        </td>
+                        <td className="col-2">
+                          {order?.total_price.toLocaleString("vi-VN")} VND
+                        </td>
+                      </tr>
+                    ))}
+                </tbody>
+              </table>
+            )}
           </div>
-        </section>
-      </main>
+        </div>
+      </section>
+
+      <section className="p-4">
+        <div className="card shadow-sm">
+          <div className="card-body">
+            <h2 className="card-title">Cảnh báo tồn kho</h2>
+            <ul className="list-group list-group-flush">
+              {loading ? (
+                // Hiển thị loading khi dữ liệu chưa được tải
+                <li className="list-group-item text-center">
+                  <div className="spinner-border text-primary" role="status">
+                    <span className="visually-hidden">Đang tải...</span>
+                  </div>
+                </li>
+              ) : (
+                // Hiển thị sản phẩm khi dữ liệu đã được tải
+                products
+                  .filter((product) => product.totalStock < 5)
+                  .slice(0, 10) // Lọc sản phẩm có totalStock < 5
+                  .map((product, index) => (
+                    <li
+                      key={index}
+                      className="list-group-item d-flex justify-content-between align-items-center"
+                    >
+                      {product._id.title} ({product._id.color},{" "}
+                      {product._id.storage} )
+                      <span className="badge bg-danger">
+                        {product.totalStock} Sản phẩm
+                      </span>
+                    </li>
+                  ))
+              )}
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <Modal
+        open={showModal}
+        onClose={handleCloseModal}
+        aria-labelledby="product-modal-title"
+        aria-describedby="product-modal-description"
+      >
+        <Box
+          sx={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            bgcolor: "background.paper",
+            border: "2px solid #000",
+            boxShadow: 24,
+            p: 4,
+            maxWidth: 800,
+            width: "100%",
+          }}
+        >
+          <Typography id="product-modal-title" variant="h6" component="h2">
+            Chi tiết sản phẩm
+          </Typography>
+          {productDetails ? (
+            <div>
+              <p>
+                <strong>Tên sản phẩm:</strong>{" "}
+                {
+                  topSellers.find(
+                    (p: any) => p.product_id === selectedProduct.product_id
+                  ).name
+                }
+              </p>
+              <p>
+                <strong>Số lượng bán:</strong>{" "}
+                {
+                  topSellers.find(
+                    (p: any) => p.product_id === selectedProduct.product_id
+                  ).totalSold
+                }
+              </p>
+              <p>
+                <strong>Thông tin chi tiết:</strong>
+              </p>
+
+              {/* Bảng hiển thị chi tiết sản phẩm */}
+              <TableContainer component={Paper} sx={{ mt: 2 }}>
+                <Table
+                  sx={{ minWidth: 650 }}
+                  aria-label="product details table"
+                >
+                  <TableHead>
+                    <TableRow>
+                      <TableCell>
+                        <strong>Số lượng</strong>
+                      </TableCell>
+                      <TableCell>
+                        <strong>Bộ nhớ</strong>
+                      </TableCell>
+                      <TableCell>
+                        <strong>Màu</strong>
+                      </TableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {productDetails.length > 0 ? (
+                      productDetails.map((detail: any, index: number) => (
+                        <TableRow key={index}>
+                          <TableCell>{detail.totalQuantity}</TableCell>
+                          <TableCell>{detail.storage}</TableCell>
+                          <TableCell>{detail.color}</TableCell>
+                        </TableRow>
+                      ))
+                    ) : (
+                      <TableRow>
+                        <TableCell colSpan={3} align="center">
+                          <Typography variant="body2" color="textSecondary">
+                            Không có chi tiết nào.
+                          </Typography>
+                        </TableCell>
+                      </TableRow>
+                    )}
+                  </TableBody>
+                </Table>
+              </TableContainer>
+            </div>
+          ) : null}
+          <Button onClick={handleCloseModal} color="primary">
+            Đóng
+          </Button>
+        </Box>
+      </Modal>
     </div>
+    // <div className="container-fluid">
+    //   <main className="w-100">
+    //     {/* Header */}
+    //     <header className="d-flex justify-content-between align-items-center p-4 bg-white shadow-sm">
+    //       <h1 className="text-primary">Bảng Tổng Hợp</h1>
+    //     </header>
+
+    //     {/* Statistics Section */}
+    //     <section className="p-4">
+    //       <div className="row g-3 mb-4">
+    //         {/* Tổng đơn hàng */}
+    //         <div className="col-lg-3 col-md-6">
+    //           <div className="card text-center shadow-sm">
+    //             <div className="card-body">
+    //               <h3 className="card-title text-primary">
+    //                 {stats.totalOrders}
+    //               </h3>
+    //               <p className="card-text">Tổng đơn hàng</p>
+    //             </div>
+    //           </div>
+    //         </div>
+
+    //         {/* Tổng sản phẩm */}
+    //         <div className="col-lg-3 col-md-6">
+    //           <div className="card text-center shadow-sm">
+    //             <div className="card-body">
+    //               <h3 className="card-title text-success">
+    //                 {stats.totalProducts}
+    //               </h3>
+    //               <p className="card-text">Tổng sản phẩm</p>
+    //             </div>
+    //           </div>
+    //         </div>
+
+    //         {/* Tổng đơn đang chờ */}
+    //         <div className="col-lg-3 col-md-6">
+    //           <div className="card text-center shadow-sm">
+    //             <div className="card-body">
+    //               <h3 className="card-title text-warning">
+    //                 {stats.totalOrdersPending}
+    //               </h3>
+    //               <p className="card-text">Đơn hàng chờ</p>
+    //             </div>
+    //           </div>
+    //         </div>
+
+    //         {/* Tổng đơn chưa thanh toán */}
+    //         <div className="col-lg-3 col-md-6">
+    //           <div className="card text-center shadow-sm">
+    //             <div className="card-body">
+    //               <h3 className="card-title text-danger">
+    //                 {stats.totalOrdersUnpaid}
+    //               </h3>
+    //               <p className="card-text">Đơn hàng chưa thanh toán</p>
+    //             </div>
+    //           </div>
+    //         </div>
+
+    //         {/* Tổng doanh thu */}
+    //         <div className="col-lg-3 col-md-6">
+    //           <div className="card text-center shadow-sm">
+    //             <div className="card-body">
+    //               <h3 className="card-title text-info">
+    //                 {stats.totalRevenue.toLocaleString("vi-VN")} VND
+    //               </h3>
+    //               <p className="card-text">Doanh thu</p>
+    //             </div>
+    //           </div>
+    //         </div>
+
+    //         {/* Tổng đơn hủy */}
+    //         <div className="col-lg-3 col-md-6">
+    //           <div className="card text-center shadow-sm">
+    //             <div className="card-body">
+    //               <h3 className="card-title text-danger">
+    //                 {stats.totalOrderCancel}
+    //               </h3>
+    //               <p className="card-text">Đơn hàng huỷ</p>
+    //             </div>
+    //           </div>
+    //         </div>
+
+    //         {/* Tổng người dùng */}
+    //         <div className="col-lg-3 col-md-6">
+    //           <div className="card text-center shadow-sm">
+    //             <div className="card-body">
+    //               <h3 className="card-title text-primary">{stats.totalUser}</h3>
+    //               <p className="card-text">Số lượng người dùng</p>
+    //             </div>
+    //           </div>
+    //         </div>
+
+    //         {/* Tổng người dùng online */}
+    //         <div className="col-lg-3 col-md-6">
+    //           <div className="card text-center shadow-sm">
+    //             <div className="card-body">
+    //               <h3 className="card-title text-success">
+    //                 {stats.totalUserOnline}
+    //               </h3>
+    //               <p className="card-text">Người dùng online</p>
+    //             </div>
+    //           </div>
+    //         </div>
+    //       </div>
+    //     </section>
+
+    //     <section className="p-4">
+    //       <div className="card shadow-sm mb-4">
+    //         <div className="card-body">
+    //           <h2 className="card-title">Đơn hàng gần đây</h2>
+    //           {/* Kiểm tra nếu đang tải dữ liệu */}
+    //           {loading ? (
+    //             <div className="text-center">
+    //               <div className="spinner-border" role="status">
+    //                 <span className="visually-hidden">Loading...</span>
+    //               </div>
+    //               <p>Loading...</p>
+    //             </div>
+    //           ) : (
+    //             <table className="table table-hover">
+    //               <thead>
+    //                 <tr>
+    //                   <th className="col-2">Mã đơn hàng</th>
+    //                   <th className="col-2">Khách hàng</th>
+    //                   <th className="col-4">Sản phẩm</th>
+    //                   <th className="col-2">Trạng thái</th>
+    //                   <th className="col-2">Tổng tiền</th>
+    //                 </tr>
+    //               </thead>
+    //               <tbody>
+    //                 {/* Loop through each order */}
+    //                 {recentOrders.length > 0 &&
+    //                   recentOrders?.map((order) => (
+    //                     <tr key={order._id}>
+    //                       <td className="col-2">{order._id}</td>
+    //                       <td className="col-2">{order.receiver_name}</td>
+    //                       <td className="col-4">
+    //                         {/* Display detailed item information */}
+    //                         {order?.items?.map((item, itemIndex) => (
+    //                           <div key={itemIndex}>
+    //                             {item?.product?.title} ({item?.color},{" "}
+    //                             {item?.storage})
+    //                           </div>
+    //                         ))}
+    //                       </td>
+    //                       <td className="col-2">
+    //                         {/* Show order status */}
+    //                         <span
+    //                           className={`badge ${
+    //                             order?.status === "Completed"
+    //                               ? "bg-success"
+    //                               : order?.status === "Pending"
+    //                               ? "bg-warning"
+    //                               : order?.status === "In Delivery"
+    //                               ? "bg-info"
+    //                               : "bg-danger"
+    //                           }`}
+    //                         >
+    //                           {getStatusText(order?.status)}
+    //                         </span>
+    //                       </td>
+    //                       <td className="col-2">
+    //                         {order?.total_price.toLocaleString("vi-VN")} VND
+    //                       </td>
+    //                     </tr>
+    //                   ))}
+    //               </tbody>
+    //             </table>
+    //           )}
+    //         </div>
+    //       </div>
+    //     </section>
+
+    //     {/* Top Customers */}
+    //     <section className="p-4">
+    //       <div className="card shadow-sm">
+    //         <div className="card-body">
+    //           <h2 className="card-title">Cảnh báo tồn kho</h2>
+    //           <ul className="list-group list-group-flush">
+    //             {loading ? (
+    //               // Hiển thị loading khi dữ liệu chưa được tải
+    //               <li className="list-group-item text-center">
+    //                 <div className="spinner-border text-primary" role="status">
+    //                   <span className="visually-hidden">Đang tải...</span>
+    //                 </div>
+    //               </li>
+    //             ) : (
+    //               // Hiển thị sản phẩm khi dữ liệu đã được tải
+    //               products
+    //                 .filter((product) => product.totalStock < 5)
+    //                 .slice(0, 10) // Lọc sản phẩm có totalStock < 5
+    //                 .map((product, index) => (
+    //                   <li
+    //                     key={index}
+    //                     className="list-group-item d-flex justify-content-between align-items-center"
+    //                   >
+    //                     {product._id.title} ({product._id.color},{" "}
+    //                     {product._id.storage} )
+    //                     <span className="badge bg-danger">
+    //                       {product.totalStock} Sản phẩm
+    //                     </span>
+    //                   </li>
+    //                 ))
+    //             )}
+    //           </ul>
+    //         </div>
+    //       </div>
+    //     </section>
+    //   </main>
+    // </div>
   );
 };
 
