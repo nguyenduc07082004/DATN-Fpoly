@@ -183,7 +183,7 @@ const Vnpay = () => {
 
   return (
     <div className="container">
-      <h3>Thông tin người dùng</h3>
+      {/* <h3>Thông tin người dùng</h3>
       <table className="mb-4 table table-bordered">
         <tbody>
           <tr>
@@ -203,7 +203,7 @@ const Vnpay = () => {
             <td>{JSON.parse(localStorage.getItem("user") || "{}").phone}</td>
           </tr>
         </tbody>
-      </table>
+      </table> */}
       <h3>Thông tin giỏ hàng</h3>
       <table className="mb-4 table table-bordered">
         <thead>
@@ -292,15 +292,15 @@ const Vnpay = () => {
       {/* Nhập mã giảm giá */}
 
       <div className="my-4 text-center">
-        <div className="d-flex justify-content-center gap-3">
+        <div className="gap-3 d-flex justify-content-center">
           <button
-            className="btn btn-primary px-4 py-2"
+            className="py-2 px-4 btn btn-primary"
             onClick={handleCreatePayment}
           >
             Thanh toán
           </button>
           <button
-            className="btn btn-danger px-4 py-2"
+            className="py-2 px-4 btn btn-danger"
             onClick={handleDeadPayment}
           >
             Hủy Thanh toán

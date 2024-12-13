@@ -96,7 +96,7 @@ const Cart = () => {
       </h1>
       {/* Bảng hiển thị thông tin người dùng */}
       <h2>Thông tin người dùng</h2>
-      <table className="table table-hover">
+      {/* <table className="table table-hover">
         <tbody>
           <tr>
             <th>Tên:</th>
@@ -115,7 +115,7 @@ const Cart = () => {
             <td>{JSON.parse(localStorage.getItem("user") || "{}").phone}</td>
           </tr>
         </tbody>
-      </table>
+      </table> */}
       <table className="table table-hover ">
         <thead>
           <tr className="table-info">
