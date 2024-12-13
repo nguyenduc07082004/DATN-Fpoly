@@ -327,12 +327,10 @@ export const updateOrderStatus = async (req, res) => {
       await invoice.save();
     }
 
-    // Cập nhật trạng thái đơn hàng
     order.status = status;
+    order.delivered_at = status === "Delivered" ? new Date() : null;
     await order.save();
 
-    // Phát sự kiện qua Socket.io chỉ khi trạng thái thực sự thay đổi
-    // Giả sử bạn đã lưu trạng thái cũ trong bộ nhớ (ví dụ: `previousStatuses`)
     if (io && io.emit) {
       io.emit("orderStatusUpdated", {
         message: `Trạng thái đơn hàng ${orderId} đã thay đổi từ "${getStatusText(

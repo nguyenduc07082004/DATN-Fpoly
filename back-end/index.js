@@ -8,12 +8,13 @@ import bodyParser from "body-parser";
 import cookieParser from "cookie-parser";
 import { languageMiddleware } from "./src/middleware/languageMiddleware.js";
 import http from "http";
-import { Server as socketIo } from "socket.io"; // Sử dụng cú pháp import đúng cho ESM
+import { Server as socketIo } from "socket.io";
 
 dotenv.config();
 
 const app = express();
-const server = http.createServer(app); // Tạo server HTTP từ express
+import "./src/cron/updateOrder.js";
+const server = http.createServer(app); 
 const io = new socketIo(server, {
   cors: {
     origin: "http://localhost:5173", 
