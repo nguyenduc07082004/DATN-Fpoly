@@ -54,6 +54,20 @@ const OrderDetail = () => {
       <h3>Thông tin đơn hàng</h3>
       <table className="table">
         <tbody>
+        <tr>
+            <td>
+              <b>Trạng thái đơn hàng</b>
+            </td>
+            <td
+              className={
+                orderStatusColors[
+                  order.status as keyof typeof orderStatusColors
+                ] || ""
+              }
+            >
+              {getStatusText(order.status)}
+            </td>
+          </tr>
           <tr>
             <td>
               <b>Mã đơn hàng:</b>
@@ -93,20 +107,6 @@ const OrderDetail = () => {
               <b>Ngày đặt hàng:</b>
             </td>
             <td>{order.created_at.slice(0, 10)}</td>
-          </tr>
-          <tr>
-            <td>
-              <b>Trạng thái đơn hàng</b>
-            </td>
-            <td
-              className={
-                orderStatusColors[
-                  order.status as keyof typeof orderStatusColors
-                ] || ""
-              }
-            >
-              {getStatusText(order.status)}
-            </td>
           </tr>
         </tbody>
       </table>
@@ -168,7 +168,7 @@ const OrderDetail = () => {
                 <td>
                   <b className="fw-bold">Giá trị giảm giá:</b>
                 </td>
-                <td className="fw-bold text-info">{order.discount_value.toLocaleString("vi", { style: "currency", currency: "VND" })}</td>
+                <td className="text-info fw-bold">{order.discount_value.toLocaleString("vi", { style: "currency", currency: "VND" })}</td>
               </tr>
         )}
           <tr>

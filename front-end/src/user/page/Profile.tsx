@@ -11,6 +11,7 @@ const Profile = () => {
     last_name: "",
     email: "",
     phone: "",
+    address:""
   });
   const [isEditing, setIsEditing] = useState(false);
 
@@ -156,7 +157,7 @@ const Profile = () => {
               {isEditing ? (
                 <input
                   type="text"
-                  name="phone"
+                  name="address"
                   value={user.address}
                   onChange={handleInputChange}
                   className="form-control"
