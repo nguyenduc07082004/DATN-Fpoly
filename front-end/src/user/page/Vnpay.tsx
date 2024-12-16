@@ -266,8 +266,14 @@ const Vnpay = () => {
     style: "currency",
     currency: "VND",
   })}
-</h4>  </div>
+</h4> 
+<div><h4>Tổng giá trị đơn hàng ban đầu: <span>{cartState.totalPrice.toLocaleString ("vi",{
+    style: "currency",
+    currency: "VND",
+  })}</span> </h4></div> 
+</div>
 )}
+
       <h4>
         Tổng giá trị giỏ hàng:{" "}
         {totalPrice.toLocaleString("vi", {

@@ -86,7 +86,7 @@ const TrangChu = () => {
       console.log(error);
     }
   };
-
+  console.log(recentOrders);
   const getTopSellingProducts = async () => {
     try {
       const response = await ins.get(`${baseURL}/orders/top-selling`);
@@ -174,16 +174,16 @@ const TrangChu = () => {
 
   return (
     <div
-      className="bg-light content1 rounded-3"
+      className="bg-light rounded-3 content1"
       style={{ height: "120rem", width: "1170px" }}
     >
       <section className="p-4">
-        <div className="row g-3 mb-4">
+        <div className="mb-4 row g-3">
           {/* Tổng đơn hàng */}
           <div className="col-lg-3 col-md-6">
-            <div className="card text-center shadow-sm">
+            <div className="shadow-sm text-center card">
               <div className="card-body">
-                <h3 className="card-title text-primary">{stats.totalOrders}</h3>
+                <h3 className="text-primary card-title">{stats.totalOrders}</h3>
                 <p className="card-text">Tổng đơn hàng</p>
               </div>
             </div>
@@ -191,9 +191,9 @@ const TrangChu = () => {
 
           {/* Tổng sản phẩm */}
           <div className="col-lg-3 col-md-6">
-            <div className="card text-center shadow-sm">
+            <div className="shadow-sm text-center card">
               <div className="card-body">
-                <h3 className="card-title text-success">
+                <h3 className="text-success card-title">
                   {stats.totalProducts}
                 </h3>
                 <p className="card-text">Tổng sản phẩm</p>
@@ -203,9 +203,9 @@ const TrangChu = () => {
 
           {/* Tổng đơn đang chờ */}
           <div className="col-lg-3 col-md-6">
-            <div className="card text-center shadow-sm">
+            <div className="shadow-sm text-center card">
               <div className="card-body">
-                <h3 className="card-title text-warning">
+                <h3 className="text-warning card-title">
                   {stats.totalOrdersPending}
                 </h3>
                 <p className="card-text">Đơn hàng chờ</p>
@@ -215,9 +215,9 @@ const TrangChu = () => {
 
           {/* Tổng đơn chưa thanh toán */}
           <div className="col-lg-3 col-md-6">
-            <div className="card text-center shadow-sm">
+            <div className="shadow-sm text-center card">
               <div className="card-body">
-                <h3 className="card-title text-danger">
+                <h3 className="text-danger card-title">
                   {stats.totalOrdersUnpaid}
                 </h3>
                 <p className="card-text">Đơn hàng chưa thanh toán</p>
@@ -227,9 +227,9 @@ const TrangChu = () => {
 
           {/* Tổng doanh thu */}
           <div className="col-lg-3 col-md-6">
-            <div className="card text-center shadow-sm">
+            <div className="shadow-sm text-center card">
               <div className="card-body">
-                <h3 className="card-title text-info">
+                <h3 className="text-info card-title">
                   {stats.totalRevenue.toLocaleString("vi-VN")} VND
                 </h3>
                 <p className="card-text">Doanh thu</p>
@@ -239,9 +239,9 @@ const TrangChu = () => {
 
           {/* Tổng đơn hủy */}
           <div className="col-lg-3 col-md-6">
-            <div className="card text-center shadow-sm">
+            <div className="shadow-sm text-center card">
               <div className="card-body">
-                <h3 className="card-title text-danger">
+                <h3 className="text-danger card-title">
                   {stats.totalOrderCancel}
                 </h3>
                 <p className="card-text">Đơn hàng huỷ</p>
@@ -251,9 +251,9 @@ const TrangChu = () => {
 
           {/* Tổng người dùng */}
           <div className="col-lg-3 col-md-6">
-            <div className="card text-center shadow-sm">
+            <div className="shadow-sm text-center card">
               <div className="card-body">
-                <h3 className="card-title text-primary">{stats.totalUser}</h3>
+                <h3 className="text-primary card-title">{stats.totalUser}</h3>
                 <p className="card-text">Số lượng người dùng</p>
               </div>
             </div>
@@ -261,9 +261,9 @@ const TrangChu = () => {
 
           {/* Tổng người dùng online */}
           <div className="col-lg-3 col-md-6">
-            <div className="card text-center shadow-sm">
+            <div className="shadow-sm text-center card">
               <div className="card-body">
-                <h3 className="card-title text-success">
+                <h3 className="text-success card-title">
                   {stats.totalUserOnline}
                 </h3>
                 <p className="card-text">Người dùng online</p>
@@ -276,7 +276,7 @@ const TrangChu = () => {
       <section className="p-4">
         <div>
           {/* Biểu đồ doanh thu */}
-          <div className="card shadow-sm mb-4">
+          <div className="shadow-sm mb-4 card">
             <div className="card-body">
               <h2 className="card-title">Doanh thu bán hàng</h2>
               {loading ? (
@@ -288,7 +288,7 @@ const TrangChu = () => {
           </div>
 
           {/* Bảng thống kê Top 5 sản phẩm bán chạy nhất */}
-          <div className="card shadow-sm">
+          <div className="shadow-sm card">
             <div className="card-body">
               <h2 className="card-title">Top 5 Sản Phẩm Bán Chạy Nhất</h2>
               {loading ? (
@@ -422,7 +422,7 @@ const TrangChu = () => {
         </Modal>
       </section>
       <section className="p-4">
-        <div className="card shadow-sm mb-4">
+        <div className="shadow-sm mb-4 card">
           <div className="card-body">
             <h2 className="card-title">Đơn hàng gần đây</h2>
             {/* Kiểm tra nếu đang tải dữ liệu */}
@@ -489,14 +489,14 @@ const TrangChu = () => {
       </section>
 
       <section className="p-4">
-        <div className="card shadow-sm">
+        <div className="shadow-sm card">
           <div className="card-body">
             <h2 className="card-title">Cảnh báo tồn kho</h2>
             <ul className="list-group list-group-flush">
               {loading ? (
                 // Hiển thị loading khi dữ liệu chưa được tải
                 <li className="list-group-item text-center">
-                  <div className="spinner-border text-primary" role="status">
+                  <div className="text-primary spinner-border" role="status">
                     <span className="visually-hidden">Đang tải...</span>
                   </div>
                 </li>
@@ -512,7 +512,7 @@ const TrangChu = () => {
                     >
                       {product._id.title} ({product._id.color},{" "}
                       {product._id.storage} )
-                      <span className="badge bg-danger">
+                      <span className="bg-danger badge">
                         {product.totalStock} Sản phẩm
                       </span>
                     </li>
@@ -619,18 +619,18 @@ const TrangChu = () => {
     // <div className="container-fluid">
     //   <main className="w-100">
     //     {/* Header */}
-    //     <header className="d-flex justify-content-between align-items-center p-4 bg-white shadow-sm">
+    //     <header className="bg-white shadow-sm p-4 d-flex justify-content-between align-items-center">
     //       <h1 className="text-primary">Bảng Tổng Hợp</h1>
     //     </header>
 
     //     {/* Statistics Section */}
     //     <section className="p-4">
-    //       <div className="row g-3 mb-4">
+    //       <div className="mb-4 row g-3">
     //         {/* Tổng đơn hàng */}
     //         <div className="col-lg-3 col-md-6">
-    //           <div className="card text-center shadow-sm">
+    //           <div className="shadow-sm text-center card">
     //             <div className="card-body">
-    //               <h3 className="card-title text-primary">
+    //               <h3 className="text-primary card-title">
     //                 {stats.totalOrders}
     //               </h3>
     //               <p className="card-text">Tổng đơn hàng</p>
@@ -640,9 +640,9 @@ const TrangChu = () => {
 
     //         {/* Tổng sản phẩm */}
     //         <div className="col-lg-3 col-md-6">
-    //           <div className="card text-center shadow-sm">
+    //           <div className="shadow-sm text-center card">
     //             <div className="card-body">
-    //               <h3 className="card-title text-success">
+    //               <h3 className="text-success card-title">
     //                 {stats.totalProducts}
     //               </h3>
     //               <p className="card-text">Tổng sản phẩm</p>
@@ -652,9 +652,9 @@ const TrangChu = () => {
 
     //         {/* Tổng đơn đang chờ */}
     //         <div className="col-lg-3 col-md-6">
-    //           <div className="card text-center shadow-sm">
+    //           <div className="shadow-sm text-center card">
     //             <div className="card-body">
-    //               <h3 className="card-title text-warning">
+    //               <h3 className="text-warning card-title">
     //                 {stats.totalOrdersPending}
     //               </h3>
     //               <p className="card-text">Đơn hàng chờ</p>
@@ -664,9 +664,9 @@ const TrangChu = () => {
 
     //         {/* Tổng đơn chưa thanh toán */}
     //         <div className="col-lg-3 col-md-6">
-    //           <div className="card text-center shadow-sm">
+    //           <div className="shadow-sm text-center card">
     //             <div className="card-body">
-    //               <h3 className="card-title text-danger">
+    //               <h3 className="text-danger card-title">
     //                 {stats.totalOrdersUnpaid}
     //               </h3>
     //               <p className="card-text">Đơn hàng chưa thanh toán</p>
@@ -676,9 +676,9 @@ const TrangChu = () => {
 
     //         {/* Tổng doanh thu */}
     //         <div className="col-lg-3 col-md-6">
-    //           <div className="card text-center shadow-sm">
+    //           <div className="shadow-sm text-center card">
     //             <div className="card-body">
-    //               <h3 className="card-title text-info">
+    //               <h3 className="text-info card-title">
     //                 {stats.totalRevenue.toLocaleString("vi-VN")} VND
     //               </h3>
     //               <p className="card-text">Doanh thu</p>
@@ -688,9 +688,9 @@ const TrangChu = () => {
 
     //         {/* Tổng đơn hủy */}
     //         <div className="col-lg-3 col-md-6">
-    //           <div className="card text-center shadow-sm">
+    //           <div className="shadow-sm text-center card">
     //             <div className="card-body">
-    //               <h3 className="card-title text-danger">
+    //               <h3 className="text-danger card-title">
     //                 {stats.totalOrderCancel}
     //               </h3>
     //               <p className="card-text">Đơn hàng huỷ</p>
@@ -700,9 +700,9 @@ const TrangChu = () => {
 
     //         {/* Tổng người dùng */}
     //         <div className="col-lg-3 col-md-6">
-    //           <div className="card text-center shadow-sm">
+    //           <div className="shadow-sm text-center card">
     //             <div className="card-body">
-    //               <h3 className="card-title text-primary">{stats.totalUser}</h3>
+    //               <h3 className="text-primary card-title">{stats.totalUser}</h3>
     //               <p className="card-text">Số lượng người dùng</p>
     //             </div>
     //           </div>
@@ -710,9 +710,9 @@ const TrangChu = () => {
 
     //         {/* Tổng người dùng online */}
     //         <div className="col-lg-3 col-md-6">
-    //           <div className="card text-center shadow-sm">
+    //           <div className="shadow-sm text-center card">
     //             <div className="card-body">
-    //               <h3 className="card-title text-success">
+    //               <h3 className="text-success card-title">
     //                 {stats.totalUserOnline}
     //               </h3>
     //               <p className="card-text">Người dùng online</p>
@@ -723,7 +723,7 @@ const TrangChu = () => {
     //     </section>
 
     //     <section className="p-4">
-    //       <div className="card shadow-sm mb-4">
+    //       <div className="shadow-sm mb-4 card">
     //         <div className="card-body">
     //           <h2 className="card-title">Đơn hàng gần đây</h2>
     //           {/* Kiểm tra nếu đang tải dữ liệu */}
@@ -791,14 +791,14 @@ const TrangChu = () => {
 
     //     {/* Top Customers */}
     //     <section className="p-4">
-    //       <div className="card shadow-sm">
+    //       <div className="shadow-sm card">
     //         <div className="card-body">
     //           <h2 className="card-title">Cảnh báo tồn kho</h2>
     //           <ul className="list-group list-group-flush">
     //             {loading ? (
     //               // Hiển thị loading khi dữ liệu chưa được tải
     //               <li className="list-group-item text-center">
-    //                 <div className="spinner-border text-primary" role="status">
+    //                 <div className="text-primary spinner-border" role="status">
     //                   <span className="visually-hidden">Đang tải...</span>
     //                 </div>
     //               </li>
@@ -814,7 +814,7 @@ const TrangChu = () => {
     //                   >
     //                     {product._id.title} ({product._id.color},{" "}
     //                     {product._id.storage} )
-    //                     <span className="badge bg-danger">
+    //                     <span className="bg-danger badge">
     //                       {product.totalStock} Sản phẩm
     //                     </span>
     //                   </li>

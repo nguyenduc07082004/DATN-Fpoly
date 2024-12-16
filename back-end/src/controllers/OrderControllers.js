@@ -27,6 +27,7 @@ export const checkout = async (req, res, next) => {
       const variant = product.variants.find(
         (v) => v._id.toString() === item.variantId.toString()
       );
+      // check số lượng trong kho
       if (variant && variant.quantity < item.quantity) {
         return res.status(400).json({
           message: `Không đủ số lượng cho sản phẩm ${product.title} (Màu sắc: ${variant.color}). Số lượng tồn kho: ${variant.quantity}`,

@@ -47,7 +47,7 @@ export const getDashboard = async (req, res) => {
     const totalUser = await User.countDocuments();
     const totalUserOnline = await User.countDocuments({ is_active: true });
     const recentOrders = await Order.find({})
-      .sort({ createdAt: -1 })
+      .sort({ created_at: -1 })
       .limit(5)
       .populate({
         path: "items",
