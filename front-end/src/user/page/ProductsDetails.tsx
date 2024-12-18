@@ -24,7 +24,9 @@ import { Variant } from "../../interfaces/Products";
 import toastr from 'toastr';
 import 'toastr/build/toastr.min.css'
 import Swal from "sweetalert2";
-const colorMapping = {
+import io from "socket.io-client"
+const socket = io(baseURL)
+const colorMapping = { 
   Đen: "#000000",    
   Trắng: "#FFFFFF",  
   Xanh: "#0000FF",   
@@ -232,6 +234,12 @@ const handleMainImageChange = (image:{url:string}) => {
 
   useEffect(() => {
     getData();
+    socket.on("new_product", () => {
+      getData();
+    });
+    return () => {
+      socket.off("new_product")
+    };
   }, [productId]);
 
   if (loading) {

@@ -20,6 +20,7 @@ const CateForm = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const [slug, setSlug] = useState<string>("");
+  const [name, setName] = useState<string>("");
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [image, setImage] = useState("");
@@ -43,6 +44,7 @@ const CateForm = () => {
         const data = await ins.get(`/categories/${id}`);
         reset(data.data);
         setSlug(data.data.slug);
+        setName(data.data.name)
         if (data.data.image) {
           setImage(data.data.image);
         }
@@ -53,10 +55,11 @@ const CateForm = () => {
   // Khi tên thay đổi, tự động tạo slug
   const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newName = e.target.value;
+    setName(newName);
     setValue("name", newName);
-    const newSlug = generateSlug(newName); // Sử dụng hàm generateSlug
+    const newSlug = generateSlug(newName); 
     setSlug(newSlug);
-    setValue("slug", newSlug); // Cập nhật slug trong form
+    setValue("slug", newSlug); 
   };
 
   // Hàm xử lý thay đổi ảnh
@@ -78,7 +81,7 @@ const CateForm = () => {
     e.preventDefault();
 
     const formData = new FormData();
-    formData.append("name", slug);
+    formData.append("name", name);
     formData.append("slug", slug);
 
     if (selectedFile) {
