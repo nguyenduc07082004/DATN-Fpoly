@@ -8,6 +8,7 @@ const categorySchema = new Schema({
   status: { type: String, enum: ["active", "inactive"], required: true },
   created_at: { type: Date, default: Date.now },
   updated_at: { type: Date, default: Date.now },
+  deleted_at: { type: Date, default: null },
 });
 
 export default model("Category", categorySchema);
