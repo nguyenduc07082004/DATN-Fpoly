@@ -127,6 +127,7 @@ const Vnpay = () => {
           setDiscountCode("");
           setDiscountValue(0);
           setDiscountAmount(0);
+          navigate("/checkout");
         } else {
           Swal.fire({
             icon: "error",
