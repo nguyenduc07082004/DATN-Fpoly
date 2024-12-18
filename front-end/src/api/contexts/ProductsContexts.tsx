@@ -90,8 +90,12 @@ export const ProdProvider = ({ children }: { children: React.ReactNode }) => {
     socket.on("orderCreated", (data) => {
       fetchProducts();
     });
+    socket.on("new_product", (data) => {
+      fetchProducts();
+    });
     return () => {
       socket.off("orderCreated");
+      socket.off("new_product");
     };
   }, []);
 
