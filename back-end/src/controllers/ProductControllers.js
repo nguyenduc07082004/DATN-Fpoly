@@ -137,7 +137,7 @@ export const createVariant = async (req, res) => {
     }
 
     const createdVariant = await productService.createVariant(productId, variantData, images);
-
+    io.emit('new_product' , createdVariant);
     if (!createdVariant) {
       return res.status(404).json({
         message: getMessage(lang, "error", "CREATE_VARIANT_FAIL"),
