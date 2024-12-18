@@ -7,9 +7,19 @@ import mongoose from "mongoose";
 // Lấy danh sách sản phẩm
 export const getAllProducts = async () => {
   try {
-    return await Product.find().populate("categories", "name description");
+    const products = await Product.find({ deleted_at: null });
+
+    const productsWithValidVariants = products.map((product) => {
+      const validVariants = product.variants.filter((variant) => variant.deleted_at === null);
+      return {
+        ...product.toObject(), 
+        variants: validVariants, 
+      };
+    });
+
+    return productsWithValidVariants;
   } catch (error) {
-    throw error; 
+    throw error;
   }
 };
 
@@ -18,7 +28,8 @@ export const getProductsWithPriceRange = async () => {
     const products = await Product.aggregate([
       {
         $match: {
-          variants: { $ne: [] } 
+          variants: { $ne: [] },
+          deleted_at: null
         }
       },
       {
@@ -59,22 +70,31 @@ export const getProductsWithPriceRange = async () => {
 export const getProductById = async (productId) => {
   try {
     const product = await Product.findById(productId)
-    .populate("categories", "name description")  
-    .exec();  
-  
-  for (let variant of product.variants) {
-    const variantImages = await VariantImage.find({ variant_id: variant._id }); 
-    variant.variantImages = variantImages;
-  }
+      .populate("categories", "name description")
+      .exec();
 
-        if (!product) {
-      throw new Error("Product not found"); 
+    if (!product) {
+      throw new Error("Product not found");
     }
+
+    // Lọc biến thể có deleted_at là null
+    product.variants = product.variants.filter((variant) => variant.deleted_at === null);
+
+    // Lấy tất cả ảnh của các biến thể cùng một lúc
+    const variantIds = product.variants.map(variant => variant._id);  // Lấy danh sách ID của các biến thể
+    const variantImages = await VariantImage.find({ variant_id: { $in: variantIds }, deleted_at: null });
+
+    // Gán ảnh vào từng biến thể
+    product.variants.forEach((variant) => {
+      variant.variantImages = variantImages.filter(image => image.variant_id.toString() === variant._id.toString());
+    });
+
     return product;
   } catch (error) {
     throw error;
   }
 };
+
 
 // Thêm sản phẩm
 export const addProduct = async (productData) => {
@@ -99,14 +119,6 @@ export const updateProduct = async (productId, updateData) => {
     throw new Error('Failed to update product');
   }
 };
-
-
-// Xóa sản phẩm
-export const deleteProduct = async (productId) => {
-  return await Product.findByIdAndDelete(productId);
-};
-
-
 
 export const createVariant = async (productId, variantData, files) => {
   // Lấy thư mục gốc của dự án
@@ -218,7 +230,7 @@ export const getFilteredProductsService = async (filters, pagination) => {
     const totalPages = Math.ceil(totalCount / limit);
 
     // Lấy các sản phẩm với phân trang
-    const products = await Product.find(query)
+    const products = await Product.find({...query, deleted_at: null})
       .populate("variants")
       .skip((page - 1) * limit)
       .limit(limit)

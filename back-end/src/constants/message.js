@@ -87,6 +87,7 @@ const messages = Object.freeze({
       IMAGE_REQUIRED: "Please upload an image",
       UPDATE_CATEGORY_FAIL: "Failed to update category",
       DELETE_CATEGORY_FAIL: "Failed to delete category",
+      CATEGORY_HAS_PRODUCTS: "Category has products",
     },
   },
   vi: {
@@ -177,6 +178,7 @@ const messages = Object.freeze({
       IMAGE_REQUIRED: "Vui lòng tải lên hình ảnh!",
       UPDATE_CATEGORY_FAIL: "Cập nhật danh mục thất bại!",
       DELETE_CATEGORY_FAIL: "Xóa danh mục thất bại!",
+      CATEGORY_HAS_PRODUCTS: "Không thể xoá danh mục vì có sản phẩm liên quan chưa bị xoá!",
     },
   },
 });

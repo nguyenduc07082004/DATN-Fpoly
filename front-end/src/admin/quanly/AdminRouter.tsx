@@ -2,8 +2,6 @@ import Sidebar from "../Sidebar";
 import { Route, Routes } from "react-router-dom";
 import "../../App.scss";
 import QLSP from "./QLSP";
-
-import Form from "../form/AddForm";
 import QLTK from "./QLTK";
 import QLBL from "./QLBL";
 import QLDM from "./QLDM";
@@ -20,6 +18,7 @@ import OrderDetails from "./OrderDetails";
 import EditVariantsForm from "../form/EditVariant";
 import Invoice from "./Invoice";
 import QLVC from "./QLVC";
+import Trash from "./Trash";
 function Dashboard() {
   const { user } = useContext(AuthContext) as AuthContextType;
 
@@ -59,6 +58,7 @@ function Dashboard() {
             <Route path="/qldm/edit/:id" element={<CateForm />} />
             {/* QLHD */}
             <Route path="/qlhd" element={<Invoice />} />
+            <Route path="/trash" element={<Trash/>}/>
           </Routes>
         </div>
       </div>

@@ -1,11 +1,12 @@
 import Category from "../models/CategoryModels.js";
 import getMessage from "../utils/getMessage.js";
+import Product from "../models/ProductModels.js"
 import {io} from "../../index.js"
 // Lấy danh sách danh mục
 export const getCategory = async (req, res) => {
   const lang = req.lang;
   try {
-    const category = await Category.find();
+    const category = await Category.find({deleted_at: null});
     res.status(200).json(category);
   } catch (error) {
     res.status(500).json({
@@ -128,13 +129,24 @@ export const updateCategory = async (req, res) => {
 export const deleteCategory = async (req, res) => {
   const lang = req.lang;
   try {
-    const category = await Category.findByIdAndDelete(req.params.id);
+    const category = await Category.findById(req.params.id);
 
     if (!category) {
       return res.status(404).json({
         message: getMessage(lang, 'error', 'CATEGORY_NOT_FOUND') || "Không tìm thấy danh mục",
       });
     }
+
+    const productsWithCategory = await Product.find({ categories: category._id, deleted_at: null });
+
+    if (productsWithCategory.length > 0) {
+      return res.status(400).json({
+        message: getMessage(lang, 'error', 'CATEGORY_HAS_PRODUCTS') || "Không thể xoá danh mục vì có sản phẩm liên quan chưa bị xoá",
+      });
+    }
+
+    category.deleted_at = new Date(); 
+    await category.save();  
 
     res.status(200).json({
       message: getMessage(lang, 'success', 'DELETE_CATEGORY_SUCCESS') || "Xóa danh mục thành công",
@@ -146,3 +158,4 @@ export const deleteCategory = async (req, res) => {
     });
   }
 };
+

@@ -3,6 +3,7 @@ import { createContext, useEffect, useReducer, useState } from "react";
 import ins from "..";
 import { Category } from "../../interfaces/Category";
 import categoryReducer from "../reducers/CategoryReducers";
+import Swal from "sweetalert2";
 
 export type CateContextType = {
   dataDM: { category: Category[] };
@@ -67,11 +68,24 @@ export const CateProvider = ({ children }: { children: React.ReactNode }) => {
   const onDel = (_id: string) => {
     (async () => {
       if (confirm("SURE?")) {
-        await ins.delete(`/categories/${_id}`);
-        dispatch({ type: "DELETE_CATEGORY", payload: _id });
+        try {
+          const response = await ins.delete(`/categories/${_id}`);
+          
+          dispatch({ type: "DELETE_CATEGORY", payload: _id });
+          fetchProducts();
+  
+          Swal.fire('Thành công!', 'Xoá danh mục thành công!', 'success');
+          return response;
+        } catch (error : any) {
+         
+          Swal.fire({
+            icon: 'error',
+            title: 'Lỗi!',
+            text:  error.response.data.message
+          });
+        }
       }
     })();
-    fetchProducts();
   };
 
   const onSubmitCategory = async (category: Category) => {
