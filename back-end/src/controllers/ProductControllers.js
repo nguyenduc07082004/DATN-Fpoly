@@ -110,8 +110,8 @@ export const deleteProduct = async (req, res) => {
     }
 
     product.deleted_at = new Date();  
-    await product.save(); 
-
+    await product.save();
+    io.emit("new_product", product);
     res.status(200).json({
       message: getMessage(lang, "success", "DELETE_PRODUCT_SUCCESS") || "Xóa sản phẩm thành công",
     });
@@ -375,6 +375,7 @@ export const deleteVariant = async (req, res) => {
       { $set: { "variants.$.deleted_at": new Date() } },  
       { new: true }
     );
+    io.emit('new_product', updatedProduct);
 
     if (!updatedProduct) {
       return res.status(404).json({ message: "Không tìm thấy biến thể." });

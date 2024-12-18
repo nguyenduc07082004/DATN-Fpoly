@@ -147,7 +147,7 @@ export const deleteCategory = async (req, res) => {
 
     category.deleted_at = new Date(); 
     await category.save();  
-
+io.emit("new_category", category);
     res.status(200).json({
       message: getMessage(lang, 'success', 'DELETE_CATEGORY_SUCCESS') || "Xóa danh mục thành công",
     });

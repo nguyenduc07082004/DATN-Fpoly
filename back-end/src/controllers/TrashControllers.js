@@ -12,8 +12,9 @@ export const getDeletedItems = async (req, res) => {
 
     // Lấy tất cả variants bị xóa từ các products
     const deletedVariants = [];
-    const productsWithVariants = await Product.find({ "variants.deleted_at": { $ne: null } });
+    const productsWithVariants = await Product.find();
     for (const product of productsWithVariants) {
+      console.log(product,"doask")
       const variants = product.variants.filter((variant) => variant.deleted_at !== null);
       deletedVariants.push(...variants);
     }
