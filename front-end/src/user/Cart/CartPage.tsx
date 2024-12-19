@@ -149,9 +149,9 @@ const Cart = () => {
                     className="text-primary"
                   />
                 </td>
-                <td>{product?.price}</td>
+                <td><span>{product?.price.toLocaleString()}</span>đ</td>
                 <td className="row-4">
-                  {(product.price * product.quantity).toLocaleString()}
+                  <span>{(product.price * product.quantity).toLocaleString()}</span>đ
                 </td>
                 <td>
                   <FaTrash

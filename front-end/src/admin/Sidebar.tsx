@@ -179,7 +179,7 @@ const AdminSidebar = () => {
               Quản lý vouchers
             </Link>
           </li>
-          <li>
+          {/* <li>
             <Link to="/admin/trash" className="text-white nav-link">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -196,7 +196,7 @@ const AdminSidebar = () => {
                 </svg>
               Thùng rác
             </Link>
-          </li>
+          </li> */}
           <li>
             <Link to="/" className="text-white nav-link">
               <svg
