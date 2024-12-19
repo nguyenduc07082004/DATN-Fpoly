@@ -9,6 +9,7 @@
     "express": "^4.21.1",
     "jspdf": "^2.5.2",
     "morgan": "^1.10.0",
+    "node-cron": "^3.0.3",
     "querystring": "^0.2.1",
     "react-chartjs-2": "^5.2.0",
     "react-redux": "^9.1.2",
