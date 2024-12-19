@@ -2,6 +2,8 @@ import * as productService from "../services/ProductService.js";
 import  getMessage from "../utils/getMessage.js"
 import Product from "../models/ProductModels.js"
 import VariantImage from "../models/VariantImageModels.js"
+import Order from "../models/OrderModels.js"; 
+import OrderItem from "../models/OrderItemModels.js"
 import {io} from "../../index.js"
   // Lấy danh sách sản phẩm
  export const getProducts = async (req, res, next) => {
@@ -98,14 +100,20 @@ export const updateProduct = async (req, res) => {
 export const deleteProduct = async (req, res) => {
   const lang = req.lang;
   try {
-    const deletedProduct = await productService.deleteProduct(req.params.id);
-    if (!deletedProduct) {
+    // Tìm sản phẩm theo ID
+    const product = await Product.findById(req.params.id);
+
+    if (!product) {
       return res.status(404).json({
-        message: getMessage(lang, "error", "DELETE_PRODUCT_FAIL"),
+        message: getMessage(lang, "error", "PRODUCT_NOT_FOUND") || "Không tìm thấy sản phẩm",
       });
     }
+
+    product.deleted_at = new Date();  
+    await product.save();
+    io.emit("new_product", product);
     res.status(200).json({
-      message: getMessage(lang, "success", "DELETE_PRODUCT_SUCCESS"),
+      message: getMessage(lang, "success", "DELETE_PRODUCT_SUCCESS") || "Xóa sản phẩm thành công",
     });
   } catch (error) {
     res.status(500).json({
@@ -129,7 +137,7 @@ export const createVariant = async (req, res) => {
     }
 
     const createdVariant = await productService.createVariant(productId, variantData, images);
-
+    io.emit('new_product' , createdVariant);
     if (!createdVariant) {
       return res.status(404).json({
         message: getMessage(lang, "error", "CREATE_VARIANT_FAIL"),
@@ -343,31 +351,43 @@ export const deleteVariant = async (req, res) => {
   try {
     const { product_id, variant_id } = req.params;
 
-    const updatedProduct = await Product.findByIdAndUpdate(
-      product_id,
-      {
-        $pull: { variants: { _id: variant_id } },
-      },
-      { new: true } 
+    // Tìm các OrderItem có product và variantId phù hợp
+    const orderItems = await OrderItem.find({
+      product: product_id,
+      variantId: variant_id,
+    });
+
+    const orderIds = orderItems.map((item) => item.order_id);
+
+    const unfinishedOrders = await Order.find({
+      _id: { $in: orderIds },  
+      status: { $nin: ["Success", "Cancelled"] }  
+    });
+
+    if (unfinishedOrders.length > 0) {
+      return res.status(400).json({
+        message: "Không thể xoá biến thể vì vẫn có đơn chưa hoàn thành hoặc đang giao.",
+      });
+    }
+
+    const updatedProduct = await Product.findOneAndUpdate(
+      { _id: product_id, "variants._id": variant_id },
+      { $set: { "variants.$.deleted_at": new Date() } },  
+      { new: true }
     );
+    io.emit('new_product', updatedProduct);
 
     if (!updatedProduct) {
-      return res.status(404).json({ message: "Product not found." });
+      return res.status(404).json({ message: "Không tìm thấy biến thể." });
     }
 
-    const isVariantDeleted = !updatedProduct.variants.some(
-      (variant) => variant._id.toString() === variant_id
-    );
-
-    if (!isVariantDeleted) {
-      return res.status(404).json({ message: "Variant not found." });
-    }
-
-    res.status(200).json({ message: "Variant deleted successfully." });
+    res.status(200).json({ message: "Xoá biến thể thành công" });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.status(500).json({ message: "Error deleting variant: " + error.message });
   }
 };
+
+
 
 
 export const checkStock = async (req, res) => {

@@ -57,11 +57,11 @@ const Details = () => {
         );
         // Cập nhật danh sách sản phẩm sau khi xóa
         fetchProduct();
-      } catch (error) {
+      } catch (error:any) {
         console.error("Lỗi khi xóa biến thể:", error);
         Swal.fire(
           "Lỗi!",
-          "Đã xảy ra lỗi khi xóa biến thể. Vui lòng thử lại!",
+          error.response.data.message,
           "error"
         );
       }

@@ -5,6 +5,7 @@ import ins from "..";
 import { Products } from "../../interfaces/Products";
 import { baseURL } from "..";
 import io from "socket.io-client";
+import Swal from "sweetalert2";
 export type ProdContextType = {
   onDel: (_id: string) => void;
   dispatch: React.Dispatch<any>;
@@ -89,21 +90,43 @@ export const ProdProvider = ({ children }: { children: React.ReactNode }) => {
     socket.on("orderCreated", (data) => {
       fetchProducts();
     });
+    socket.on("new_product", (data) => {
+      fetchProducts();
+    });
     return () => {
       socket.off("orderCreated");
+      socket.off("new_product");
     };
   }, []);
 
-  //Logic xóa sản phẩm
   const onDel = (_id: string) => {
     (async () => {
-      if (confirm("SURE?")) {
-        await ins.delete(`/products/${_id}`);
-        dispatch({ type: "DELETE_PRODUCT", payload: _id });
+      if (confirm("SURE?")) { 
+        try {
+          const response = await ins.delete(`/products/${_id}`);
+          
+          dispatch({ type: "DELETE_PRODUCT", payload: _id });
+          fetchProducts(); 
+          Swal.fire({
+            icon: 'success',
+            title: 'Deleted!',
+            text: 'Xoá sản phẩm thành công',
+          });
+  
+          return response;
+        } catch (error:any) {
+          console.error('Error deleting product:', error);
+          
+          Swal.fire({
+            icon: 'error',
+            title: 'Error!',
+            text: error.response.data.message,
+          });
+        }
       }
     })();
-    fetchProducts();
   };
+  
 
   return (
     <ProdContext.Provider

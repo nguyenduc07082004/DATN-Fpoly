@@ -98,7 +98,7 @@ const Cart = () => {
         Giỏ hàng
       </h1>
       {/* Bảng hiển thị thông tin người dùng */}
-      <h2>Thông tin người dùng</h2>
+      <h2>Thông tin giỏ hàng</h2>
       {/* <table className="table table-hover">
         <tbody>
           <tr>

@@ -21,8 +21,8 @@ const variantSchema = new Schema({
     required: true,
     min:[0, "Quantity cannot be negative"],
   },
-    variantImages: [{ type: Schema.Types.ObjectId, ref: "VariantImage" }]
-
+    variantImages: [{ type: Schema.Types.ObjectId, ref: "VariantImage" }],
+    deleted_at: { type: Date, default: null },
 });
 
 const productSchema = new Schema({
@@ -34,6 +34,7 @@ const productSchema = new Schema({
   variants: { type: [variantSchema], default: [] }, 
   created_at: { type: Date, default: Date.now },
   updated_at: { type: Date, default: Date.now },
+  deleted_at: { type: Date, default: null },
 });
 
 // Xuất mô hình Product
