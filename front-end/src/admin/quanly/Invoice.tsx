@@ -145,7 +145,7 @@ const InvoiceList = () => {
                 <strong>Ngày tạo:</strong>{" "}
                 {new Date(selectedInvoice.createdAt).toLocaleDateString()}
               </Typography>
-              <Typography>
+              {/* <Typography>
                 <strong>Ngày giao hàng:</strong>{" "}
                 {selectedInvoice.orderId?.delivered_at &&
                 selectedInvoice.orderId?.delivered_at !== null
@@ -153,7 +153,7 @@ const InvoiceList = () => {
                       selectedInvoice.orderId.delivered_at
                     ).toLocaleDateString()
                   : "Chưa giao hàng"}
-              </Typography>
+              </Typography> */}
 
               <Typography variant="subtitle1" sx={{ marginTop: "20px" }}>
                 <strong>Danh sách sản phẩm:</strong>

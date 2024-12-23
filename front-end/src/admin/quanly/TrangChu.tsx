@@ -182,7 +182,7 @@ const TrangChu = () => {
   return (
     <div
       className="bg-light rounded-3 content1"
-      style={{ height: "120rem", width: "1170px" }}
+      style={{ height: "170rem", width: "1170px" }}
     >
 <section className="p-4">
 <div className="shadow-sm text-center card">
@@ -193,7 +193,7 @@ const TrangChu = () => {
       {/* Nút Tìm */}
       <input
       type="date"
-      className="form-control w-100 me-2"
+      className="w-100 form-control me-2"
       value={selectedDate} 
       onChange={(e) => setSelectedDate(e.target.value)} 
       max={new Date().toISOString().split('T')[0]} 
