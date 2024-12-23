@@ -112,3 +112,23 @@ export const getCommentsWithReplies = async (req, res) => {
   }
 };
 
+export const deleteComment = async (req, res) => {
+  const lang = req.lang || "en"; 
+  const commentId = req.params.id;
+
+  try {
+    const comment = await Comment.findById(commentId);
+    if (!comment) {
+      return res.status(404).json({ success: false, message: getMessage(lang, 'error', 'COMMENT_NOT_FOUND') });
+    }
+
+    await Reply.deleteMany({ commentId: commentId });
+
+    await Comment.findByIdAndDelete(commentId);
+
+    return res.status(200).json({ success: true, message: getMessage(lang, 'success', 'COMMENT_DELETED') });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ success: false, message: getMessage(lang, 'error', 'SERVER_ERROR') });
+  }
+};

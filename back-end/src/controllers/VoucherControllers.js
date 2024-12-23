@@ -69,7 +69,7 @@ export const getVoucherByCode = async (req, res) => {
 };
 
 export const createVoucher = async (req, res) => {
-    const { code, discount, expiration_date, min_order_value, max_discount_amount } = req.body;
+    const { code, discount, expiration_date, min_order_value, max_discount_amount, start_date } = req.body;
 
     try {
         // Kiểm tra xem voucher đã tồn tại chưa
@@ -84,6 +84,10 @@ export const createVoucher = async (req, res) => {
         }
         if (new Date(expiration_date) < new Date()) {
             return res.status(400).json({ error: 'Ngày hết hạn phải lớn hơn ngày hiện tại' });
+        }
+
+        if (new Date(start_date) >= new Date(expiration_date)) {
+            return res.status(400).json({ error: 'Ngày hết hạn phải lớn hoặc bằng ngày bắt đầu' });
         }
 
         // Kiểm tra giá trị mới
@@ -143,6 +147,9 @@ export const checkVoucher = async (req, res) => {
         }
 
         const currentDate = new Date();
+        if (new Date(voucher.start_date) > currentDate) {
+            return res.status(400).json({ error: 'Mã giảm giá chưa bắt đầu' });
+        }
         if (new Date(voucher.expiration_date) < currentDate) {
             return res.status(400).json({ error: 'Mã giảm giá đã hết hạn' });
         }

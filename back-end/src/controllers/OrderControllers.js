@@ -397,7 +397,7 @@ export const getOrderByUserID = async (req, res) => {
     const skip = (page - 1) * limit;
 
     const orders = await Order.find({ user_id: userId })
-      .sort({ created_at: -1 }) // Sort by created_at in descending order (latest first)
+      .sort({ created_at: -1 }) 
       .skip(skip)
       .limit(limit)
       .populate({

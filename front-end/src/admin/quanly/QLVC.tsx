@@ -24,6 +24,7 @@ const VoucherManagement: React.FC = () => {
   const [code, setCode] = useState<string>("");
   const [discount, setDiscount] = useState<number>(0);
   const [expirationDate, setExpirationDate] = useState<string>("");
+  const [startDate, setStartDate] = useState<string>("");
   const [message, setMessage] = useState({
     type: "",
     message: "",
@@ -39,6 +40,8 @@ const VoucherManagement: React.FC = () => {
   const [maxDiscountAmount, setMaxDiscountAmount] = useState<number | null>(
     null
   );
+
+  console.log(expirationDate);
 
   // Hàm lấy danh sách voucher với tìm kiếm và phân trang
   useEffect(() => {
@@ -78,15 +81,17 @@ const VoucherManagement: React.FC = () => {
         return;
       }
 
-        if (maxDiscountAmount > minimumOrderAmount) {
-          setMessage({
-            type: "warning",
-            message: "Giá trị giảm giá phải nhỏ hơn hoặc bằng giá trị đơn hàng tối thiểu",
-          })
-        }
+      if (maxDiscountAmount > minimumOrderAmount) {
+        setMessage({
+          type: "warning",
+          message:
+            "Giá trị giảm giá phải nhỏ hơn hoặc bằng giá trị đơn hàng tối thiểu",
+        });
+      }
       const newVoucher = {
         code,
         discount,
+        start_date: startDate,
         expiration_date: expirationDate,
         min_order_value: minimumOrderAmount,
         max_discount_amount: maxDiscountAmount,
@@ -97,6 +102,7 @@ const VoucherManagement: React.FC = () => {
       setCode("");
       setDiscount(0);
       setExpirationDate("");
+      setStartDate("");
       setMinimumOrderAmount(null);
       setMaxDiscountAmount(null);
     } catch (error: any) {
@@ -113,6 +119,7 @@ const VoucherManagement: React.FC = () => {
           ...editVoucher,
           code,
           discount,
+          start_date: startDate,
           expiration_date: expirationDate,
           min_order_value: minimumOrderAmount,
           max_discount_amount: maxDiscountAmount,
@@ -175,7 +182,8 @@ const VoucherManagement: React.FC = () => {
     setEditVoucher(voucher);
     setCode(voucher.code);
     setDiscount(voucher.discount);
-    setExpirationDate(voucher.expiration_date);
+    setStartDate(voucher.start_date.split("T")[0]);
+    setExpirationDate(voucher.expiration_date.split("T")[0]);
     setMinimumOrderAmount(voucher.min_order_value);
     setMaxDiscountAmount(voucher.max_discount_amount);
     setOpenEditDialog(true);
@@ -262,11 +270,29 @@ const VoucherManagement: React.FC = () => {
             onChange={(e) => setMaxDiscountAmount(Number(e.target.value))}
             InputProps={{
               inputProps: {
-                min: 0, // Giá trị tối thiểu
+                min: 0,
               },
             }}
           />
         </Grid>
+        <Grid item xs={12} sm={4}>
+          <TextField
+            label="Ngày bắt đầu"
+            variant="outlined"
+            fullWidth
+            type="date"
+            value={startDate}
+            onChange={(e) => setStartDate(e.target.value)}
+            required
+            InputLabelProps={{
+              shrink: true,
+            }}
+            inputProps={{
+              max: expirationDate || undefined,
+            }}
+          />
+        </Grid>
+
         <Grid item xs={12} sm={4}>
           <TextField
             label="Ngày hết hạn"
@@ -277,7 +303,10 @@ const VoucherManagement: React.FC = () => {
             onChange={(e) => setExpirationDate(e.target.value)}
             required
             InputLabelProps={{
-              shrink: true, // Đảm bảo nhãn luôn hiển thị trên cùng
+              shrink: true,
+            }}
+            inputProps={{
+              min: startDate || undefined,
             }}
           />
         </Grid>
@@ -318,10 +347,16 @@ const VoucherManagement: React.FC = () => {
                     Giảm giá: {voucher.discount}%
                   </Typography>
                   <Typography variant="body2" color="textSecondary">
-                    Giá trị tối thiểu: {voucher.min_order_value.toLocaleString('vi-VN')} VND
+                    Giá trị tối thiểu:{" "}
+                    {voucher.min_order_value.toLocaleString("vi-VN")} VND
                   </Typography>
                   <Typography variant="body2" color="textSecondary">
-                    Giá trị tối đa: {voucher.max_discount_amount.toLocaleString('vi-VN')} VND
+                    Giá trị tối đa:{" "}
+                    {voucher.max_discount_amount.toLocaleString("vi-VN")} VND
+                  </Typography>
+                  <Typography variant="body2" color="textSecondary">
+                    Ngày bắt đầu:{" "}
+                    {new Date(voucher.start_date).toLocaleDateString()}
                   </Typography>
 
                   <Typography variant="body2" color="textSecondary">
@@ -440,6 +475,20 @@ const VoucherManagement: React.FC = () => {
             sx={{ mb: 2 }}
           />
           <TextField
+            label="Start Date"
+            fullWidth
+            variant="outlined"
+            type="date"
+            value={startDate}
+            onChange={(e) => setStartDate(e.target.value)}
+            InputLabelProps={{
+              shrink: true,
+            }}
+            inputProps={{
+              min: expirationDate || undefined,
+            }}
+          />
+          <TextField
             label="Expiration Date"
             fullWidth
             variant="outlined"
@@ -448,6 +497,9 @@ const VoucherManagement: React.FC = () => {
             onChange={(e) => setExpirationDate(e.target.value)}
             InputLabelProps={{
               shrink: true,
+            }}
+            inputProps={{
+              min: startDate || undefined,
             }}
           />
         </DialogContent>
