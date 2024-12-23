@@ -8,8 +8,19 @@ export const getInvoice = async (req, res) => {
         const skip = (page - 1) * pageSize;
 
         const invoices = await Invoice.find()
-            .skip(skip)
-            .limit(pageSize);
+        .populate([
+          {
+            path: 'orderItems.productId',
+            select: 'title description',
+          },
+          {
+            path: 'orderId',
+            select: 'voucher status discount_value receiver_address total_price receiver_name receiver_phone delivered_at',
+          },
+        ]).sort({ createdAt: -1 })
+        .skip(skip)
+        .limit(pageSize);
+      
 
         const totalInvoices = await Invoice.countDocuments();
 

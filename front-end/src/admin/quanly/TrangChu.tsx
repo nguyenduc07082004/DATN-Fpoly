@@ -57,11 +57,11 @@ const TrangChu = () => {
   const [showModal, setShowModal] = useState(false); // Điều khiển modal
   const [selectedProduct, setSelectedProduct] = useState<any>(null); // Lưu thông tin chi tiết sản phẩm
   const [productDetails, setProductDetails] = useState<any>(null);
-  const getData = async () => {
+  const [selectedDate, setSelectedDate] = useState('');
+  const getData = async (date: string) => {
     try {
-      const response = await ins.get(`${baseURL}/dashboard`);
+      const response = await ins.get(`${baseURL}/dashboard?date=${date}`);
       const data = response.data;
-      console.log(data);
       if (response.status === 200) {
         const totalRevenue =
           data.total.totalRevenue.length > 0
@@ -86,7 +86,6 @@ const TrangChu = () => {
       console.log(error);
     }
   };
-  console.log(recentOrders);
   const getTopSellingProducts = async () => {
     try {
       const response = await ins.get(`${baseURL}/orders/top-selling`);
@@ -124,8 +123,16 @@ const TrangChu = () => {
     setProductDetails(null);
   };
 
+  const handleSearch = async () => {
+    await getData(selectedDate)
+  };
+
+  const handleClear = () => {
+    setSelectedDate('');
+  };
+
   useEffect(() => {
-    getData();
+    getData('');
     getTopSellingProducts();
   }, []);
 
@@ -148,7 +155,7 @@ const TrangChu = () => {
     plugins: {
       title: {
         display: true,
-        text: "Tổng quan về doanh số theo ngày",
+        text: "Tổng quan về doanh số",
       },
       tooltip: {
         mode: "index",
@@ -177,101 +184,133 @@ const TrangChu = () => {
       className="bg-light rounded-3 content1"
       style={{ height: "120rem", width: "1170px" }}
     >
-      <section className="p-4">
-        <div className="mb-4 row g-3">
-          {/* Tổng đơn hàng */}
-          <div className="col-lg-3 col-md-6">
-            <div className="shadow-sm text-center card">
-              <div className="card-body">
-                <h3 className="text-primary card-title">{stats.totalOrders}</h3>
-                <p className="card-text">Tổng đơn hàng</p>
-              </div>
-            </div>
-          </div>
+<section className="p-4">
+<div className="shadow-sm text-center card">
+  <div className="card-body">
+    <h5 className="card-title">Chọn ngày</h5>
+    
+    <div className="mt-3 d-flex justify-content-center">
+      {/* Nút Tìm */}
+      <input
+      type="date"
+      className="form-control w-100 me-2"
+      value={selectedDate} 
+      onChange={(e) => setSelectedDate(e.target.value)} 
+      max={new Date().toISOString().split('T')[0]} 
+    />
+      <button
+        className="btn btn-primary me-2"
+        onClick={() => handleSearch()} 
+      >
+        Tìm
+      </button>
+      
+      {/* Nút Clear */}
+      <button
+        className="btn btn-secondary"
+        onClick={() => handleClear()} 
+      >
+        Clear
+      </button>
+    </div>
+  </div>
+</div>
 
-          {/* Tổng sản phẩm */}
-          <div className="col-lg-3 col-md-6">
-            <div className="shadow-sm text-center card">
-              <div className="card-body">
-                <h3 className="text-success card-title">
-                  {stats.totalProducts}
-                </h3>
-                <p className="card-text">Tổng sản phẩm</p>
-              </div>
-            </div>
-          </div>
-
-          {/* Tổng đơn đang chờ */}
-          <div className="col-lg-3 col-md-6">
-            <div className="shadow-sm text-center card">
-              <div className="card-body">
-                <h3 className="text-warning card-title">
-                  {stats.totalOrdersPending}
-                </h3>
-                <p className="card-text">Đơn hàng chờ</p>
-              </div>
-            </div>
-          </div>
-
-          {/* Tổng đơn chưa thanh toán */}
-          <div className="col-lg-3 col-md-6">
-            <div className="shadow-sm text-center card">
-              <div className="card-body">
-                <h3 className="text-danger card-title">
-                  {stats.totalOrdersUnpaid}
-                </h3>
-                <p className="card-text">Đơn hàng chưa thanh toán</p>
-              </div>
-            </div>
-          </div>
-
-          {/* Tổng doanh thu */}
-          <div className="col-lg-3 col-md-6">
-            <div className="shadow-sm text-center card">
-              <div className="card-body">
-                <h3 className="text-info card-title">
-                  {stats.totalRevenue.toLocaleString("vi-VN")} VND
-                </h3>
-                <p className="card-text">Doanh thu</p>
-              </div>
-            </div>
-          </div>
-
-          {/* Tổng đơn hủy */}
-          <div className="col-lg-3 col-md-6">
-            <div className="shadow-sm text-center card">
-              <div className="card-body">
-                <h3 className="text-danger card-title">
-                  {stats.totalOrderCancel}
-                </h3>
-                <p className="card-text">Đơn hàng huỷ</p>
-              </div>
-            </div>
-          </div>
-
-          {/* Tổng người dùng */}
-          <div className="col-lg-3 col-md-6">
-            <div className="shadow-sm text-center card">
-              <div className="card-body">
-                <h3 className="text-primary card-title">{stats.totalUser}</h3>
-                <p className="card-text">Số lượng người dùng</p>
-              </div>
-            </div>
-          </div>
-
-          {/* Tổng người dùng online */}
-          <div className="col-lg-3 col-md-6">
-            <div className="shadow-sm text-center card">
-              <div className="card-body">
-                <h3 className="text-success card-title">
-                  {stats.totalUserOnline}
-                </h3>
-                <p className="card-text">Người dùng online</p>
-              </div>
-            </div>
-          </div>
+  <div className="mb-4 row g-3">
+    {/* Tổng đơn hàng */}
+    <div className="col-lg-3 col-md-6">
+      <div className="shadow-sm text-center card">
+        <div className="card-body">
+          <h3 className="text-primary card-title">{stats.totalOrders}</h3>
+          <p className="card-text">Tổng đơn hàng</p>
         </div>
-      </section>
+      </div>
+    </div>
+
+    {/* Tổng sản phẩm */}
+    <div className="col-lg-3 col-md-6">
+      <div className="shadow-sm text-center card">
+        <div className="card-body">
+          <h3 className="text-success card-title">
+            {stats.totalProducts}
+          </h3>
+          <p className="card-text">Tổng sản phẩm</p>
+        </div>
+      </div>
+    </div>
+
+    {/* Tổng đơn đang chờ */}
+    <div className="col-lg-3 col-md-6">
+      <div className="shadow-sm text-center card">
+        <div className="card-body">
+          <h3 className="text-warning card-title">
+            {stats.totalOrdersPending}
+          </h3>
+          <p className="card-text">Đơn hàng chờ</p>
+        </div>
+      </div>
+    </div>
+
+    {/* Tổng đơn chưa thanh toán */}
+    <div className="col-lg-3 col-md-6">
+      <div className="shadow-sm text-center card">
+        <div className="card-body">
+          <h3 className="text-danger card-title">
+            {stats.totalOrdersUnpaid}
+          </h3>
+          <p className="card-text">Đơn hàng chưa thanh toán</p>
+        </div>
+      </div>
+    </div>
+
+    {/* Tổng doanh thu */}
+    <div className="col-lg-3 col-md-6">
+      <div className="shadow-sm text-center card">
+        <div className="card-body">
+          <h3 className="text-info card-title">
+            {stats.totalRevenue.toLocaleString("vi-VN")} VND
+          </h3>
+          <p className="card-text">Doanh thu</p>
+        </div>
+      </div>
+    </div>
+
+    {/* Tổng đơn hủy */}
+    <div className="col-lg-3 col-md-6">
+      <div className="shadow-sm text-center card">
+        <div className="card-body">
+          <h3 className="text-danger card-title">
+            {stats.totalOrderCancel}
+          </h3>
+          <p className="card-text">Đơn hàng huỷ</p>
+        </div>
+      </div>
+    </div>
+
+    {/* Tổng người dùng */}
+    <div className="col-lg-3 col-md-6">
+      <div className="shadow-sm text-center card">
+        <div className="card-body">
+          <h3 className="text-primary card-title">{stats.totalUser}</h3>
+          <p className="card-text">Số lượng người dùng</p>
+        </div>
+      </div>
+    </div>
+
+    {/* Tổng người dùng online */}
+    <div className="col-lg-3 col-md-6">
+      <div className="shadow-sm text-center card">
+        <div className="card-body">
+          <h3 className="text-success card-title">
+            {stats.totalUserOnline}
+          </h3>
+          <p className="card-text">Người dùng online</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
 
       <section className="p-4">
         <div>
@@ -616,216 +655,6 @@ const TrangChu = () => {
         </Box>
       </Modal>
     </div>
-    // <div className="container-fluid">
-    //   <main className="w-100">
-    //     {/* Header */}
-    //     <header className="bg-white shadow-sm p-4 d-flex justify-content-between align-items-center">
-    //       <h1 className="text-primary">Bảng Tổng Hợp</h1>
-    //     </header>
-
-    //     {/* Statistics Section */}
-    //     <section className="p-4">
-    //       <div className="mb-4 row g-3">
-    //         {/* Tổng đơn hàng */}
-    //         <div className="col-lg-3 col-md-6">
-    //           <div className="shadow-sm text-center card">
-    //             <div className="card-body">
-    //               <h3 className="text-primary card-title">
-    //                 {stats.totalOrders}
-    //               </h3>
-    //               <p className="card-text">Tổng đơn hàng</p>
-    //             </div>
-    //           </div>
-    //         </div>
-
-    //         {/* Tổng sản phẩm */}
-    //         <div className="col-lg-3 col-md-6">
-    //           <div className="shadow-sm text-center card">
-    //             <div className="card-body">
-    //               <h3 className="text-success card-title">
-    //                 {stats.totalProducts}
-    //               </h3>
-    //               <p className="card-text">Tổng sản phẩm</p>
-    //             </div>
-    //           </div>
-    //         </div>
-
-    //         {/* Tổng đơn đang chờ */}
-    //         <div className="col-lg-3 col-md-6">
-    //           <div className="shadow-sm text-center card">
-    //             <div className="card-body">
-    //               <h3 className="text-warning card-title">
-    //                 {stats.totalOrdersPending}
-    //               </h3>
-    //               <p className="card-text">Đơn hàng chờ</p>
-    //             </div>
-    //           </div>
-    //         </div>
-
-    //         {/* Tổng đơn chưa thanh toán */}
-    //         <div className="col-lg-3 col-md-6">
-    //           <div className="shadow-sm text-center card">
-    //             <div className="card-body">
-    //               <h3 className="text-danger card-title">
-    //                 {stats.totalOrdersUnpaid}
-    //               </h3>
-    //               <p className="card-text">Đơn hàng chưa thanh toán</p>
-    //             </div>
-    //           </div>
-    //         </div>
-
-    //         {/* Tổng doanh thu */}
-    //         <div className="col-lg-3 col-md-6">
-    //           <div className="shadow-sm text-center card">
-    //             <div className="card-body">
-    //               <h3 className="text-info card-title">
-    //                 {stats.totalRevenue.toLocaleString("vi-VN")} VND
-    //               </h3>
-    //               <p className="card-text">Doanh thu</p>
-    //             </div>
-    //           </div>
-    //         </div>
-
-    //         {/* Tổng đơn hủy */}
-    //         <div className="col-lg-3 col-md-6">
-    //           <div className="shadow-sm text-center card">
-    //             <div className="card-body">
-    //               <h3 className="text-danger card-title">
-    //                 {stats.totalOrderCancel}
-    //               </h3>
-    //               <p className="card-text">Đơn hàng huỷ</p>
-    //             </div>
-    //           </div>
-    //         </div>
-
-    //         {/* Tổng người dùng */}
-    //         <div className="col-lg-3 col-md-6">
-    //           <div className="shadow-sm text-center card">
-    //             <div className="card-body">
-    //               <h3 className="text-primary card-title">{stats.totalUser}</h3>
-    //               <p className="card-text">Số lượng người dùng</p>
-    //             </div>
-    //           </div>
-    //         </div>
-
-    //         {/* Tổng người dùng online */}
-    //         <div className="col-lg-3 col-md-6">
-    //           <div className="shadow-sm text-center card">
-    //             <div className="card-body">
-    //               <h3 className="text-success card-title">
-    //                 {stats.totalUserOnline}
-    //               </h3>
-    //               <p className="card-text">Người dùng online</p>
-    //             </div>
-    //           </div>
-    //         </div>
-    //       </div>
-    //     </section>
-
-    //     <section className="p-4">
-    //       <div className="shadow-sm mb-4 card">
-    //         <div className="card-body">
-    //           <h2 className="card-title">Đơn hàng gần đây</h2>
-    //           {/* Kiểm tra nếu đang tải dữ liệu */}
-    //           {loading ? (
-    //             <div className="text-center">
-    //               <div className="spinner-border" role="status">
-    //                 <span className="visually-hidden">Loading...</span>
-    //               </div>
-    //               <p>Loading...</p>
-    //             </div>
-    //           ) : (
-    //             <table className="table table-hover">
-    //               <thead>
-    //                 <tr>
-    //                   <th className="col-2">Mã đơn hàng</th>
-    //                   <th className="col-2">Khách hàng</th>
-    //                   <th className="col-4">Sản phẩm</th>
-    //                   <th className="col-2">Trạng thái</th>
-    //                   <th className="col-2">Tổng tiền</th>
-    //                 </tr>
-    //               </thead>
-    //               <tbody>
-    //                 {/* Loop through each order */}
-    //                 {recentOrders.length > 0 &&
-    //                   recentOrders?.map((order) => (
-    //                     <tr key={order._id}>
-    //                       <td className="col-2">{order._id}</td>
-    //                       <td className="col-2">{order.receiver_name}</td>
-    //                       <td className="col-4">
-    //                         {/* Display detailed item information */}
-    //                         {order?.items?.map((item, itemIndex) => (
-    //                           <div key={itemIndex}>
-    //                             {item?.product?.title} ({item?.color},{" "}
-    //                             {item?.storage})
-    //                           </div>
-    //                         ))}
-    //                       </td>
-    //                       <td className="col-2">
-    //                         {/* Show order status */}
-    //                         <span
-    //                           className={`badge ${
-    //                             order?.status === "Completed"
-    //                               ? "bg-success"
-    //                               : order?.status === "Pending"
-    //                               ? "bg-warning"
-    //                               : order?.status === "In Delivery"
-    //                               ? "bg-info"
-    //                               : "bg-danger"
-    //                           }`}
-    //                         >
-    //                           {getStatusText(order?.status)}
-    //                         </span>
-    //                       </td>
-    //                       <td className="col-2">
-    //                         {order?.total_price.toLocaleString("vi-VN")} VND
-    //                       </td>
-    //                     </tr>
-    //                   ))}
-    //               </tbody>
-    //             </table>
-    //           )}
-    //         </div>
-    //       </div>
-    //     </section>
-
-    //     {/* Top Customers */}
-    //     <section className="p-4">
-    //       <div className="shadow-sm card">
-    //         <div className="card-body">
-    //           <h2 className="card-title">Cảnh báo tồn kho</h2>
-    //           <ul className="list-group list-group-flush">
-    //             {loading ? (
-    //               // Hiển thị loading khi dữ liệu chưa được tải
-    //               <li className="list-group-item text-center">
-    //                 <div className="text-primary spinner-border" role="status">
-    //                   <span className="visually-hidden">Đang tải...</span>
-    //                 </div>
-    //               </li>
-    //             ) : (
-    //               // Hiển thị sản phẩm khi dữ liệu đã được tải
-    //               products
-    //                 .filter((product) => product.totalStock < 5)
-    //                 .slice(0, 10) // Lọc sản phẩm có totalStock < 5
-    //                 .map((product, index) => (
-    //                   <li
-    //                     key={index}
-    //                     className="list-group-item d-flex justify-content-between align-items-center"
-    //                   >
-    //                     {product._id.title} ({product._id.color},{" "}
-    //                     {product._id.storage} )
-    //                     <span className="bg-danger badge">
-    //                       {product.totalStock} Sản phẩm
-    //                     </span>
-    //                   </li>
-    //                 ))
-    //             )}
-    //           </ul>
-    //         </div>
-    //       </div>
-    //     </section>
-    //   </main>
-    // </div>
   );
 };
 

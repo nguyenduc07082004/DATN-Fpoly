@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Modal, Box, Typography, TextField, Button } from "@mui/material";
 import ins from "../../api";
 import { baseURL } from "../../api";
+import Swal from "sweetalert2";
 const QLBL = () => {
   const [comments, setComments] = useState<any[]>([]);  
   const [isModalOpen, setIsModalOpen] = useState(false);  
@@ -41,30 +42,57 @@ const QLBL = () => {
         comment._id === selectedComment._id ? { ...comment, reply: response.data.reply } : comment
       ));
       closeModal();
-      alert("Trả lời thành công!");
+      Swal.fire("Thành công", "Trả lời đánh giá thành công", "success");
     } catch (error) {
       console.error("Lỗi khi trả lời bình luận:", error);
-      alert("Có lỗi xảy ra, vui lòng thử lại.");
+      Swal.fire("Lỗi", "Có lỗi xảy ra khi trả lời đánh giá", "error");
     }
   };
 
+  const handleDeleteComment = async (commentId: string) => {
+    // Hiển thị cửa sổ xác nhận
+    const result = await Swal.fire({
+      title: 'Bạn chắc chắn muốn xóa đánh giá này?',
+      text: "Hành động này không thể hoàn tác!",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Xóa',
+      cancelButtonText: 'Hủy',
+      reverseButtons: true
+    });
+  
+    if (result.isConfirmed) {
+      try {
+        await ins.delete(`${baseURL}/comments/${commentId}`);
+        setComments(comments.filter((comment) => comment._id !== commentId));
+        Swal.fire("Thành công", "Xóa đánh giá thành công!", "success");
+      } catch (error) {
+        console.error("Lỗi khi xóa bình luận:", error);
+        Swal.fire("Lỗi", "Có lỗi xảy ra khi xóa đánh giá", "error");
+      }
+    } else {
+      Swal.fire('Hủy', 'Hành động xóa đã bị hủy', 'info');
+    }
+  };
+  
+
   return (
     <div>
-      <h2>Bình luận của khách hàng</h2>
+      <h2>Đánh giá của khách hàng</h2>
       <table className="table">
   <thead>
     <tr>
-      <th>Sản phẩm bình lua</th>
-      <th>Bình luận</th>
-      <th>Ngày bình luận</th>
-      <th>Người bình luận</th>
+      <th>Sản phẩm</th>
+      <th>Lời đánh giá</th>
+      <th>Ngày đánh giá</th>
+      <th>Người đánh giá</th>
       <th>Trả lời</th>
     </tr>
   </thead>
   <tbody>
     {comments.length === 0 ? (
       <tr>
-        <td colSpan={5}>Chưa có bình luận nào</td>
+        <td colSpan={5}>Chưa có đánh giá nào</td>
       </tr>
     ) : (
       comments.map((comment) => (
@@ -74,8 +102,11 @@ const QLBL = () => {
           <td>{new Date(comment.createdAt).toLocaleString()}</td>
           <td>{comment.userId?.last_name}</td>
           <td>
-            <Button variant="outlined" onClick={() => openModal(comment)}>
+            <Button variant="contained" sx={{ marginRight: 1 }} onClick={() => openModal(comment)}>
               Trả lời
+            </Button>
+            <Button variant="contained" color="error" onClick={() => handleDeleteComment(comment._id)}>
+              Xoá
             </Button>
           </td>
         </tr>
@@ -104,10 +135,10 @@ const QLBL = () => {
           }}
         >
           <Typography id="modal-title" variant="h6" component="h2">
-            Trả lời bình luận cho sản phẩm: {selectedComment?.product_name}
+            Trả lời đánh giá cho sản phẩm: {selectedComment?.product_name}
           </Typography>
           <Typography id="modal-description" sx={{ mt: 2 }}>
-            <strong>Bình luận:</strong> {selectedComment?.comment}
+            <strong>Đánh giá:</strong> {selectedComment?.comment}
           </Typography>
 
           <form onSubmit={handleReplySubmit} style={{ marginTop: 16 }}>

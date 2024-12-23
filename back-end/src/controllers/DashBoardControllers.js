@@ -5,19 +5,42 @@ import Order from "../models/OrderModels.js";
 import getMessage from "../utils/getMessage.js";
 export const getDashboard = async (req, res) => {
   try {
-    const totalOrders = await Order.countDocuments();
+    const {date} = req.query;
+    const startDate = date ? new Date(date) : null;
+    const endDate = startDate ? new Date(startDate) : null;
+    if (startDate) endDate.setHours(23, 59, 59, 999); 
+
+   
+    const totalOrders = await Order.countDocuments(
+      startDate
+        ? { created_at: { $gte: startDate, $lte: endDate } }
+        : {}
+    );
     const totalProducts = await Product.countDocuments();
-    const totalOrdersPending = await Order.countDocuments({
-      status: "Pending",
-    });
-    const totalOrdersUnpaid = await Order.countDocuments({
+    const totalOrdersPending = await Order.countDocuments(
+      startDate
+        ? { 
+            status: "Pending", 
+            created_at: { $gte: startDate, $lte: endDate } 
+          }
+        : { status: "Pending" } // Nếu không có date, chỉ lọc theo status "Pending"
+    );
+
+    const totalOrdersUnpaid = await Order.countDocuments(startDate ? {
+      payment_status: "unpaid",
+      status: { $ne: "Cancelled" },
+      created_at: { $gte: startDate, $lte: endDate },
+    } : {
       payment_status: "unpaid",
       status: { $ne: "Cancelled" },
     });
 
     const totalRevenue = await Order.aggregate([
       {
-        $match: { payment_status: "paid" },
+        $match: {
+          payment_status: "paid",
+          ...(startDate ? { created_at: { $gte: startDate, $lte: endDate } } : {}),
+        },
       },
       {
         $group: {
@@ -29,7 +52,10 @@ export const getDashboard = async (req, res) => {
 
     const salesData = await Order.aggregate([
       {
-        $match: { payment_status: "paid" },
+        $match: {
+          payment_status: "paid",
+          ...(startDate ? { created_at: { $gte: startDate, $lte: endDate } } : {}),
+        },
       },
       {
         $group: {
@@ -43,6 +69,7 @@ export const getDashboard = async (req, res) => {
     ]);
     const totalOrderCancel = await Order.countDocuments({
       status: "Cancelled",
+      ...(startDate ? { created_at: { $gte: startDate, $lte: endDate } } : {}),
     });
     const totalUser = await User.countDocuments();
     const totalUserOnline = await User.countDocuments({ is_active: true });

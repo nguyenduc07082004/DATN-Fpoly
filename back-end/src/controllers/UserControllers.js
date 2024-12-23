@@ -2,6 +2,7 @@ import UserModels from "../models/UserModels.js";
 import { hassPassword , comparePassword } from "../utils/password.js";
 import { generateToken } from "../utils/jwt.js";
 import getMessage from "../utils/getMessage.js";
+import { io } from "../../index.js";
 export const register = async (req, res, next) => {
   try {
     const lang = req.lang || "en";
@@ -150,6 +151,7 @@ export const blockUser = async (req, res) => {
 
     user.is_blocked = is_blocked;
     await user.save();
+    io.emit("blockUser", user);
 
     return res.status(200).json({
       success: true,

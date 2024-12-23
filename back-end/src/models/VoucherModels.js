@@ -3,6 +3,7 @@ import { Schema, model } from "mongoose";
 const voucherSchema = new Schema({
   code: { type: String, required: true, unique: true },
   discount: { type: Number, required: true },
+  start_date: { type: Date, required: true },  
   expiration_date: { type: Date, required: true },
   is_used: { type: Boolean, default: false },
   user_id: { type: Schema.Types.ObjectId, ref: 'User' },
