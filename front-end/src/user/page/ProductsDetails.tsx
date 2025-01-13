@@ -230,7 +230,7 @@ const ProductDetails = () => {
         Swal.fire({
           icon: "warning",
           title: "Vui lòng đăng nhập",
-          text: error.response.data.message,
+          text: "Vui lòng đăng nhập trước khi đánh giá",
           confirmButtonText: "Đăng nhập",
           cancelButtonText: "Đóng",
           showCancelButton: true,
