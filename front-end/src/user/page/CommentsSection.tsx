@@ -3,7 +3,7 @@ import { Grid, Box, Typography, TextField, Button, Rating, IconButton } from "@m
 import CloseIcon from "@mui/icons-material/Close";
 
 const CommentsSection = ({ comments, onAddReply, onDeleteReply , userId }) => {
-  const user = JSON.parse(localStorage.getItem("user"));
+  const user = JSON.parse(localStorage.getItem("user")) || {};
   const [replyText, setReplyText] = useState({});
 
   console.log(comments,"dayl à conment")
