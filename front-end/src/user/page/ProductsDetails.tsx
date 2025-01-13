@@ -25,6 +25,7 @@ import toastr from 'toastr';
 import 'toastr/build/toastr.min.css'
 import Swal from "sweetalert2";
 import io from "socket.io-client"
+import CommentsSection from "./CommentsSection";
 const socket = io(baseURL)
 const colorMapping = { 
   Đen: "#000000",    
@@ -60,6 +61,7 @@ const ProductDetails = () => {
   const [avgRating, setAvgRating] = useState(0);
   const [comment , setComment] = useState('');
   const [rating, setRating] = useState(0);
+  const [replies, setReplies] = useState<any[]>([]);
 
 
   useEffect(() => {
@@ -189,6 +191,8 @@ const ProductDetails = () => {
     }
   }
 
+  console.log(comments,"daosk")
+
   const handleCommentChange = (event : React.ChangeEvent<HTMLTextAreaElement>) => {
     setComment(event.target.value); 
   };
@@ -200,7 +204,10 @@ const ProductDetails = () => {
     event.preventDefault(); 
 
     if (!comment || rating === 0) {
-      alert("Vui lòng điền đầy đủ bình luận và chọn rating.");
+      Swal.fire({
+        icon: 'warning',
+        title: 'Vui lòng nhập bình lận và đánh giá cho sản phẩm',
+      })
       return;
     }
 
@@ -213,13 +220,34 @@ const ProductDetails = () => {
       });
 
       if (response.status === 201) {
-        alert('Bình luận của bạn đã được gửi!');
+        Swal.fire('success', 'Bạn đã đánh giá thành công', 'success');
         setComment(''); 
         setRating(0);    
         getComments();
       } 
-    } catch (error) {
-      alert(error.response.data.message);
+    } catch (error : any) {
+      if (!userId) { 
+        Swal.fire({
+          icon: "warning",
+          title: "Vui lòng đăng nhập",
+          text: error.response.data.message,
+          confirmButtonText: "Đăng nhập",
+          cancelButtonText: "Đóng",
+          showCancelButton: true,
+        }).then((result) => {
+          if (result.isConfirmed) {
+            window.location.href = '/login'; 
+          }
+        });
+      }
+      else {
+        Swal.fire({
+          icon: "warning",
+          text: error.response.data.message,
+          cancelButtonText: "Đóng",
+          showCancelButton: true,
+         })    
+      }
     }
   };
   const getData = async () => {
@@ -232,6 +260,31 @@ const handleMainImageChange = (image:{url:string}) => {
     setMainImage(image.url); 
   };
 
+  const handleDeleteReply = async (commentId: string, replyId: string) => {
+    const result = await Swal.fire({
+      title: 'Bạn có chắc chắn muốn xóa phản hồi này?',
+      text: 'Hành động này không thể hoàn tác!',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Xóa',
+      cancelButtonText: 'Hủy',
+    });
+  
+    if (result.isConfirmed) {
+      try {
+        await ins.delete(`/replies/${replyId}`);
+        Swal.fire("Thành công", "Xóa phản hồi thành công", "success");
+        getComments();
+      } catch (error) {
+        console.log(error,"dasoik")
+        Swal.fire("Lỗi", "Có lỗi xảy ra khi xóa phản hồi", "error");
+      }
+    } else {
+      Swal.fire("Đã hủy", "Phản hồi không bị xóa", "info");
+    }
+  };
+  
+
   useEffect(() => {
     getData();
     socket.on("new_product", () => {
@@ -242,6 +295,36 @@ const handleMainImageChange = (image:{url:string}) => {
     };
   }, [productId]);
 
+  useEffect(() => {
+    socket.on("deleteReply", () => {
+      getComments();
+    })
+    return () => {
+      socket.off("deleteReply")
+    }
+  } , [])
+  const handleReplies = async (commentId: string , replies: string) => {
+    try {
+      const response = await ins.post(`${baseURL}/replies/${commentId}` , {reply:replies, userId});
+      if (response.status === 201) {
+        getComments();
+      }
+    }
+    catch (error) {
+      Swal.fire({
+        icon: "warning",
+        title: "Vui lòng đăng nhập",
+        text: "Vui lòng đăng nhập trước khi bình luận",
+        confirmButtonText: "Đăng nhập",
+        cancelButtonText: "Đóng",
+        showCancelButton: true,
+      }).then((result) => {
+        if (result.isConfirmed) {
+          window.location.href = '/login'; 
+        }
+      });
+    }
+  }
   if (loading) {
     return (
       <Box display="flex" justifyContent="center" alignItems="center" height="100vh">
@@ -456,40 +539,13 @@ const handleMainImageChange = (image:{url:string}) => {
       </Box>
     </Grid>
 
-    <Grid item xs={12}>
-      <Box sx={{ padding: 2, border: '1px solid #ccc', borderRadius: 1 }}>
-        <Typography variant="h6" gutterBottom>
-          Bình luận:
-        </Typography>
-        {comments.length > 0 && comments.map((comment) => (
-          <Box key={comment.id} sx={{ marginBottom: 2 }}>
-            <Typography variant="body2" sx={{ fontWeight: 'bold' }}>
-              {comment.userId.email}
-            </Typography>
-            <Rating value={comment.rating} readOnly size="small" sx={{ marginBottom: 1 }} />
-            <Typography variant="body2" sx={{ marginBottom: 1 }}>
-              {comment.comment}
-            </Typography>
-            {comment.replies.map((reply, idx) => (
-              <Box key={idx} sx={{ marginLeft: 2, marginTop: 1 }}>
-                <Typography variant="body2" sx={{ fontWeight: 'bold' }}>
-                  {reply.userId.first_name} {reply.userId.last_name}: 
-                </Typography>
-                <Typography variant="body2">
-                  {reply.reply}
-                </Typography>
-              </Box>
-            ))}
-          </Box>
-        ))}
-      </Box>
-    </Grid>
+  <CommentsSection comments={comments} onAddReply={handleReplies} onDeleteReply={handleDeleteReply} userId={userId} />
 
     {/* Form thêm bình luận */}
     <Grid item xs={12}>
       <Box sx={{ padding: 2, border: '1px solid #ccc', borderRadius: 1 }}>
         <Typography variant="h6" gutterBottom>
-          Thêm bình luận của bạn:
+          Thêm đánh giá của bạn về sản phẩm:
         </Typography>
         <Rating
           value={rating}

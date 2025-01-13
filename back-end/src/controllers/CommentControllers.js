@@ -3,6 +3,7 @@ import Product from '../models/ProductModels.js';
 import User from '../models/UserModels.js';
 import getMessage from '../utils/getMessage.js';
 import Reply from '../models/ReplyModels.js';
+import Order from "../models/OrderModels.js"
 
 export const addCommentAndRating = async (req, res) => {
   const lang = req.lang || "vi"; 
@@ -24,6 +25,19 @@ export const addCommentAndRating = async (req, res) => {
     // Kiểm tra rating hợp lệ (nếu có)
     if (rating && (rating < 1 || rating > 5)) {
       return res.status(400).json({ success: false, message: getMessage(lang, 'error', 'INVALID_RATING') });
+    }
+
+    const orders = await Order.find({
+      user_id: userId,
+      status: "Success",
+    }).populate("items");
+
+    const hasPurchased = orders.some(order =>
+      order.items.some(item => item.product.toString() === productId)
+    );
+
+    if (!hasPurchased) {
+      return res.status(403).json({ success: false, message: getMessage(lang, 'error', 'PURCHASE_REQUIRED') });
     }
 
     // Kiểm tra xem người dùng đã có đánh giá cho sản phẩm này chưa
@@ -52,6 +66,7 @@ export const addCommentAndRating = async (req, res) => {
     return res.status(500).json({ success: false, message: getMessage(lang, 'error', 'SERVER_ERROR') });
   }
 };
+
 
 
 export const getCommentsByProduct = async (productId, lang = "en") => {
@@ -83,6 +98,46 @@ export const getComments = async (req, res) => {
   }
 };
 
+export const getCommentById = async (req, res) => {
+  const lang = req.lang || "en";
+  const { commentId } = req.params;
+
+  try {
+    const comment = await Comment.findById(commentId)
+      .populate("userId", "first_name last_name email")
+      .populate("productId", "name price");
+
+    if (!comment) {
+      return res.status(404).json({
+        success: false,
+        message: getMessage(lang, "error", "COMMENT_NOT_FOUND"),
+      });
+    }
+
+    const replies = await Reply.find({ commentId })
+      .populate("userId", "first_name last_name email")
+      .sort({ createdAt: -1 });
+
+    const result = {
+      ...comment.toObject(),
+      replies: replies, 
+    };
+
+    return res.status(200).json({
+      success: true,
+      data: result,
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({
+      success: false,
+      message: getMessage(lang, "error", "SERVER_ERROR"),
+    });
+  }
+};
+
+
+
 
 export const getCommentsWithReplies = async (req, res) => {
   const lang = req.lang || "en"; 
@@ -100,8 +155,8 @@ export const getCommentsWithReplies = async (req, res) => {
 
    for (let comment of comments) {
       const replies = await Reply.find({ commentId: comment._id })
-        .populate("userId", "first_name last_name email")
-        .sort({ createdAt: 1 });
+        .populate("userId", "first_name last_name email userId")
+        .sort({ createdAt: -1 });
       comment.replies = replies;
     }
 

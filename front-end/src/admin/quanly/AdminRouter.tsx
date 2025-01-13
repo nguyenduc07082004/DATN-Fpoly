@@ -19,6 +19,7 @@ import EditVariantsForm from "../form/EditVariant";
 import Invoice from "./Invoice";
 import QLVC from "./QLVC";
 import Trash from "./Trash";
+import CommentRatingDetails from "./CommentRatingDetails";
 function Dashboard() {
   const { user } = useContext(AuthContext) as AuthContextType;
 
@@ -43,6 +44,7 @@ function Dashboard() {
             <Route path="/qlsp/edit/:id" element={<EditForm />} />
             <Route path="/qltk" element={<QLTK />} />
             <Route path="/qlbl" element={<QLBL />} />
+            <Route path="/qlbl/details/:commentId" element={< CommentRatingDetails/>} />
             <Route path="/qldh" element={<QLDH />} />
             <Route path="/qlvc" element={<QLVC />} />
             <Route path="/qldh/:id" element={<OrderDetails />} />

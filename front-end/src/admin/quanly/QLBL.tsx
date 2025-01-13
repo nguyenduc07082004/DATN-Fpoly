@@ -102,9 +102,12 @@ const QLBL = () => {
           <td>{new Date(comment.createdAt).toLocaleString()}</td>
           <td>{comment.userId?.last_name}</td>
           <td>
-            <Button variant="contained" sx={{ marginRight: 1 }} onClick={() => openModal(comment)}>
-              Trả lời
+            <Button variant="contained" color="info" sx={{ marginRight: 1 }} onClick={() => window.location.href = `/admin/qlbl/details/${comment._id}`}>
+              Chi tiết
             </Button>
+            {/* <Button variant="contained" sx={{ marginRight: 1 }} onClick={() => openModal(comment)}>
+              Trả lời
+            </Button> */}
             <Button variant="contained" color="error" onClick={() => handleDeleteComment(comment._id)}>
               Xoá
             </Button>

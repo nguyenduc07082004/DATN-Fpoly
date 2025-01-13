@@ -56,7 +56,7 @@ const AddForm = () => {
     }
   
     try {
-      await ins.post(
+      const response = await ins.post(
         `${baseURL}/products/add`, 
         formDataToSend,
         {
@@ -65,8 +65,10 @@ const AddForm = () => {
           },
         }
       );
-      alert("Sản phẩm đã được thêm thành công!");
-      window.location.href = "/admin/qlsp";
+      if (response.data.data) {
+        alert("Sản phẩm được thêm thành công!");
+        window.location.href = `/admin/details/${response.data.data._id}/variant/add`;
+      }
     } catch (error) {
       console.error("Error adding product:", error);
       alert("Có lỗi xảy ra khi thêm sản phẩm.");

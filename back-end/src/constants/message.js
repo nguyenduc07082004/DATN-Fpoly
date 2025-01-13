@@ -88,6 +88,7 @@ const messages = Object.freeze({
       UPDATE_CATEGORY_FAIL: "Failed to update category",
       DELETE_CATEGORY_FAIL: "Failed to delete category",
       CATEGORY_HAS_PRODUCTS: "Category has products",
+      PURCHASE_REQUIRED: "Purchase is required",
     },
   },
   vi: {
@@ -127,6 +128,8 @@ const messages = Object.freeze({
       ADD_CATEGORY_SUCCESS: "Thêm danh mục thành công",
       UPDATE_CATEGORY_SUCCESS: "Cập nhật danh mục thành công",
       DELETE_CATEGORY_SUCCESS: "Xóa danh mục thành công",
+      REPLY_DELETED_SUCCESS: "Xóa bình luận thành công!",
+      REPLY_ADDED: "Thêm bình luận thành công!",
     },
     error: {
       TOKEN_INVALID: "Token không hợp lệ!",
@@ -179,6 +182,9 @@ const messages = Object.freeze({
       UPDATE_CATEGORY_FAIL: "Cập nhật danh mục thất bại!",
       DELETE_CATEGORY_FAIL: "Xóa danh mục thất bại!",
       CATEGORY_HAS_PRODUCTS: "Không thể xoá danh mục vì có sản phẩm liên quan chưa bị xoá!",
+      PURCHASE_REQUIRED: "Vui lòng mua hàng rồi đánh giá",
+      REPLY_NOT_FOUND: "Không tìm thấy bình luận!",
+      NO_LOGIN : "Vui lòng đăng nhập"
     },
   },
 });
