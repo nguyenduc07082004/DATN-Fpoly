@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { Box, Typography, Button, TextField, CircularProgress, IconButton } from "@mui/material";
+import { Box, Typography, CircularProgress, IconButton } from "@mui/material";
 import ins from "../../api";
 import { baseURL } from "../../api";
 import Swal from "sweetalert2";
@@ -10,11 +10,7 @@ const CommentRatingDetails = () => {
   const { commentId } = useParams<{ commentId: string }>();
   const [commentDetails, setCommentDetails] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [isSubmitting, setIsSubmitting] = useState(false);
   const socket = io(baseURL);
-
-  const userId = JSON.parse(localStorage.getItem("user") ?? "{}")?._id ?? "";
-
   const fetchCommentDetails = async () => {
     try {
       const response = await ins.get(`${baseURL}/comments/detail/${commentId}`);
