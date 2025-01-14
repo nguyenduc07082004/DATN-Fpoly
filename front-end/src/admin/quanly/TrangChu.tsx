@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Line } from "react-chartjs-2";
 import {
   Chart as ChartJS,
@@ -36,12 +36,15 @@ import {
   TableBody,
   Paper,
 } from "@mui/material";
+import Swal from "sweetalert2";
 
 const TrangChu = () => {
   const [salesData, setSalesData] = useState<any>([]);
   const [recentOrders, setRecentOrders] = useState<any>([]);
   const [products, setProducts] = useState<any>([]);
   const [topSellers, setTopSellers] = useState<any>([]);
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
   const [loading, setLoading] = useState(true);
   const [stats, setStats] = useState({
     totalOrders: 0,
@@ -57,22 +60,19 @@ const TrangChu = () => {
   const [showModal, setShowModal] = useState(false); // Điều khiển modal
   const [selectedProduct, setSelectedProduct] = useState<any>(null); // Lưu thông tin chi tiết sản phẩm
   const [productDetails, setProductDetails] = useState<any>(null);
-  const [selectedDate, setSelectedDate] = useState('');
-  const getData = async (date: string) => {
+  const getData = async (startDate: string , endDate:string) => {
     try {
-      const response = await ins.get(`${baseURL}/dashboard?date=${date}`);
+      const response = await ins.get(
+        `${baseURL}/dashboard?startDate=${startDate}&endDate=${endDate}`
+      );
       const data = response.data;
       if (response.status === 200) {
-        const totalRevenue =
-          data.total.totalRevenue.length > 0
-            ? data.total.totalRevenue[0].total
-            : 0;
         setStats({
           totalOrders: data.total.totalOrders,
           totalProducts: data.total.totalProducts,
           totalOrdersPending: data.total.totalOrdersPending,
           totalOrdersUnpaid: data.total.totalOrdersUnpaid,
-          totalRevenue: totalRevenue,
+          totalRevenue: data.total.totalRevenue > 0 ? data.total.totalRevenue : 0 ,
           totalOrderCancel: data.total.totalOrderCancel,
           totalUser: data.total.totalUser,
           totalUserOnline: data.total.totalUserOnline,
@@ -119,20 +119,34 @@ const TrangChu = () => {
 
   const handleCloseModal = () => {
     setShowModal(false);
-    setSelectedProduct(null);
+    setSelectedProduct(null); 
     setProductDetails(null);
   };
 
   const handleSearch = async () => {
-    await getData(selectedDate)
+    if (!startDate && !endDate) {
+      await getData('', '');
+      return;
+    }
+    if (!startDate || !endDate) {
+      Swal.fire({
+        icon: "error",
+        title: "Lỗi",
+        text: "Vui lòng chọn ngày bắt đầu và kết thúc",
+      });
+      return;
+    }
+    await getData(startDate, endDate);
   };
+  
 
   const handleClear = () => {
-    setSelectedDate('');
+    setStartDate("");
+    setEndDate("");
   };
 
   useEffect(() => {
-    getData('');
+    getData('', '');
     getTopSellingProducts();
   }, []);
 
@@ -187,17 +201,37 @@ const TrangChu = () => {
 <section className="p-4">
 <div className="shadow-sm text-center card">
   <div className="card-body">
-    <h5 className="card-title">Chọn ngày</h5>
+    <h5 className="card-title">Chọn khoảng thời gian</h5>
     
-    <div className="mt-3 d-flex justify-content-center">
+    <div className="mt-3 d-flex justify-content-center align-items-center">
+      {/* Ngày bắt đầu */}
+      <div className="me-3">
+        <label htmlFor="start-date" className="form-label">Ngày bắt đầu</label>
+        <input
+          id="start-date"
+          type="date"
+          className="form-control"
+          value={startDate} 
+          onChange={(e) => setStartDate(e.target.value)} 
+          max={endDate || new Date().toISOString().split('T')[0]} 
+        />
+      </div>
+
+      {/* Ngày kết thúc */}
+      <div className="me-3">
+        <label htmlFor="end-date" className="form-label">Ngày kết thúc</label>
+        <input
+          id="end-date"
+          type="date"
+          className="form-control"
+          value={endDate} 
+          onChange={(e) => setEndDate(e.target.value)} 
+          min={startDate} 
+          max={new Date().toISOString().split('T')[0]} 
+        />
+      </div>
+
       {/* Nút Tìm */}
-      <input
-      type="date"
-      className="w-100 form-control me-2"
-      value={selectedDate} 
-      onChange={(e) => setSelectedDate(e.target.value)} 
-      max={new Date().toISOString().split('T')[0]} 
-    />
       <button
         className="btn btn-primary me-2"
         onClick={() => handleSearch()} 
@@ -215,6 +249,7 @@ const TrangChu = () => {
     </div>
   </div>
 </div>
+
 
   <div className="mb-4 row g-3">
     {/* Tổng đơn hàng */}

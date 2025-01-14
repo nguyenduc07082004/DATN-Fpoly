@@ -7,12 +7,18 @@ const AddForm = () => {
     title: "",
     categories: "",
     description: "",
-    default_price: "",  
+    default_price: "",
   });
 
   const { dataDM } = useContext(CategoryContext); 
   const [image, setImage] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
+
+  const [errors, setErrors] = useState({
+    title: "",
+    categories: "",
+    default_price: "",
+  });
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -20,12 +26,9 @@ const AddForm = () => {
       ...prevData,
       [name]: value,
     }));
-  };
-
-  const handleCategoryChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    setFormData((prevData) => ({
-      ...prevData,
-      categories: event.target.value, 
+    setErrors((prevErrors) => ({
+      ...prevErrors,
+      [name]: "",
     }));
   };
 
@@ -39,29 +42,35 @@ const AddForm = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-  
-    if (!formData.title || !formData.categories || !formData.default_price) {
-      alert("Vui lòng điền đầy đủ thông tin sản phẩm.");
+
+    const newErrors = {
+      title: formData.title ? "" : "Tên sản phẩm là bắt buộc.",
+      categories: formData.categories ? "" : "Vui lòng chọn danh mục.",
+      default_price: formData.default_price ? "" : "Giá sản phẩm là bắt buộc.",
+    };
+
+    if (Object.values(newErrors).some((error) => error)) {
+      setErrors(newErrors);
       return;
     }
-  
+
     const formDataToSend = new FormData();
     formDataToSend.append("title", formData.title);
     formDataToSend.append("categories", formData.categories);
     formDataToSend.append("description", formData.description);
-    formDataToSend.append("default_price", formData.default_price); 
-  
+    formDataToSend.append("default_price", formData.default_price);
+
     if (image) {
       formDataToSend.append("image", image);
     }
-  
+
     try {
       const response = await ins.post(
-        `${baseURL}/products/add`, 
+        `${baseURL}/products/add`,
         formDataToSend,
         {
           headers: {
-            "Content-Type": "multipart/form-data", 
+            "Content-Type": "multipart/form-data",
           },
         }
       );
@@ -79,7 +88,7 @@ const AddForm = () => {
     if (dataDM && dataDM.category.length > 0) {
       setFormData((prevData) => ({
         ...prevData,
-        categories: dataDM.category[0]._id, 
+        categories: dataDM.category[0]._id,
       }));
     }
   }, [dataDM]);
@@ -98,8 +107,8 @@ const AddForm = () => {
               name="title"
               value={formData.title}
               onChange={handleInputChange}
-              required
             />
+            {errors.title && <p className="text-danger mt-1">{errors.title}</p>}
           </div>
           <div className="col-md-6 mb-3">
             <label htmlFor="categories">Danh mục</label>
@@ -107,8 +116,7 @@ const AddForm = () => {
               className="form-control"
               name="categories"
               value={formData.categories}
-              onChange={handleCategoryChange}
-              required
+              onChange={handleInputChange}
             >
               <option value="">-----</option>
               {dataDM.category.map((i) => (
@@ -117,6 +125,7 @@ const AddForm = () => {
                 </option>
               ))}
             </select>
+            {errors.categories && <p className="text-danger mt-1">{errors.categories}</p>}
           </div>
         </div>
 
@@ -130,8 +139,8 @@ const AddForm = () => {
               name="default_price"
               value={formData.default_price}
               onChange={handleInputChange}
-              required
             />
+            {errors.default_price && <p className="text-danger mt-1">{errors.default_price}</p>}
           </div>
         </div>
 
