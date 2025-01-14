@@ -10,6 +10,8 @@ const VariantsForm = () => {
   const [selectedProductId, setSelectedProductId] = useState<string | null>(
     id as string
   );
+
+
   const [color, setColor] = useState<string>("");
   const [storage, setStorage] = useState<string>("");
   const [sku, setSku] = useState<string>("");
@@ -152,13 +154,11 @@ const VariantsForm = () => {
 
       if (response.status === 201) {
         alert("Biến thể đã được tạo thành công");
-
         setSku("");
         setColor("");
         setStorage("");
         setPrice(0);
         setQuantity(1);
-        setSelectedProductId("");
         setImages(null); 
       }
     } catch (error: any) {

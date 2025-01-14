@@ -5,41 +5,38 @@ import Order from "../models/OrderModels.js";
 import getMessage from "../utils/getMessage.js";
 export const getDashboard = async (req, res) => {
   try {
-    const {date} = req.query;
-    const startDate = date ? new Date(date) : null;
-    const endDate = startDate ? new Date(startDate) : null;
-    if (startDate) endDate.setHours(23, 59, 59, 999); 
+    const { startDate, endDate } = req.query;
 
-   
-    const totalOrders = await Order.countDocuments(
-      startDate
-        ? { created_at: { $gte: startDate, $lte: endDate } }
-        : {}
-    );
+    const parsedStartDate = startDate ? new Date(startDate) : null;
+    const parsedEndDate = endDate ? new Date(endDate) : null;
+
+    if (parsedStartDate) parsedStartDate.setHours(0, 0, 0, 0);
+    if (parsedEndDate) parsedEndDate.setHours(23, 59, 59, 999);
+
+    const dateFilter = parsedStartDate && parsedEndDate 
+      ? { created_at: { $gte: parsedStartDate, $lte: parsedEndDate } } 
+      : {};
+
+    const totalOrders = await Order.countDocuments(dateFilter);
+
     const totalProducts = await Product.countDocuments();
-    const totalOrdersPending = await Order.countDocuments(
-      startDate
-        ? { 
-            status: "Pending", 
-            created_at: { $gte: startDate, $lte: endDate } 
-          }
-        : { status: "Pending" } // Nếu không có date, chỉ lọc theo status "Pending"
-    );
 
-    const totalOrdersUnpaid = await Order.countDocuments(startDate ? {
+    const totalOrdersPending = await Order.countDocuments({
+      status: "Pending",
+      ...dateFilter,
+    });
+
+    const totalOrdersUnpaid = await Order.countDocuments({
       payment_status: "unpaid",
       status: { $ne: "Cancelled" },
-      created_at: { $gte: startDate, $lte: endDate },
-    } : {
-      payment_status: "unpaid",
-      status: { $ne: "Cancelled" },
+      ...dateFilter,
     });
 
     const totalRevenue = await Order.aggregate([
       {
         $match: {
           payment_status: "paid",
-          ...(startDate ? { created_at: { $gte: startDate, $lte: endDate } } : {}),
+          ...dateFilter,
         },
       },
       {
@@ -54,7 +51,7 @@ export const getDashboard = async (req, res) => {
       {
         $match: {
           payment_status: "paid",
-          ...(startDate ? { created_at: { $gte: startDate, $lte: endDate } } : {}),
+          ...dateFilter,
         },
       },
       {
@@ -67,13 +64,16 @@ export const getDashboard = async (req, res) => {
         $sort: { _id: 1 },
       },
     ]);
+
     const totalOrderCancel = await Order.countDocuments({
       status: "Cancelled",
-      ...(startDate ? { created_at: { $gte: startDate, $lte: endDate } } : {}),
+      ...dateFilter,
     });
+
     const totalUser = await User.countDocuments();
     const totalUserOnline = await User.countDocuments({ is_active: true });
-    const recentOrders = await Order.find({})
+
+    const recentOrders = await Order.find(dateFilter)
       .sort({ created_at: -1 })
       .limit(5)
       .populate({
@@ -83,28 +83,31 @@ export const getDashboard = async (req, res) => {
           select: "title description image variants",
         },
       })
-      .exec(); 
-      const products = await Product.aggregate([
-        { $unwind: "$variants" }, 
-        { $group: { 
-            _id: { 
-              productId: "$_id",  
-              storage: "$variants.storage",
-              color: "$variants.color",
-              title: "$title"
-            },
-            totalStock: { $sum: "$variants.quantity" }  
-          }
+      .exec();
+
+    const products = await Product.aggregate([
+      { $unwind: "$variants" },
+      {
+        $group: {
+          _id: {
+            productId: "$_id",
+            storage: "$variants.storage",
+            color: "$variants.color",
+            title: "$title",
+          },
+          totalStock: { $sum: "$variants.quantity" },
         },
-        { $match: { totalStock: { $lt: 5 } } }  
-      ]);
+      },
+      { $match: { totalStock: { $lt: 5 } } },
+    ]);
+
     res.status(200).json({
       total: {
         totalOrders,
         totalProducts,
         totalOrdersPending,
         totalOrdersUnpaid,
-        totalRevenue,
+        totalRevenue: totalRevenue[0]?.total || 0, 
         totalOrderCancel,
         totalUser,
         totalUserOnline,
@@ -118,3 +121,4 @@ export const getDashboard = async (req, res) => {
     res.status(500).json({ message: "Internal server error" });
   }
 };
+
