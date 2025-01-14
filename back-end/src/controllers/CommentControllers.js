@@ -73,7 +73,7 @@ export const getCommentsByProduct = async (productId, lang = "en") => {
   try {
     const comments = await Comment.find({ productId })
       .populate("userId", "first_name last_name email") 
-      .populate("productId") 
+      .populate("productId", "title image") 
       .sort({ createdAt: -1 }); 
 
     if (!comments || comments.length === 0) {
