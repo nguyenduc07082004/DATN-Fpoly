@@ -179,7 +179,7 @@ const OrderPlace = () => {
   };
 
   return (
-    <div className="container-xl bg-white rounded shadow-sm p-4">
+    <div className="container-xl bg-white rounded shadow-sm p-4"  style={{ height: "40rem", width: "1170px" }}>
       <h1 className="my-4 text-center">Danh sách đơn hàng</h1>
 
       {isLoading && <div className="text-center">Loading...</div>}

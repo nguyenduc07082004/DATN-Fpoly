@@ -4,8 +4,6 @@ import anh1 from "../../assets/bien-dien-thoai-di-dong-1.jpg";
 import anh2 from "../../assets/Sliding-Preord.webp";
 import anh3 from "../../assets/samsung-s24-ultra-home-20-11.webp";
 
-const bannerImages = [anh1, anh2, anh3];
-
 const IntroPage: React.FC = () => {
   return (
     <div className="container-xl bg-white rounded shadow-sm p-4">
@@ -28,95 +26,129 @@ const IntroPage: React.FC = () => {
                     Giới thiệu
                   </Typography>
                 </Box>
+
                 <div className="content-page rte">
-                  <p>
-                    Chào mừng bạn đến với Smart Shop, nền tảng mua sắm trực
-                    tuyến hàng đầu chuyên cung cấp các dòng sản phẩm điện thoại
-                    thông minh từ các thương hiệu nổi tiếng.
-                  </p>
-
-                  {/* Image centered and enlarged */}
+                  {/* Section 1 - Ảnh bên phải, chữ bên trái */}
                   <Box
+                    className="row"
                     sx={{
-                      display: "block",
-                      marginY: "20px",
-                      textAlign: "center", // Centers the image
+                      display: "flex",
+                      alignItems: "center",
+                      marginBottom: "20px",
                     }}
                   >
-                    <img
-                      src={anh1}
-                      alt="FPT Shop"
-                      style={{
-                        width: "60%", // Increased image size
-                        maxWidth: "350px", // Set max width
-                        borderRadius: "10px",
-                        boxShadow: "0 4px 10px rgba(0, 0, 0, 0.1)",
+                    {/* Text */}
+                    <Box className="col-6" sx={{ flex: "1 1 50%" }}>
+                      <p>
+                        Chào mừng bạn đến với Smart Shop, nền tảng mua sắm trực
+                        tuyến hàng đầu chuyên cung cấp các dòng sản phẩm điện
+                        thoại thông minh từ các thương hiệu nổi tiếng.
+                      </p>
+                    </Box>
+                    {/* Image */}
+                    <Box
+                      className="col-6"
+                      sx={{
+                        flex: "1 1 50%",
+                        textAlign: "center",
                       }}
-                    />
+                    >
+                      <img
+                        src={anh1}
+                        alt="FPT Shop"
+                        style={{
+                          width: "300px", // Kích thước ảnh lớn hơn
+                          height: "300px", // Đảm bảo ảnh là hình vuông
+                          borderRadius: "10px",
+                          boxShadow: "0 4px 10px rgba(0, 0, 0, 0.1)",
+                          transition: "transform 0.3s ease, box-shadow 0.3s ease",
+                        }}
+                      />
+                    </Box>
                   </Box>
 
-                  <p>
-                    Tại Smart Shop, bạn sẽ tìm thấy một giao diện mua sắm thân
-                    thiện, hiện đại và dễ sử dụng. Trang web của chúng tôi cung
-                    cấp thông tin chi tiết về từng sản phẩm, từ các dòng điện
-                    thoại phổ biến như iPhone, Samsung, Xiaomi, đảm bảo bạn dễ
-                    dàng tìm được sản phẩm phù hợp với nhu cầu.
-                  </p>
-
-                  {/* Image centered and enlarged */}
+                  {/* Section 2 - Ảnh bên trái, chữ bên phải */}
                   <Box
+                    className="row"
                     sx={{
-                      display: "block",
-                      marginY: "20px",
-                      textAlign: "center", // Centers the image
+                      display: "flex",
+                      alignItems: "center",
+                      marginBottom: "20px",
+                      flexDirection: "row-reverse", // Đảo thứ tự
                     }}
                   >
-                    <img
-                      src={anh2}
-                      alt="Shop phụ kiện"
-                      style={{
-                        width: "60%", // Increased image size
-                        maxWidth: "350px", // Set max width to match other images
-                        borderRadius: "10px",
-                        boxShadow: "0 4px 10px rgba(0, 0, 0, 0.1)",
+                    {/* Text */}
+                    <Box className="col-6" sx={{ flex: "1 1 50%" }}>
+                      <p>
+                        Tại Smart Shop, bạn sẽ tìm thấy một giao diện mua sắm
+                        thân thiện, hiện đại và dễ sử dụng. Trang web của chúng
+                        tôi cung cấp thông tin chi tiết về từng sản phẩm, từ các
+                        dòng điện thoại phổ biến như iPhone, Samsung, Xiaomi,
+                        đảm bảo bạn dễ dàng tìm được sản phẩm phù hợp với nhu
+                        cầu.
+                      </p>
+                    </Box>
+                    {/* Image */}
+                    <Box
+                      className="col-6"
+                      sx={{
+                        flex: "1 1 50%",
+                        textAlign: "center",
                       }}
-                    />
+                    >
+                      <img
+                        src={anh2}
+                        alt="Shop phụ kiện"
+                        style={{
+                          width: "300px", // Kích thước ảnh lớn hơn
+                          height: "300px", // Đảm bảo ảnh là hình vuông
+                          borderRadius: "10px",
+                          boxShadow: "0 4px 10px rgba(0, 0, 0, 0.1)",
+                          transition: "transform 0.3s ease, box-shadow 0.3s ease",
+                        }}
+                      />
+                    </Box>
                   </Box>
 
-                  <p>
-                    Chúng tôi cam kết: Sản phẩm chính hãng, giá cả cạnh tranh và
-                    hỗ trợ tận tâm. Ngoài ra, Smart Shop còn cung cấp các dịch
-                    vụ bảo hành và sửa chữa với đội ngũ kỹ thuật viên giàu kinh
-                    nghiệm.
-                  </p>
-
-                  {/* Image centered and enlarged */}
+                  {/* Section 3 - Ảnh bên phải, chữ bên trái */}
                   <Box
+                    className="row"
                     sx={{
-                      display: "block",
-                      marginY: "20px",
-                      textAlign: "center", // Centers the image
+                      display: "flex",
+                      alignItems: "center",
+                      marginBottom: "20px",
                     }}
                   >
-                    <img
-                      src={anh3}
-                      alt="Dịch vụ quản lý bán hàng"
-                      style={{
-                        width: "60%", // Increased image size
-                        maxWidth: "350px", // Set max width
-                        borderRadius: "10px",
-                        boxShadow: "0 4px 10px rgba(0, 0, 0, 0.1)",
+                    {/* Text */}
+                    <Box className="col-6" sx={{ flex: "1 1 50%" }}>
+                      <p>
+                        Chúng tôi cam kết: Sản phẩm chính hãng, giá cả cạnh tranh
+                        và hỗ trợ tận tâm. Ngoài ra, Smart Shop còn cung cấp các
+                        dịch vụ bảo hành và sửa chữa với đội ngũ kỹ thuật viên
+                        giàu kinh nghiệm.
+                      </p>
+                    </Box>
+                    {/* Image */}
+                    <Box
+                      className="col-6"
+                      sx={{
+                        flex: "1 1 50%",
+                        textAlign: "center",
                       }}
-                    />
+                    >
+                      <img
+                        src={anh3}
+                        alt="Dịch vụ quản lý bán hàng"
+                        style={{
+                          width: "300px", // Kích thước ảnh lớn hơn
+                          height: "300px", // Đảm bảo ảnh là hình vuông
+                          borderRadius: "10px",
+                          boxShadow: "0 4px 10px rgba(0, 0, 0, 0.1)",
+                          transition: "transform 0.3s ease, box-shadow 0.3s ease",
+                        }}
+                      />
+                    </Box>
                   </Box>
-
-                  <p>
-                    Với sứ mệnh mang đến sự hài lòng tối đa cho khách hàng,
-                    Smart Shop không ngừng cải tiến chất lượng sản phẩm và dịch
-                    vụ. Hãy truy cập trang web của chúng tôi ngay hôm nay để
-                    khám phá thế giới công nghệ đẳng cấp và tận hưởng trải
-                    nghiệm mua sắm trực tuyến tuyệt vời!
-                  </p>
                 </div>
               </Box>
             </Box>

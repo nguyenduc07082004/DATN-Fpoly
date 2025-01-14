@@ -50,9 +50,9 @@ const QLBL = () => {
   return (
     <div>
       <h2>Đánh giá của khách hàng</h2>
-      <table className="table">
+      <table className="table table-hover table-bordered table-stripped">
   <thead>
-    <tr>
+    <tr className="table-primary">
       <th>Sản phẩm</th>
       <th>Lời đánh giá</th>
       <th>Ngày đánh giá</th>
@@ -68,7 +68,7 @@ const QLBL = () => {
     ) : (
       comments.map((comment) => (
         <tr key={comment._id}>
-          <td>{comment.productId?._id}</td> 
+          <td>{comment.productId?.title}</td> 
           <td>{comment.comment}</td>
           <td>{new Date(comment.createdAt).toLocaleString()}</td>
           <td>{comment.userId?.last_name}</td>

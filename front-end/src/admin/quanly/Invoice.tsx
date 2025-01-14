@@ -158,7 +158,6 @@ const InvoiceList = () => {
               <Typography variant="subtitle1" sx={{ marginTop: "20px" }}>
                 <strong>Danh sách sản phẩm:</strong>
               </Typography>
-
               <ul>
                 {selectedInvoice.orderItems.map((item: any) => (
                   <li key={item._id}>

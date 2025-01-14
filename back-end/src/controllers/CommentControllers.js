@@ -73,7 +73,7 @@ export const getCommentsByProduct = async (productId, lang = "en") => {
   try {
     const comments = await Comment.find({ productId })
       .populate("userId", "first_name last_name email") 
-      .populate("productId", "name price") 
+      .populate("productId") 
       .sort({ createdAt: -1 }); 
 
     if (!comments || comments.length === 0) {
@@ -90,7 +90,7 @@ export const getCommentsByProduct = async (productId, lang = "en") => {
 export const getComments = async (req, res) => {
   const lang = req.lang || "en"; 
   try {
-    const comments = await Comment.find().populate("userId", "first_name last_name email").populate("productId", "name price").sort({ createdAt: -1 });
+    const comments = await Comment.find().populate("userId", "first_name last_name email").populate("productId", "title price").sort({ createdAt: -1 });
    res.status(200).json(comments)
   } catch (error) {
     console.error(error);

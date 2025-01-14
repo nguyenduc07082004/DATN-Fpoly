@@ -234,13 +234,13 @@ const VoucherManagement: React.FC = () => {
             type="number"
             value={discount}
             onChange={(e) =>
-              setDiscount(Math.max(1, Math.min(30, Number(e.target.value))))
+              setDiscount(Math.max(1, Math.min(99, Number(e.target.value))))
             }
             required
             InputProps={{
               inputProps: {
                 min: 1,
-                max: 30,
+                max: 99,
               },
             }}
           />

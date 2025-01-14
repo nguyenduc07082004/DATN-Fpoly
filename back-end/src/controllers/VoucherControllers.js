@@ -79,7 +79,7 @@ export const createVoucher = async (req, res) => {
         }
 
         // Kiểm tra giá trị giảm giá và ngày hết hạn
-        if (discount > 30 || discount <= 0) {
+        if (discount > 99 || discount <= 0) {
             return res.status(400).json({ error: 'Giảm giá phải trong khoảng 1% - 30%' });
         }
         if (new Date(expiration_date) < new Date()) {
