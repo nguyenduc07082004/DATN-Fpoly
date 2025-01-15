@@ -7,18 +7,16 @@ import { useParams } from "react-router-dom";
 const VariantsForm = () => {
   const { id } = useParams();
   const [products, setProducts] = useState<any[]>([]);
-  const [selectedProductId, setSelectedProductId] = useState<string | null>(
-    id as string
-  );
-
-
+  const [selectedProductId, setSelectedProductId] = useState<string | null>(id as string);
   const [color, setColor] = useState<string>("");
   const [storage, setStorage] = useState<string>("");
   const [sku, setSku] = useState<string>("");
   const [price, setPrice] = useState<number>(0);
   const [quantity, setQuantity] = useState<number>(0);
   const [images, setImages] = useState<File[] | null>(null);
+  const [variant, setVariant] = useState<any | null>(null);  // Thêm state để lưu thông tin biến thể
   const fileInputRef = useRef<HTMLInputElement | null>(null);
+
   useEffect(() => {
     const fetchProducts = async () => {
       try {
@@ -56,17 +54,12 @@ const VariantsForm = () => {
     const newQuantity = Number(e.target.value);
     setQuantity(newQuantity);
   };
-  const updateSku = (
-    productId: string | null,
-    selectedColor: string,
-    selectedStorage: string
-  ) => {
+
+  const updateSku = (productId: string | null, selectedColor: string, selectedStorage: string) => {
     if (productId && selectedColor && selectedStorage) {
       const product = products.find((p) => p._id === productId);
       if (product) {
-        const generatedSku = generateSlug(
-          `${product.title}-${selectedColor}-${selectedStorage}`
-        );
+        const generatedSku = generateSlug(`${product.title}-${selectedColor}-${selectedStorage}`);
         setSku(generatedSku);
       }
     }
@@ -79,8 +72,6 @@ const VariantsForm = () => {
     if (files) {
       const newFiles = Array.from(files);
       if (images && newFiles.length + images.length > maxFiles) {
-        alert(`Chỉ nhận tối đa ${maxFiles} hình ảnh`);
-
         const filesToSave = newFiles.slice(0, maxFiles - (images?.length || 0));
         setImages((prevImages) =>
           prevImages ? [...prevImages, ...filesToSave] : [...filesToSave]
@@ -104,22 +95,12 @@ const VariantsForm = () => {
       return prevImages;
     });
   };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (
-      !selectedProductId ||
-      !color ||
-      !storage ||
-      !sku ||
-      !price ||
-      !quantity ||
-      !images
-    ) {
-      alert(
-        "Vui lòng chọn đầy đủ thông tin sản phẩm, màu sắc, bộ nhớ , SKU , giá , số lượng , hình ảnh."
-      );
-      return;
+    if (!selectedProductId || !color || !storage || !sku || !price || !quantity || !images) {
+      return; // Bỏ qua thông báo lỗi
     }
 
     const variantData = {
@@ -133,7 +114,7 @@ const VariantsForm = () => {
 
     const formData = new FormData();
     formData.append("productId", selectedProductId);
-    formData.append("variantData", JSON.stringify(variantData)); 
+    formData.append("variantData", JSON.stringify(variantData));
 
     if (images) {
       images.forEach((image) => {
@@ -153,26 +134,22 @@ const VariantsForm = () => {
       );
 
       if (response.status === 201) {
-        alert("Biến thể đã được tạo thành công");
+        // Lưu thông tin biến thể vào state để hiển thị
+        setVariant({
+          ...variantData,
+          images: images,
+        });
+
         setSku("");
         setColor("");
         setStorage("");
         setPrice(0);
         setQuantity(1);
-        setImages(null); 
+        setImages(null);
       }
     } catch (error: any) {
       console.error("Có lỗi khi tạo biến thể:", error);
-      if (error.response) {
-        const errorMessage =
-          error.response.data.message ||
-          "Có lỗi khi tạo biến thể. Vui lòng thử lại.";
-        alert(errorMessage);
-      } else if (error.request) {
-        alert("Không nhận được phản hồi từ server. Vui lòng kiểm tra kết nối.");
-      } else {
-        alert("Có lỗi không xác định. Vui lòng thử lại.");
-      }
+      // Xử lý lỗi mà không cần thông báo alert
     }
   };
 
@@ -186,7 +163,7 @@ const VariantsForm = () => {
     <div className="mt-5">
       <h2 className="text-center mb-4">Tạo Biến thể cho Sản phẩm</h2>
       <form onSubmit={handleSubmit}>
-        <div className="border p-4 mb-4 rounded shadow-sm">
+        <div className="border rounded shadow-sm mb-4 p-4">
           <label htmlFor="">Sản Phẩm</label>
           <br />
           <select
@@ -273,7 +250,7 @@ const VariantsForm = () => {
             <div className="form-group">
               <button
                 type="button"
-                className="btn btn-success btn-sm shadow-sm mt-2"
+                className="shadow-sm mt-2 btn btn-success btn-sm"
                 onClick={handleClick}
               >
                 <i className="bi bi-upload"></i> Tải ảnh lên
@@ -297,11 +274,11 @@ const VariantsForm = () => {
               </div>
             )}
 
-            <div className="image-preview mt-2">
+            <div className="mt-2 image-preview">
               <div className="row">
                 {images &&
                   images.map((file, index) => (
-                    <div key={index} className="col-4 mb-3">
+                    <div key={index} className="mb-3 col-4">
                       <div className="card">
                         <img
                           src={URL.createObjectURL(file)}
@@ -311,7 +288,7 @@ const VariantsForm = () => {
                         />
                         <button
                           type="button"
-                          className="btn btn-danger position-absolute top-0 end-0 m-2"
+                          className="m-2 top-0 btn btn-danger position-absolute end-0"
                           onClick={() => handleRemoveImage(index)}
                         >
                           <i className="bi bi-x-circle"></i>
@@ -332,6 +309,37 @@ const VariantsForm = () => {
           </button>
         </div>
       </form>
+
+      {/* Table to display entered information */}
+      {variant && (
+        <div className="mt-4">
+          <h4>Thông tin Biến thể</h4>
+          <table className="table table-bordered">
+            <thead>
+              <tr>
+                <th>Sản phẩm</th>
+                <th>Màu sắc</th>
+                <th>Bộ nhớ</th>
+                <th>SKU</th>
+                <th>Giá</th>
+                <th>Số lượng</th>
+                <th>Hình ảnh</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>{products.find((product) => product._id === variant.productId)?.title}</td>
+                <td>{variant.color}</td>
+                <td>{variant.storage}</td>
+                <td>{variant.sku}</td>
+                <td>{variant.price}</td>
+                <td>{variant.quantity}</td>
+                <td>{variant.images?.length} tệp</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      )}
     </div>
   );
 };
