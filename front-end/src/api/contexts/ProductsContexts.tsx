@@ -3,8 +3,9 @@ import { createContext, useEffect, useReducer, useState } from "react";
 import productsReducer, { initialState } from "../reducers/ProductsReducers";
 import ins from "..";
 import { Products } from "../../interfaces/Products";
-import axios from "axios";
-
+import { baseURL } from "..";
+import io from "socket.io-client";
+import Swal from "sweetalert2";
 export type ProdContextType = {
   onDel: (_id: string) => void;
   dispatch: React.Dispatch<any>;
@@ -21,6 +22,7 @@ export type ProdContextType = {
   onChangeHandler: (event: any) => void;
   setImage: React.Dispatch<React.SetStateAction<boolean>>;
   data1: any;
+  fetchProducts: () => void;
 };
 
 export const ProdContext = createContext({} as ProdContextType);
@@ -40,11 +42,12 @@ export const ProdProvider = ({ children }: { children: React.ReactNode }) => {
     quantity: "",
     description: "",
   });
+
+  const socket = io(baseURL);
   const onChangeHandler = (event: any) => {
     const name = event.target.name;
     const value = event.target.value;
     setData((data1) => ({ ...data1, [name]: value }));
-    console.log(name, value);
   };
   //Tìm kiếm sản phẩm
   const handleSearch = (event: any) => {
@@ -80,23 +83,50 @@ export const ProdProvider = ({ children }: { children: React.ReactNode }) => {
   const fetchProducts = async () => {
     const { data } = await ins.get("/products");
     dispatch({ type: "LIST_PRODUCTS", payload: data });
-    console.log(data);
   };
 
   useEffect(() => {
     fetchProducts();
+    socket.on("orderCreated", (data) => {
+      fetchProducts();
+    });
+    socket.on("new_product", (data) => {
+      fetchProducts();
+    });
+    return () => {
+      socket.off("orderCreated");
+      socket.off("new_product");
+    };
   }, []);
 
-  //Logic xóa sản phẩm
   const onDel = (_id: string) => {
     (async () => {
-      if (confirm("SURE?")) {
-        await ins.delete(`/products/${_id}`);
-        dispatch({ type: "DELETE_PRODUCT", payload: _id });
+      if (confirm("SURE?")) { 
+        try {
+          const response = await ins.delete(`/products/${_id}`);
+          
+          dispatch({ type: "DELETE_PRODUCT", payload: _id });
+          fetchProducts(); 
+          Swal.fire({
+            icon: 'success',
+            title: 'Deleted!',
+            text: 'Xoá sản phẩm thành công',
+          });
+  
+          return response;
+        } catch (error:any) {
+          console.error('Error deleting product:', error);
+          
+          Swal.fire({
+            icon: 'error',
+            title: 'Error!',
+            text: error.response.data.message,
+          });
+        }
       }
     })();
-    fetchProducts();
   };
+  
 
   return (
     <ProdContext.Provider
@@ -116,6 +146,7 @@ export const ProdProvider = ({ children }: { children: React.ReactNode }) => {
         indexOfFirstProduct,
         searchQuery,
         productsPerPage,
+        fetchProducts
       }}
     >
       {children}

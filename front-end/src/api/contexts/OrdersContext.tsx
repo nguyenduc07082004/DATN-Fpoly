@@ -11,7 +11,7 @@ import { CartItem } from "../../interfaces/Cart";
 interface OrderContextType {
   state: State;
   dispatch: React.Dispatch<any>; // Thêm dispatch vào OrderContextType
-  fetchOrder: () => void;
+  fetchOrder: (page: number, limit: number) => void;
   updateOrderStatus: (orderId: string, status: string) => void;
   updatePaymentStatus: (orderId: string, payment_status: string) => void;
   addOrder: (order: CartItem) => void;
@@ -22,11 +22,27 @@ const OrderContext = createContext<OrderContextType | undefined>(undefined);
 const OrderProvider = ({ children }: { children: ReactNode }) => {
   const [state, dispatch] = useReducer(orderReducer, initialState);
 
-  const fetchOrder = async () => {
-    const res = await ins.get("/orders");
-    dispatch({ type: "GET_ORDER", payload: { products: res.data } });
-  };
+  const fetchOrder = async (page: number, limit: number) => {
+    try {
+      const res = await ins.get("/orders", {
+        params: {
+          page: page,
+          limit: limit,
+        },
+      });
 
+  
+      dispatch({
+        type: "GET_ORDER",
+        payload: {
+          products: res.data.orders,
+          totalOrders: res.data.totalOrders, 
+        },
+      });
+    } catch (error) {
+      console.error("Không thể lấy đơn hàng: ", error);
+    }
+  };
   const updateOrderStatus = async (orderId: string, status: string) => {
     try {
       await ins.patch(`/orders/${orderId}`, { status });

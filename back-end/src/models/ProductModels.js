@@ -4,7 +4,7 @@ const variantSchema = new Schema({
   sku: { type: String, unique: true, sparse: true }, 
   color: {
     type: String,
-    enum: ["Đen", "Trắng", "Hồng", "Xanh"],
+    enum: ["Đen", "Trắng", "Hồng", "Xanh" , "Đỏ" , "Vàng" , "XanhLá" , "Bạc"],
   },
   storage: {
     type: String,
@@ -21,8 +21,8 @@ const variantSchema = new Schema({
     required: true,
     min:[0, "Quantity cannot be negative"],
   },
-    variantImages: [{ type: Schema.Types.ObjectId, ref: "VariantImage" }]
-
+    variantImages: [{ type: Schema.Types.ObjectId, ref: "VariantImage" }],
+    deleted_at: { type: Date, default: null },
 });
 
 const productSchema = new Schema({
@@ -30,9 +30,11 @@ const productSchema = new Schema({
   image: { type: String },
   categories: { type: Schema.Types.ObjectId, ref: "Category", required: true },
   description: { type: String },
+  default_price: { type: Number, required: true },
   variants: { type: [variantSchema], default: [] }, 
   created_at: { type: Date, default: Date.now },
   updated_at: { type: Date, default: Date.now },
+  deleted_at: { type: Date, default: null },
 });
 
 // Xuất mô hình Product

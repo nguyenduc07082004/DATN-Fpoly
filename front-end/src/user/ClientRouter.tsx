@@ -13,6 +13,11 @@ import Cart from "./Cart/CartPage";
 import VnpayPayment from "./page/Vnpay";
 import CheckOut from "./page/CheckOut";
 import OrderPlace from "./page/OrderPlace";
+import Profile from "./page/Profile";
+import ContactPage from "./page/ContactPage";
+import IntroPage from "./page/IntroPage";
+import OrderDetails from "./page/OrderDetails";
+import Voucher from "./page/Voucher";
 const Client = () => {
   return (
     <div>
@@ -20,7 +25,6 @@ const Client = () => {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/other" element={<ProductPage />} />{" "}
-        {/* Thay đổi theo trang khác */}
         <Route path="/products" element={<ProductList />} />
         <Route path="/products/:productId" element={<ProductsDetails />} />
         <Route path="/login" element={<Login />} />
@@ -28,8 +32,13 @@ const Client = () => {
         <Route path="/cart" element={<Cart />} />
         <Route path="/user/:id" element={<FromUser />} />
         <Route path="/vnpay" element={<VnpayPayment />} />
+        <Route path="/profile" element={<Profile />} />
+        <Route path="/voucher" element={<Voucher />} />
         <Route path="/checkout" element={<CheckOut />} />
         <Route path="/orderplace" element={<OrderPlace />} />
+        <Route path="/orderplace/:id" element={<OrderDetails />} />
+        <Route path="/contactPage" element={<ContactPage />} />
+        <Route path="/introPage" element={<IntroPage />} />
       </Routes>
       <Footer />
     </div>

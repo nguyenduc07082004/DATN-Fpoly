@@ -13,7 +13,7 @@ export type CartContextType = {
   };
   dispatch: React.Dispatch<any>;
   addToCart: (product: Products, quantity: number, price: number , variantId: string, selectedColor: string, selectedStorage: string) => void;
-  checkout: () => void;
+  checkout: (discountCode: string) => Promise<any>;
   removeFromCart: (variantId: string) => void;
   fetchCart: () => void;
 };
@@ -74,9 +74,25 @@ const CartProvider = ({ children }: { children: ReactNode }) => {
   };
 
 
-  const checkout = async () => {
-    const res = await ins.post("/orders/checkout");
-    dispatch({ type: "CHECKOUT", payload: res.data });
+  const checkout = async (discountCode:string) => { 
+    try {
+      if (discountCode) {
+        const res = await ins.post("/orders/checkout", {
+          discountCode, 
+        });
+        dispatch({ type: "CHECKOUT", payload: res.data });
+        return res;
+      }
+      else {
+        const res = await ins.post("/orders/checkout");
+  
+        dispatch({ type: "CHECKOUT", payload: res.data });
+        return res;
+      }
+    } catch (error) {
+      console.error("Checkout failed", error);
+      throw error;
+    }
   };
 
   const removeFromCart = async (variantId: string) => {

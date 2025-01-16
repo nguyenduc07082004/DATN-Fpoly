@@ -1,8 +1,15 @@
-import React, { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { CartContext, CartContextType } from "../../api/contexts/CartContext";
 import { CartItem } from "../../api/reducers/CartReducer";
 import { useNavigate } from "react-router-dom";
-import { FaMinusCircle, FaPlusCircle } from "react-icons/fa";
+import {
+  FaMinusCircle,
+  FaPlusCircle,
+  FaShoppingCart,
+  FaTrash,
+} from "react-icons/fa";
+import Swal from "sweetalert2";
+import ins from "../../api";
 
 const Cart = () => {
   const { state, removeFromCart, checkout, addToCart, fetchCart } = useContext(
@@ -10,12 +17,10 @@ const Cart = () => {
   ) as CartContextType;
   const navigate = useNavigate();
   const token = localStorage.getItem("accessToken");
-  const [paymentMethod, setPaymentMethod] = useState("COD");
 
   useEffect(() => {
     fetchCart();
   }, []);
-
   const handleRemoveFromCart = (variantId: string) => {
     removeFromCart(variantId);
   };
@@ -23,53 +28,86 @@ const Cart = () => {
   const handleDecreaseQuantity = (product: CartItem) => {
     if (product?.quantity > 1) {
       addToCart({
-        productId: product.product._id, 
-        quantity: -1,                   
-        price: product.price,            
-        variantId: product.variantId,    
-        selectedColor: product.color,    
-        selectedStorage: product.storage 
+        productId: product.product._id,
+        quantity: -1,
+        price: product.price,
+        variantId: product.variantId,
+        selectedColor: product.color,
+        selectedStorage: product.storage,
       });
-    } 
+    }
   };
 
   const handleIncreaseQuantity = (product: CartItem) => {
     addToCart({
-      productId: product.product._id, 
-      quantity: 1,                    
-      price: product.price,           
-      variantId: product.variantId,    
-      selectedColor: product.color,    
-      selectedStorage: product.storage 
+      productId: product.product._id,
+      quantity: 1,
+      price: product.price,
+      variantId: product.variantId,
+      selectedColor: product.color,
+      selectedStorage: product.storage,
     });
   };
+
   const handleCheckout = async () => {
-    if (!token) {
-      alert("Vui lòng đăng nhập để thanh toán");
-      navigate("/login");
-    } else {
-      if (paymentMethod === "CreditCard") {
-        // Chuyển hướng đến trang VNPAY
-        navigate("/vnpay");
-      } else {
-        alert(`Thanh toán thành công với phương thức: ${paymentMethod}`);
-        await checkout();
-        navigate("/checkout");
+    try {
+      if (!token) {
+        Swal.fire({
+          icon: "warning",
+          title: "Vui lòng đăng nhập",
+          text: "Vui lòng đăng nhập trước khi thanh toán",
+          confirmButtonText: "Đăng nhập",
+          cancelButtonText: "Đóng",
+          showCancelButton: true,
+        }).then((result) => {
+          if (result.isConfirmed) {
+            navigate("/login");
+          }
+        });
       }
+      if (state.products.length === 0) {
+        Swal.fire({
+          icon: "warning",
+          title: "Giỏ hàng trống",
+          text: "Vui lòng thêm sản phẩm vào giỏ hàng trước khi thanh toán",
+        });
+      } else {
+        const res = await ins.post("/products/check-stock", {
+          cartItems: state.products,
+        });
+        if (res.status === 200) {
+          navigate("/vnpay");
+        }
+      }
+    } catch (error: any) {
+      Swal.fire({
+        icon: "error",
+        title: "Oops...",
+        text:
+          error.response?.data?.unavailableVariants[0].message ||
+          "Đã xảy ra lỗi, vui lòng thử lại!",
+      });
     }
   };
 
+  // Tính toán tổng tiền sau khi giảm giá
   return (
-    <>
-      <h1>Giỏ hàng</h1>
-
+    <div className="container">
+      <h1>
+        <FaShoppingCart className="me-2" />
+        Giỏ hàng
+      </h1>
       {/* Bảng hiển thị thông tin người dùng */}
-      <h2>Thông tin người dùng</h2>
-      <table className="table table-bordered">
+      <h2>Thông tin giỏ hàng</h2>
+      {/* <table className="table table-hover">
         <tbody>
           <tr>
             <th>Tên:</th>
-            <td>{JSON.parse(localStorage.getItem("user") || "{}").first_name + " " + JSON.parse(localStorage.getItem("user") || "{}").last_name}</td>
+            <td>
+              {JSON.parse(localStorage.getItem("user") || "{}").first_name +
+                " " +
+                JSON.parse(localStorage.getItem("user") || "{}").last_name}
+            </td>
           </tr>
           <tr>
             <th>Địa chỉ:</th>
@@ -80,78 +118,76 @@ const Cart = () => {
             <td>{JSON.parse(localStorage.getItem("user") || "{}").phone}</td>
           </tr>
         </tbody>
-      </table>
-
-      {/* Chọn hình thức thanh toán */}
-      <h2>Phương thức thanh toán</h2>
-      <select
-        value={paymentMethod}
-        onChange={(e) => setPaymentMethod(e.target.value)}
-        className="mb-3 form-select"
-      >
-        <option value="COD">Thanh toán khi nhận hàng </option>
-        <option value="CreditCard">Thanh toán qua vnpay</option>
-      </select>
-
-      <table className="table table-striped table-bordered">
+      </table> */}
+      <table className="table table-hover ">
         <thead>
-          <tr>
-            <th>STT</th>
-            <th>Tên sản phẩm</th>
-            <th>Màu sắc</th>
-            <th>Dung lượng</th>
-            <th>Mô tả</th>
-            <th>Số lượng mua</th>
-            <th>Giá</th>
-            <th>Thành tiền</th>
-            <th>Xóa</th>
+          <tr className="table-info">
+            <th className="col-4">Tên sản phẩm</th>
+            <th className="col-3">Màu sắc</th>
+            <th className="col-3">Dung lượng</th>
+            <th className="col-3">Số lượng</th>
+            <th className="col-3">Đơn Giá</th>
+            <th className="col-2">Giá</th>
+            <th className="col-1">Xóa</th>
           </tr>
         </thead>
         <tbody>
-          {state.products.map((product: CartItem, index: number) => (
-            <tr key={index}>
-              <td>{index + 1}</td>
-              <td>{product.product?.title}</td>
-              <td>{product.color}</td>
-              <td>{product.storage}</td>
-              <td>{product.product?.description}</td>
-              <td>
-                <FaMinusCircle
-                  onClick={() => handleDecreaseQuantity(product)}
-                  className="text-danger"
-                />{" "}
-                {product?.quantity}{" "}
-                <FaPlusCircle
-                  onClick={() => handleIncreaseQuantity(product)}
-                  className="text-primary"
-                />
-              </td>
-              <td>{product.price}</td>
-              <td>{product.price * product?.quantity}</td>
-              <td>
-                <button
-                  onClick={() =>
-                    handleRemoveFromCart(String(product.variantId))
-                  }
-                  className="btn btn-danger"
-                >
-                  Xóa
-                </button>
+          {state.products.length > 0 ? (
+            state.products.map((product: CartItem, index: number) => (
+              <tr key={index}>
+                <td className="row-4">{product.product?.title}</td>
+                <td className="row-3">{product.color}</td>
+                <td className="row-3">{product.storage}</td>
+                <td className="row-3">
+                  <FaMinusCircle
+                    onClick={() => handleDecreaseQuantity(product)}
+                    className="text-danger"
+                  />{" "}
+                  {product?.quantity}{" "}
+                  <FaPlusCircle
+                    onClick={() => handleIncreaseQuantity(product)}
+                    className="text-primary"
+                  />
+                </td>
+                <td><span>{product?.price.toLocaleString()}</span>đ</td>
+                <td className="row-4">
+                  <span>{(product.price * product.quantity).toLocaleString()}</span>đ
+                </td>
+                <td>
+                  <FaTrash
+                    onClick={() => handleRemoveFromCart(product.variantId)}
+                    className="text-danger"
+                    style={{ cursor: "pointer" }}
+                  />
+                </td>
+              </tr>
+            ))
+          ) : (
+            <tr>
+              <td colSpan={7} style={{ textAlign: "center", padding: "20px" }}>
+                Giỏ hàng trống
               </td>
             </tr>
-          ))}
-          <tr>
-            <td colSpan={7}>Tổng tiền</td>
-            <td>{state.totalPrice}</td>
-            <td>
-              <button onClick={handleCheckout} className="btn btn-success">
-                Thanh toán
-              </button>
-            </td>
-          </tr>
+          )}
         </tbody>
       </table>
-    </>
+
+      {/* Tổng tiền sau khi giảm giá */}
+      <div className="my-4 row fs-5">
+        <div className="text-right col">
+          <strong>Tổng tiền:</strong>
+        </div>
+        <div className="text-right col fw-bold">
+          <span>{state.totalPrice.toLocaleString()} đ</span>
+        </div>
+      </div>
+
+      <div className="my-4">
+        <button onClick={handleCheckout} className="btn btn-success">
+          Thanh toán
+        </button>
+      </div>
+    </div>
   );
 };
 

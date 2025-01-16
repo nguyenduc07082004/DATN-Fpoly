@@ -8,6 +8,11 @@ import {
   deleteProduct,
   createVariant,
   getProductsWithoutVariants,
+  getFilteredProducts,
+  getVariantByProductId,
+  deleteVariant,
+  updateVariant , 
+  checkStock
 } from "../controllers/ProductControllers.js";
 import multer from "multer";
 // Lấy danh sách sản phẩm (không cần xác thực)
@@ -26,18 +31,19 @@ const upload = multer({ storage: storage });
 ProductRouter.post("/add", upload.single("image"), addProduct);
 ProductRouter.get("/", getProducts);
 ProductRouter.get("/without-variants", getProductsWithoutVariants);
-
+ProductRouter.get("/filters", getFilteredProducts);
 ProductRouter.get(
   "/:id", //authMiddleware,
   getProductById
 );
-
-// Thêm sản phẩm (yêu cầu xác thực)
-
-ProductRouter.get(
-  "/:id", //authMiddleware,
-  getProductById
+ProductRouter.get("/:product_id/variants/:variant_id", getVariantByProductId);
+ProductRouter.put("/:productId/variants/:variantId",upload.array("images", 3), updateVariant);
+ProductRouter.post(
+  "/create/variants", 
+  upload.array("images", 3), 
+  createVariant
 );
+ProductRouter.post("/check-stock" , checkStock)
 
 // Cập nhật sản phẩm (yêu cầu xác thực)
 ProductRouter.put(
@@ -51,9 +57,9 @@ ProductRouter.delete(
   "/:id", //authMiddleware,
   deleteProduct
 );
+ProductRouter.delete("/:product_id/variants/:variant_id", deleteVariant);
 
-ProductRouter.post(
-  "/create/variants", 
-  upload.array("images", 10), 
-  createVariant
-);export default ProductRouter;
+
+
+
+export default ProductRouter;

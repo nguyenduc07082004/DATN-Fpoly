@@ -1,8 +1,10 @@
+import Swal from 'sweetalert2';
 import "../.././App.scss";
 import { useContext, useEffect, useState } from "react";
 import { UserContext } from "../../api/contexts/UserContext";
 import ins from "../../api";
 import { baseURL } from "../../api";
+
 const QLTK = () => {
   const {
     handleNextPage,
@@ -13,42 +15,53 @@ const QLTK = () => {
     searchQuery,
   } = useContext(UserContext);
 
-  const [users, setUsers] = useState<User[]>([]); 
+  const [users, setUsers] = useState<User[]>([]);
 
   const getUser = async () => {
     try {
       const response = await ins.get(`${baseURL}/users`);
-      setUsers(response.data); 
+      setUsers(response.data);
     } catch (error) {
       console.error("Error fetching users:", error);
     }
   };
 
   const handleToggleActive = async (userId: string, newStatus: boolean) => {
-    try {
-      const response = await ins.post(`${baseURL}/users/block`, {
-        userId,
-        is_blocked: newStatus,
-      });
-  
-      if (response.status === 200) {
-        setUsers((prevUsers) =>
-          prevUsers.map((user) =>
-            user._id === userId ? { ...user, is_blocked: newStatus } : user
-          )
-        );
-        console.log(response.data.message || "Status updated successfully!");
-      } else {
-        console.warn("Unexpected response status:", response.status);
+    // Hiển thị hộp thoại xác nhận trước khi thực hiện
+    Swal.fire({
+      title: newStatus ? "Mở tài khoản" : "Khoá tài khoản",
+      text: newStatus ? "Bạn có chắc chắn muốn mở tài khoản này?" : "Bạn có chắc chắn muốn khoá tài khoản này?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "Xác nhận",
+      cancelButtonText: "Hủy",
+      reverseButtons: true
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+          const response = await ins.post(`${baseURL}/users/block`, {
+            userId,
+            is_blocked: newStatus,
+          });
+
+          if (response.status === 200) {
+            setUsers((prevUsers) =>
+              prevUsers.map((user) =>
+                user._id === userId ? { ...user, is_blocked: newStatus } : user
+              )
+            );
+            Swal.fire("Thành công", response.data.message || "Cập nhật trạng thái thành công!", "success");
+          } else {
+            console.warn("Unexpected response status:", response.status);
+          }
+        } catch (error: any) {
+          console.error("Failed to update status:", error.response?.data?.message || error.message);
+          Swal.fire("Lỗi", "Có lỗi xảy ra khi cập nhật trạng thái", "error");
+        }
       }
-    } catch (error: any) {
-      console.error(
-        "Failed to update status:",
-        error.response?.data?.message || error.message
-      );
-    }
+    });
   };
-  
+
   useEffect(() => {
     getUser();
   }, []);
@@ -58,7 +71,7 @@ const QLTK = () => {
       <p className="m-3">
         <b className="h2">Quản lý tài khoản</b>
       </p>
-      <div className="d-flex py-4 mx-5">
+      <div className="mx-5 py-4 d-flex">
         <div className="search">
           Search
           <input
@@ -80,7 +93,7 @@ const QLTK = () => {
             <th className="col-1">Trạng thái</th>
             <th className="col-1">SĐT</th>
             <th className="col-3">Địa chỉ</th>
-            <th className="col-2">Chức năng</th>
+            <th className="col-2">Trạng thái người dùng</th>
           </tr>
         </thead>
         <tbody className="text-center">
@@ -106,11 +119,11 @@ const QLTK = () => {
         </tbody>
       </table>
 
-      <div className="d-flex justify-content-center align-items-center my-4">
+      <div className="my-4 d-flex justify-content-center align-items-center">
         <button
           disabled={currentPage === 1}
           onClick={handlePrevPage}
-          className="btn btn-primary mx-2"
+          className="mx-2 btn btn-primary"
         >
           Trang trước
         </button>
@@ -120,7 +133,7 @@ const QLTK = () => {
         <button
           disabled={currentPage === totalPages}
           onClick={handleNextPage}
-          className="btn btn-primary mx-2"
+          className="mx-2 btn btn-primary"
         >
           Trang sau
         </button>

@@ -1,33 +1,80 @@
 import { Link } from "react-router-dom";
 import Logo from "../../../logo.png";
 import "../css/Style.css";
-import {
-  AuthContext,
-  AuthContextType,
-  useAuth,
-} from "../../api/contexts/AuthContext";
-import { useContext } from "react";
+import { useContext, useEffect, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCartShopping } from "@fortawesome/free-solid-svg-icons";
+import { faCartShopping, faUser } from "@fortawesome/free-solid-svg-icons";
+import { AuthContext, AuthContextType, useAuth } from "../../api/contexts/AuthContext";
 import { CartContext, CartContextType } from "../../api/contexts/CartContext";
 import ins from "../../api";
 import { baseURL } from "../../api";
+import io from "socket.io-client";
+import toastr from "toastr";
+
 const Header = () => {
   const { logout } = useAuth();
   const { user } = useContext(AuthContext) as AuthContextType;
+  const [isNoti, setIsNoti] = useState(false);
   const { state } = useContext(CartContext) as CartContextType;
+  const socket = io(baseURL);
 
+  interface OrderStatusUpdateData {
+    userId: string;
+    orderId: string;
+    status: string;
+    message: string;
+  }
+
+  const debounceTimeouts: Record<string, NodeJS.Timeout> = {};
+  const shownMessages: Record<string, boolean> = JSON.parse(localStorage.getItem("shownMessages") || "{}");
+
+  useEffect(() => {
+    const handleOrderStatusUpdated = (data: OrderStatusUpdateData) => {
+      if (data.userId !== user._id) {
+        return;
+      }
+
+      const { orderId, message } = data;
+
+      if (shownMessages[orderId]) {
+        return;
+      }
+
+      if (debounceTimeouts[orderId]) {
+        clearTimeout(debounceTimeouts[orderId]);
+      }
+
+      debounceTimeouts[orderId] = setTimeout(() => {
+        toastr.success(message, "Thành công");
+        shownMessages[orderId] = true;
+        localStorage.setItem("shownMessages", JSON.stringify(shownMessages));
+        setIsNoti(true);
+      }, 500);
+    };
+
+    socket.off("orderStatusUpdated", handleOrderStatusUpdated);
+    socket.on("orderStatusUpdated", handleOrderStatusUpdated);
+
+    return () => {
+      socket.off("orderStatusUpdated", handleOrderStatusUpdated);
+    };
+  }, [user, isNoti]);
+
+  const totalProduct = state.products.reduce(
+    (acc, item) => acc + item.quantity,
+    0
+  );
 
   const handleLogout = async () => {
     try {
-      const response = await ins.post(`${baseURL}/logout`); 
+      const response = await ins.post(`${baseURL}/logout`);
       if (response.status === 200) {
-        logout(); 
-        localStorage.removeItem("accessToken"); 
-        localStorage.removeItem("user"); 
-        alert("Đăng xuất thành công!"); 
+        logout();
+        localStorage.removeItem("accessToken");
+        localStorage.removeItem("user");
+        alert("Đăng xuất thành công!");
       }
-    } catch (error : any) {
+    } catch (error: any) {
       if (error.response) {
         console.error("Lỗi:", error.response.data.message);
         alert(error.response.data.message || "Đã xảy ra lỗi khi đăng xuất.");
@@ -37,7 +84,6 @@ const Header = () => {
       }
     }
   };
-  const cartItemCount = 0; 
 
   return (
     <header className="header">
@@ -49,106 +95,38 @@ const Header = () => {
       <nav>
         <ul>
           <li>
-            <Link
-              to="/"
-              className="text-decoration-none"
-              style={{ color: "white" }}
-            >
+            <Link to="/" className="text-decoration-none" style={{ color: "white" }}>
               Trang chủ
             </Link>
           </li>
           <li>
-            <Link
-              to="/other"
-              className="text-decoration-none"
-              style={{ color: "white" }}
-            >
+            <Link to="/other" className="text-decoration-none" style={{ color: "white" }}>
               Sản phẩm
             </Link>
           </li>
           <li>
-            <Link
-              to="/about"
-              className="text-decoration-none"
-              style={{ color: "white" }}
-            >
+            <Link to="/introPage" className="text-decoration-none" style={{ color: "white" }}>
               Giới thiệu
             </Link>
           </li>
           <li>
-            <Link
-              to="/contact"
-              className="text-decoration-none"
-              style={{ color: "white" }}
-            >
+            <Link to="/contactPage" className="text-decoration-none" style={{ color: "white" }}>
               Liên hệ
             </Link>
           </li>
           <li>
-            <Link
-              to="/orderplace"
-              className="text-decoration-none"
-              style={{ color: "white" }}
-            >
+            <Link to="/orderplace" className="text-decoration-none" style={{ color: "white" }}>
               Đơn hàng
             </Link>
           </li>
-          <li className="dropdown">
-            <Link
-              to="#"
-              className="dropdown-toggle text-decoration-none"
-              data-bs-toggle="dropdown"
-              aria-expanded="false"
-              style={{ color: "white" }}
-            >
-              Thiết bị
+          <li>
+            <Link to="/voucher" className="text-decoration-none" style={{ color: "white" }}>
+              Mã Giảm Giá
             </Link>
-            <ul className="dropdown-menu">
-              <li>
-                <Link to="/products/phone" className="dropdown-item">
-                  Điện thoại
-                </Link>
-              </li>
-              <li>
-                <Link to="/products/laptop" className="dropdown-item">
-                  Laptop
-                </Link>
-              </li>
-              <li>
-                <Link to="/products/accessory" className="dropdown-item">
-                  Phụ kiện
-                </Link>
-              </li>
-              <li>
-                <Link to="/products/smartwatch" className="dropdown-item">
-                  Smartwatch
-                </Link>
-              </li>
-              <li>
-                <Link to="/products/watch" className="dropdown-item">
-                  Đồng hồ
-                </Link>
-              </li>
-              <li>
-                <Link to="/products/used" className="dropdown-item">
-                  Máy cũ
-                </Link>
-              </li>
-              <li>
-                <Link to="/services" className="dropdown-item">
-                  Dịch vụ
-                </Link>
-              </li>
-            </ul>
           </li>
         </ul>
       </nav>
       <div className="user-options">
-        <input
-          type="text"
-          placeholder="Tìm kiếm sản phẩm..."
-          className="search-bar"
-        />
         {!localStorage.getItem("accessToken") ? (
           <>
             <Link to="/login" className="text-decoration-none">
@@ -167,8 +145,9 @@ const Header = () => {
               data-bs-toggle="dropdown"
               aria-expanded="false"
             >
+              <FontAwesomeIcon icon={faUser} style={{ marginRight: "5px" }} />
               <strong>
-                {JSON.parse(localStorage.getItem("user") || "{}").fullName}
+                {JSON.parse(localStorage.getItem("user") || "{}").last_name}
               </strong>
             </Link>
             <ul
@@ -176,13 +155,8 @@ const Header = () => {
               aria-labelledby="dropdownUser1"
             >
               <li>
-                <Link className="dropdown-item" to="#">
+                <Link className="dropdown-item" to="/profile">
                   Tài khoản
-                </Link>
-              </li>
-              <li>
-                <Link className="dropdown-item" to="#">
-                  Cài đặt
                 </Link>
               </li>
               {user?.role === "admin" && (
@@ -196,7 +170,11 @@ const Header = () => {
                 <hr className="dropdown-divider" />
               </li>
               <li>
-                <Link onClick={() => handleLogout()} className="dropdown-item" to="#">
+                <Link
+                  onClick={() => handleLogout()}
+                  className="dropdown-item"
+                  to="#"
+                >
                   Đăng xuất
                 </Link>
               </li>
@@ -205,8 +183,8 @@ const Header = () => {
         )}
         <Link to="/cart" className="text-decoration-none cart-icon">
           <FontAwesomeIcon icon={faCartShopping} />
-          {cartItemCount > 0 && (
-            <span className="cart-item-count">{cartItemCount}</span>
+          {totalProduct > 0 && (
+            <span className="cart-item-count">{totalProduct}</span>
           )}
         </Link>
       </div>

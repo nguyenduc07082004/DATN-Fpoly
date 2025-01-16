@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from "react";
-import { useParams, Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import {
   Container,
   Grid,
@@ -7,54 +7,39 @@ import {
   Button,
   CircularProgress,
   Box,
+  TextField,
+  Rating,
+  ImageList,
+  ImageListItem,
+  Card,
   CardContent,
   CardActionArea,
-  Card,
   CardMedia,
 } from "@mui/material";
 import { Products } from "../../interfaces/Products";
-import Logo from "../../assets/logoshop.jpg";
 import { CartContext } from "../../api/contexts/CartContext";
 import { baseURL } from "../../api";
 import ins from "../../api";
 import { Variant } from "../../interfaces/Products";
-
-// Component Header
-const Header = () => {
-  return (
-    <header className="header">
-      <div className="logo">
-        <img src={Logo} alt="logo" />
-      </div>
-      <nav>
-        <ul>
-          <li>Điện thoại</li>
-          <li>Laptop</li>
-          <li>Phụ kiện</li>
-          <li>Smartwatch</li>
-          <li>Đồng hồ</li>
-          <li>Máy cũ</li>
-          <li>Dịch vụ</li>
-        </ul>
-      </nav>
-      <div className="user-options">
-        <span>Đăng nhập</span>
-        <span>Giỏ hàng</span>
-      </div>
-    </header>
-  );
+import toastr from 'toastr';
+import 'toastr/build/toastr.min.css'
+import Swal from "sweetalert2";
+import io from "socket.io-client"
+import CommentsSection from "./CommentsSection";
+const socket = io(baseURL)
+const colorMapping = { 
+  Đen: "#000000",    
+  Trắng: "#FFFFFF",  
+  Xanh: "#0000FF",   
+  Hồng: "#FFC0CB",  
+  Đỏ: "#FF0000",
+  Vàng: "#FFFF00",
+  XanhLá: "#00FF00",
+  Bạc: "#808080",
 };
 
-// Color options (cứng)
-const colorOptions = [
-  { _id: "1", color: "#000000", options: "Đen" },   
-  { _id: "2", color: "#ffffff", options: "Trắng" },  
-  { _id: "3", color: "#ff69b4", options: "Hồng" }, 
-  { _id: "4", color: "#0000ff", options: "Xanh" },   
-];
-
-// Main ProductDetails Component
 const ProductDetails = () => {
+  const userId = JSON.parse(localStorage.getItem("user") || "{}")._id;
   const { productId } = useParams();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -64,40 +49,72 @@ const ProductDetails = () => {
   const [availableVariants, setAvailableVariants] = useState<any[]>([]);  
   const [availableStorages, setAvailableStorages] = useState<{_id : string; storage: string; quantity: number; price: number }[]>([]);  
   const [selectedPrice, setSelectedPrice] = useState<number>(0); 
+  const [images, setImages] = useState([])
+  const [selectQuantity, setSelectQuantity] = useState(0);
   const [suggestedProducts, setSuggestedProducts] = useState<Products[]>([]);
   const token = localStorage.getItem("accessToken");
   const [product, setProduct] = useState<Products>({} as Products);
   const [quantity, setQuantity] = useState(1);
   const [variantId, setVariantId] = useState<string>("");
   const { addToCart } = useContext(CartContext);
+  const [comments, setComments] = useState<any[]>([]);
+  const [avgRating, setAvgRating] = useState(0);
+  const [comment , setComment] = useState('');
+  const [rating, setRating] = useState(0);
+  const [replies, setReplies] = useState<any[]>([]);
+
+
+  useEffect(() => {
+    if (availableVariants.length > 0) {
+      setSelectedColor(availableVariants[0].color);
+      setSelectedStorage(availableVariants[0].storage);
+      setVariantId(availableVariants[0]._id);
+      setSelectedPrice(availableVariants[0].price);
+      setImages(availableVariants[0].variantImages);
+      setSelectQuantity(availableVariants[0].quantity);
+      handleColorChange(availableVariants[0].color);
+      handleStorageChange(availableVariants[0].storage);
+    }
+  },[availableVariants]);
 
   const handleAddToCart = async () => {
-    const variant = availableStorages.find(v => v._id === variantId);
-    
-    if (variant) {
-      addToCart({
-        productId: product._id,
-        variantId: variant._id,
-        storage: variant.storage,
-        price: variant.price,
-        quantity: quantity,
-        selectedColor: selectedColor,
-        selectedStorage: variant.storage
+    if (!userId) {
+      Swal.fire({
+        icon: 'warning',
+        title: 'Vui lòng đăng nhập',
+        text: 'Vui lòng đăng nhập trước khi thêm sản phẩm vào giỏ hàng.',
+        confirmButtonText: 'Đăng nhập',
+        cancelButtonText: 'Đăng ký',
+        showCancelButton: true
+      }).then((result) => {
+        if (result.isConfirmed) {
+          window.location.href = '/login'; 
+        } else {
+          window.location.href = '/register'; 
+        }
       });
     } else {
-      console.error("Variant không hợp lệ");
+      const variant = availableStorages.find(v => v._id === variantId);
+      if (variant) {
+        addToCart({
+          productId: product._id,
+          variantId: variant._id,
+          storage: variant.storage,
+          price: variant.price,
+          quantity: quantity,
+          selectedColor: selectedColor,
+          selectedStorage: variant.storage
+        });
+        toastr.success("Sản phẩm đã được thêm vào giỏ hàng!", "Thành công");
+      } else {
+        toastr.error("Variant không hợp lệ", "Lỗi");
+      }
     }
   };
   
-
-  const handleQuantityChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setQuantity(Number(e.target.value));
-  };
-
   const handleColorChange = (color: string) => {
     setSelectedColor(color);
   
-    // Lọc các biến thể theo màu sắc
     const filteredVariants = product.variants.filter(
       (variant: Variant) => variant.color === color
     );
@@ -122,12 +139,15 @@ const ProductDetails = () => {
     setSelectedStorage(storage);
   
     const selectedVariant = product.variants.find(
-      (variant: Variant) => variant.storage === storage
+      (variant: Variant) => variant.storage === storage && variant.color === selectedColor
     );
   
     if (selectedVariant) {
       setSelectedPrice(selectedVariant.price);
       setVariantId(selectedVariant._id);
+      setMainImage(product.image);
+      setImages(selectedVariant.variantImages);
+      setSelectQuantity(selectedVariant.quantity);
     }
   };
 
@@ -161,15 +181,150 @@ const ProductDetails = () => {
     });
   };
 
+  const getComments = async () => {
+    try {
+      const response = await ins.get(`${baseURL}/comments/replies/${productId}`);
+      setComments(response.data.comments);
+      setAvgRating(response.data.averageRating);
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  console.log(comments,"daosk")
+
+  const handleCommentChange = (event : React.ChangeEvent<HTMLTextAreaElement>) => {
+    setComment(event.target.value); 
+  };
+
+  const handleRatingChange = (newValue : number) => {
+    setRating(newValue); 
+  };
+  const handleAddComment = async (event: React.MouseEvent<HTMLButtonElement>) => {
+    event.preventDefault(); 
+
+    if (!comment || rating === 0) {
+      Swal.fire({
+        icon: 'warning',
+        title: 'Vui lòng nhập bình lận và đánh giá cho sản phẩm',
+      })
+      return;
+    }
+
+    try {
+      const response = await ins.post(`${baseURL}/comments`, {
+        userId,
+        productId,
+        comment,
+        rating,
+      });
+
+      if (response.status === 201) {
+        Swal.fire('success', 'Bạn đã đánh giá thành công', 'success');
+        setComment(''); 
+        setRating(0);    
+        getComments();
+      } 
+    } catch (error : any) {
+      if (!userId) { 
+        Swal.fire({
+          icon: "warning",
+          title: "Vui lòng đăng nhập",
+          text: "Vui lòng đăng nhập trước khi đánh giá",
+          confirmButtonText: "Đăng nhập",
+          cancelButtonText: "Đóng",
+          showCancelButton: true,
+        }).then((result) => {
+          if (result.isConfirmed) {
+            window.location.href = '/login'; 
+          }
+        });
+      }
+      else {
+        Swal.fire({
+          icon: "warning",
+          text: error.response.data.message,
+          cancelButtonText: "Đóng",
+          showCancelButton: true,
+         })    
+      }
+    }
+  };
   const getData = async () => {
     getProductById();
     getProductWithoutsVariants();
+    getComments();
   };
+
+const handleMainImageChange = (image:{url:string}) => {
+    setMainImage(image.url); 
+  };
+
+  const handleDeleteReply = async (commentId: string, replyId: string) => {
+    const result = await Swal.fire({
+      title: 'Bạn có chắc chắn muốn xóa phản hồi này?',
+      text: 'Hành động này không thể hoàn tác!',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Xóa',
+      cancelButtonText: 'Hủy',
+    });
+  
+    if (result.isConfirmed) {
+      try {
+        await ins.delete(`/replies/${replyId}`);
+        Swal.fire("Thành công", "Xóa phản hồi thành công", "success");
+        getComments();
+      } catch (error) {
+        console.log(error,"dasoik")
+        Swal.fire("Lỗi", "Có lỗi xảy ra khi xóa phản hồi", "error");
+      }
+    } else {
+      Swal.fire("Đã hủy", "Phản hồi không bị xóa", "info");
+    }
+  };
+  
 
   useEffect(() => {
     getData();
+    socket.on("new_product", () => {
+      getData();
+    });
+    return () => {
+      socket.off("new_product")
+    };
   }, [productId]);
 
+  useEffect(() => {
+    socket.on("deleteReply", () => {
+      getComments();
+    })
+    return () => {
+      socket.off("deleteReply")
+    }
+  } , [])
+  const handleReplies = async (commentId: string , replies: string) => {
+    try {
+      const response = await ins.post(`${baseURL}/replies/${commentId}` , {reply:replies, userId});
+      if (response.status === 201) {
+        getComments();
+      }
+    }
+    catch (error) {
+      Swal.fire({
+        icon: "warning",
+        title: "Vui lòng đăng nhập",
+        text: "Vui lòng đăng nhập trước khi bình luận",
+        confirmButtonText: "Đăng nhập",
+        cancelButtonText: "Đóng",
+        showCancelButton: true,
+      }).then((result) => {
+        if (result.isConfirmed) {
+          window.location.href = '/login'; 
+        }
+      });
+    }
+  }
   if (loading) {
     return (
       <Box display="flex" justifyContent="center" alignItems="center" height="100vh">
@@ -187,59 +342,98 @@ const ProductDetails = () => {
   }
 
   return (
-    <>
-    <Header />
+    <div className="container-xl bg-current rounded shadow-sm p-4" style={{ backgroundColor: "#eaeaea" }}>
     <Container maxWidth="lg" sx={{ mt: 4 }}>
   <Grid container spacing={4}>
-    <Grid item xs={12} md={5}>
-      <Box
-        component="img"
-        src={mainImage ? `${baseURL}/images/${mainImage}` : `${baseURL}/images/${product.image}`}
-        alt="Main product image"
-        sx={{
-          width: "100%",
-          height: "auto",
-          objectFit: "contain",
-          borderRadius: 2,
-          boxShadow: 3,
-        }}
-      />
+    {/* Phần hình ảnh */}
+    <Grid item xs={12} md={6}>
+      <Box>
+        {/* Ảnh chính */}
+        <Box
+          component="img"
+          src={mainImage ? `${baseURL}/images/${mainImage}` : `${baseURL}/images/${product.image}`}
+          alt="Main product image"
+          sx={{
+            width: "70%",
+            height: "auto",
+            objectFit: "contain",
+            borderRadius: 2,
+            boxShadow: 3,
+          }}
+        />
+      </Box>
+
+      {/* Các ảnh nhỏ khác */}
+      <Box sx={{ mt: 2 }}>
+        <Typography variant="body1" gutterBottom>
+          Chọn ảnh khác:
+        </Typography>
+        <ImageList sx={{ width: "100%", height: 160 }} cols={4} rowHeight={164}>
+          {availableVariants.length > 0 && images.length > 0 && images.map((image, idx) => (
+            <ImageListItem key={idx}>
+              <Box
+                component="img"
+                src={`${baseURL}/images/${image.url}`}
+                alt={`Product Image ${image.order}`}
+                sx={{
+                  width: "100%",
+                  height: "100%",
+                  objectFit: "cover",
+                  cursor: "pointer",
+                  transition: "transform 0.3s ease",
+                  "&:hover": {
+                    transform: "scale(1.1)", // Tạo hiệu ứng zoom khi hover
+                  },
+                }}
+                onClick={() => handleMainImageChange(image)} // Thay đổi ảnh chính khi click
+              />
+            </ImageListItem>
+          ))}
+        </ImageList>
+      </Box>
     </Grid>
 
-    <Grid item xs={12} md={7}>
-      <Typography variant="h4">{product.title}</Typography>
-      <Typography variant="body1">{product.description}</Typography>
+    {/* Phần chọn màu sắc, dung lượng, giá tiền */}
+    <Grid item xs={12} md={6}>
+      <Typography variant="h4" gutterBottom>
+        {product.title}
+      </Typography>
 
-      <Box sx={{ mt: 3 }}>
-        <Typography variant="body1" sx={{ fontWeight: "bold" }}>
-          Chọn màu sắc:
-        </Typography>
-        <Box sx={{ mt: 2, display: "flex", gap: 2 }}>
-          {colorOptions.map((color) => (
+      {/* Chọn màu sắc */}
+      <Box sx={{ mt: 2, display: "flex", gap: 2 }}>
+        {Array.from(
+          new Set(availableVariants.map((variant) => variant.color)) // Lấy tên màu từ DB
+        ).map((colorName) => {
+          const color = colorMapping[colorName] || "#000000"; // Lấy mã màu từ bảng ánh xạ
+
+          return (
             <Button
-              key={color._id}
+              key={colorName}
               variant="contained"
               sx={{
                 width: 50,
                 height: 50,
                 borderRadius: "50%",
-                backgroundColor: color.color,
+                backgroundColor: color,
                 padding: 0,
-                boxShadow: selectedColor === color.options ? "0px 0px 10px 2px rgba(0, 0, 0, 0.2)" : "none",
-                border: selectedColor === color.options ? "3px solid #fff" : "none",
+                boxShadow:
+                  selectedColor === colorName
+                    ? "0px 0px 10px 2px rgba(0, 0, 0, 0.2)"
+                    : "none",
+                border: selectedColor === colorName ? "3px solid #fff" : "none",
                 transition: "all 0.3s ease",
-                '&:hover': {
-                  backgroundColor: color.color,
+                "&:hover": {
+                  backgroundColor: color,
                   boxShadow: "0px 0px 10px 2px rgba(0, 0, 0, 0.2)",
                 },
-                '&:active': {
+                "&:active": {
                   transform: "scale(0.95)",
                 },
                 position: "relative",
               }}
-              onClick={() => handleColorChange(color.options)}
+              onClick={() => handleColorChange(colorName)}
             >
-              {selectedColor === color.options && (
+              {selectedColor === colorName && (
                 <Box
                   sx={{
                     position: "absolute",
@@ -255,10 +449,11 @@ const ProductDetails = () => {
                 </Box>
               )}
             </Button>
-          ))}
-        </Box>
+          );
+        })}
       </Box>
 
+      {/* Chọn dung lượng */}
       <Box sx={{ mt: 3 }}>
         <Typography variant="body1" sx={{ fontWeight: "bold" }}>
           Chọn dung lượng:
@@ -275,6 +470,7 @@ const ProductDetails = () => {
                 <Button
                   key={storage}
                   variant="contained"
+                  disabled={quantity === 0}
                   onClick={() => handleStorageChange(storage)}
                   sx={{
                     padding: "8px 20px",
@@ -301,58 +497,111 @@ const ProductDetails = () => {
         </Box>
       </Box>
 
+      {/* Hiển thị giá tiền */}
       {selectedStorage && (
         <Box sx={{ mt: 3 }}>
           <Typography variant="h6" sx={{ fontWeight: "bold" }}>
             Giá tiền:
           </Typography>
-          <Typography variant="body1" sx={{ fontWeight: "bold" , color: "red"}}>
+          <Typography variant="body1" sx={{ fontWeight: "bold", color: "red" }}>
             {selectedPrice.toLocaleString("vi-VN")} VNĐ
           </Typography>
         </Box>
       )}
 
+      {/* Mô tả sản phẩm */}
+      <Typography variant="body1" sx={{ mt: 2 }}>
+        {product.description}
+      </Typography>
+
+      {/* Nút thêm vào giỏ hàng */}
       <Button
         variant="contained"
         onClick={handleAddToCart}
         sx={{ mt: 3 }}
-        disabled={!selectedStorage}
+        disabled={selectQuantity === 0}
       >
         Thêm vào giỏ hàng
       </Button>
     </Grid>
   </Grid>
 
-  <Typography variant="h5" sx={{ mt: 5, mb: 3 }}>
-    Sản phẩm gợi ý
-  </Typography>
-  <Grid container spacing={3}>
-    {suggestedProducts.map((suggestedProduct) => (
-      <Grid item xs={12} sm={6} md={3} key={suggestedProduct._id}>
-        <Card>
-          <CardActionArea component={Link} to={`/products/${suggestedProduct._id}`}>
-            <CardMedia
-              component="img"
-              height="200"
-              image={`${baseURL}/images/${suggestedProduct.image}`}
-              alt={suggestedProduct.title}
-            />
-            <CardContent>
-              <Typography variant="h6" noWrap>
-                {suggestedProduct.title}
-              </Typography>
-              <Typography variant="body2" color="textSecondary">
-                {suggestedProduct.price.toLocaleString("vi-VN")} VNĐ
-              </Typography>
-            </CardContent>
-          </CardActionArea>
-        </Card>
-      </Grid>
-    ))}
+  {/* Đánh giá và bình luận */}
+  <Grid container spacing={3} sx={{ mt: 5 }}>
+    <Grid item xs={12}>
+      <Box sx={{ borderBottom: '1px solid #ccc', paddingBottom: 2 }}>
+        <Typography variant="h5" gutterBottom>
+          Đánh giá: {product.title}
+        </Typography>
+        <Typography variant="body1">
+          Đánh giá: <Rating value={avgRating} readOnly /> {`${avgRating} / 5`}
+        </Typography>
+      </Box>
+    </Grid>
+
+  <CommentsSection comments={comments} onAddReply={handleReplies} onDeleteReply={handleDeleteReply} userId={userId} />
+
+    {/* Form thêm bình luận */}
+    <Grid item xs={12}>
+      <Box sx={{ padding: 2, border: '1px solid #ccc', borderRadius: 1 }}>
+        <Typography variant="h6" gutterBottom>
+          Thêm đánh giá của bạn về sản phẩm:
+        </Typography>
+        <Rating
+          value={rating}
+          onChange={(event, newValue) => handleRatingChange(newValue)}
+          sx={{ marginBottom: 2 }}
+        />
+        <TextField
+          label="Bình luận"
+          variant="outlined"
+          fullWidth
+          multiline
+          rows={3}
+          value={comment}
+          onChange={handleCommentChange}
+          sx={{ marginBottom: 2 }}
+        />
+        <Button
+          onClick={handleAddComment}
+          variant="contained"
+          disabled={!comment || rating === 0}
+        >
+          Gửi bình luận
+        </Button>
+      </Box>
+    </Grid>
+    <Typography variant="h5" sx={{ mt: 5, mb: 3 }}>
+  Sản phẩm gợi ý
+</Typography>
+<Grid container spacing={3}>
+  {suggestedProducts.map((suggestedProduct) => (
+    <Grid item xs={12} sm={6} md={3} key={suggestedProduct._id}>
+      <Card>
+        <CardActionArea component={Link} to={`/products/${suggestedProduct._id}`}>
+          <CardMedia
+            component="img"
+            height="200"
+            image={`${baseURL}/images/${suggestedProduct.image}`} // Sử dụng dấu nháy ngược
+            alt={suggestedProduct.title}
+          />
+          <CardContent>
+            <Typography variant="h6" noWrap>
+              {suggestedProduct.title}
+            </Typography>
+            <Typography variant="body2" color="textSecondary">
+              {suggestedProduct.price.toLocaleString("vi-VN")} VNĐ
+            </Typography>
+          </CardContent>
+        </CardActionArea>
+      </Card>
+    </Grid>
+  ))}
+</Grid>
+    
   </Grid>
 </Container>
-
-    </>
+    </div>
   );
 };
 

@@ -1,9 +1,8 @@
 import "../.././App.scss";
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 import { ProdContext } from "../../api/contexts/ProductsContexts";
 import { Link } from "react-router-dom";
 import { baseURL } from "../../api";
-
 const QLSP = () => {
   const {
     onDel,
@@ -14,16 +13,15 @@ const QLSP = () => {
     currentPage,
     totalPages,
     indexOfFirstProduct,
-    searchQuery,
+    searchQuery
   } = useContext(ProdContext);
 
-  console.log(currentProducts);
   return (
     <div>
       <p className="m-3">
         <b className="h2">Quản lý sản phẩm</b>
       </p>
-      <div className="d-flex py-4">
+      <div className="py-4 d-flex">
         <div className="mx-4">
           <button className="rounded">
             <Link
@@ -51,10 +49,10 @@ const QLSP = () => {
           <tr className="d-flex">
             <th className="col-1">STT</th>
             <th className="col-2">Tên sản phẩm</th>
-            <th className="col-1">Ảnh</th>
+            <th className="col-3">Ảnh</th>
             <th className="col-1">Số lượng</th>
             <th className="col-2">Loại</th>
-            <th className="col-3">Mô tả</th>
+            <th className="col-1">Giá</th>
             <th className="col-2">Chức năng</th>
           </tr>
         </thead>
@@ -63,15 +61,18 @@ const QLSP = () => {
             <tr className="d-flex" key={i._id}>
               <td className="col-1">{indexOfFirstProduct + index + 1}</td>
               <td className="col-2">{i.title}</td>
-              <td className="col-1">
+              <td className="col-3">
                 <img
                   src={`${baseURL}/images/` + i.image}
                   alt="error"
-                  width="50%"
+                  width="20%"
                 />
               </td>
               <td className="col-1">
-              {i.variants.reduce((total, variant) => total + (variant.quantity || 0), 0)}
+                {i.variants.reduce(
+                  (total, variant) => total + (variant.quantity || 0),
+                  0
+                )}
               </td>
               <td className="col-2">
                 {i.categories
@@ -80,9 +81,17 @@ const QLSP = () => {
                     : i.categories.name
                   : "Không có danh mục"}
               </td>
-              <td className="col-3">{i.description}</td>
+              <td className="col-1">
+                {i.default_price
+                  ? `${i.default_price.toLocaleString("vi", {
+                      style: "currency",
+                      currency: "VND",
+                    })}`
+                  : "Chưa có giá"}
+              </td>
+
               <td className="col-2 d-flex">
-                <button className="action-edit rounded">
+                <button className="rounded action-edit">
                   <Link
                     className="text-decoration-none text-white"
                     to={`/admin/qlsp/edit/${i._id}`}
@@ -91,12 +100,12 @@ const QLSP = () => {
                   </Link>
                 </button>
                 <button
-                  className="action-del rounded"
+                  className="rounded action-del"
                   onClick={() => onDel(String(i._id))}
                 >
                   Xóa
                 </button>
-                <button className="action-details rounded">
+                <button className="rounded action-details">
                   <Link
                     className="text-decoration-none text-white"
                     to={`/admin/details/${i._id}`}
@@ -110,11 +119,11 @@ const QLSP = () => {
         </tbody>
       </table>
 
-      <div className="d-flex justify-content-center align-items-center my-4">
+      <div className="my-4 d-flex justify-content-center align-items-center">
         <button
           disabled={currentPage === 1}
           onClick={handlePrevPage}
-          className="btn btn-primary mx-2"
+          className="mx-2 btn btn-primary"
         >
           Trang trước
         </button>
@@ -124,7 +133,7 @@ const QLSP = () => {
         <button
           disabled={currentPage === totalPages}
           onClick={handleNextPage}
-          className="btn btn-primary mx-2"
+          className="mx-2 btn btn-primary"
         >
           Trang sau
         </button>

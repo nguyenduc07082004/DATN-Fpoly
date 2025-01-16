@@ -1,31 +1,34 @@
-import axios from "axios";
 import { useContext, useState, useEffect } from "react";
 import { CategoryContext } from "../../api/contexts/CategoryContext";
+import ins, { baseURL } from "../../api";
 
 const AddForm = () => {
   const [formData, setFormData] = useState({
     title: "",
-    categories: "", 
+    categories: "",
     description: "",
+    default_price: "",
   });
 
   const { dataDM } = useContext(CategoryContext); 
   const [image, setImage] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
 
-  // Cập nhật state formData khi có thay đổi
+  const [errors, setErrors] = useState({
+    title: "",
+    categories: "",
+    default_price: "",
+  });
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({
       ...prevData,
       [name]: value,
     }));
-  };
-
-  const handleCategoryChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    setFormData((prevData) => ({
-      ...prevData,
-      categories: event.target.value, 
+    setErrors((prevErrors) => ({
+      ...prevErrors,
+      [name]: "",
     }));
   };
 
@@ -39,36 +42,42 @@ const AddForm = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-  
-    if (!formData.title || !formData.categories) {
-      alert("Vui lòng điền đầy đủ thông tin sản phẩm.");
+
+    const newErrors = {
+      title: formData.title ? "" : "Tên sản phẩm là bắt buộc.",
+      categories: formData.categories ? "" : "Vui lòng chọn danh mục.",
+      default_price: formData.default_price ? "" : "Giá sản phẩm là bắt buộc.",
+    };
+
+    if (Object.values(newErrors).some((error) => error)) {
+      setErrors(newErrors);
       return;
     }
-  
-    // Chuyển dữ liệu thành FormData
+
     const formDataToSend = new FormData();
     formDataToSend.append("title", formData.title);
     formDataToSend.append("categories", formData.categories);
     formDataToSend.append("description", formData.description);
-  
-    // Chuyển variants thành JSON string và gửi
-  
+    formDataToSend.append("default_price", formData.default_price);
+
     if (image) {
       formDataToSend.append("image", image);
     }
-  
+
     try {
-      await axios.post(
-        `http://localhost:8000/products/add`, 
+      const response = await ins.post(
+        `${baseURL}/products/add`,
         formDataToSend,
         {
           headers: {
-            "Content-Type": "multipart/form-data", 
+            "Content-Type": "multipart/form-data",
           },
         }
       );
-      alert("Sản phẩm đã được thêm thành công!");
-      window.location.href = "/admin/qlsp";
+      if (response.data.data) {
+        alert("Sản phẩm được thêm thành công!");
+        window.location.href = `/admin/details/${response.data.data._id}/variant/add`;
+      }
     } catch (error) {
       console.error("Error adding product:", error);
       alert("Có lỗi xảy ra khi thêm sản phẩm.");
@@ -79,7 +88,7 @@ const AddForm = () => {
     if (dataDM && dataDM.category.length > 0) {
       setFormData((prevData) => ({
         ...prevData,
-        categories: dataDM.category[0]._id, 
+        categories: dataDM.category[0]._id,
       }));
     }
   }, [dataDM]);
@@ -87,7 +96,6 @@ const AddForm = () => {
   return (
     <div>
       <h2 className="m-3">Thêm mới sản phẩm</h2>
-      <button className = "btn btn-primary m-3" onClick = {() => window.location.href = "/admin/qlsp/variants"}>Thêm mới biến thể</button>
       <form onSubmit={handleSubmit}>
         <div className="m-5 row">
           <div className="col-md-6 mb-3">
@@ -99,8 +107,8 @@ const AddForm = () => {
               name="title"
               value={formData.title}
               onChange={handleInputChange}
-              required
             />
+            {errors.title && <p className="text-danger mt-1">{errors.title}</p>}
           </div>
           <div className="col-md-6 mb-3">
             <label htmlFor="categories">Danh mục</label>
@@ -108,8 +116,7 @@ const AddForm = () => {
               className="form-control"
               name="categories"
               value={formData.categories}
-              onChange={handleCategoryChange}
-              required
+              onChange={handleInputChange}
             >
               <option value="">-----</option>
               {dataDM.category.map((i) => (
@@ -118,6 +125,22 @@ const AddForm = () => {
                 </option>
               ))}
             </select>
+            {errors.categories && <p className="text-danger mt-1">{errors.categories}</p>}
+          </div>
+        </div>
+
+        <div className="m-5 row">
+          <div className="col-md-6 mb-3">
+            <label htmlFor="default_price">Giá sản phẩm</label>
+            <input
+              className="form-control"
+              type="number"
+              placeholder="Giá sản phẩm"
+              name="default_price"
+              value={formData.default_price}
+              onChange={handleInputChange}
+            />
+            {errors.default_price && <p className="text-danger mt-1">{errors.default_price}</p>}
           </div>
         </div>
 
@@ -157,14 +180,12 @@ const AddForm = () => {
             />
           </div>
         </div>
-<div className="m-5 d-flex justify-content-end">
-<button
-          className="btn btn-danger btn-block "
-          type="submit"
-        >
-          <h5>Thêm mới sản phẩm</h5>
-        </button>
-</div>
+
+        <div className="m-5 d-flex justify-content-end">
+          <button className="btn btn-danger btn-block" type="submit">
+            <h5>Thêm mới sản phẩm</h5>
+          </button>
+        </div>
       </form>
     </div>
   );

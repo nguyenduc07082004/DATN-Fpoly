@@ -1,13 +1,25 @@
 import Product from "../models/ProductModels.js";
 import VariantImage from "../models/VariantImageModels.js"; // Import model VariantImage
+import Comment from "../models/CommentsModels.js";
 import path from "path";
 import fs from "fs";
+import mongoose from "mongoose";
 // Lấy danh sách sản phẩm
 export const getAllProducts = async () => {
   try {
-    return await Product.find().populate("categories", "name description");
+    const products = await Product.find({ deleted_at: null });
+
+    const productsWithValidVariants = products.map((product) => {
+      const validVariants = product.variants.filter((variant) => variant.deleted_at === null);
+      return {
+        ...product.toObject(), 
+        variants: validVariants, 
+      };
+    });
+
+    return productsWithValidVariants;
   } catch (error) {
-    throw error; 
+    throw error;
   }
 };
 
@@ -16,7 +28,8 @@ export const getProductsWithPriceRange = async () => {
     const products = await Product.aggregate([
       {
         $match: {
-          variants: { $ne: [] } 
+          variants: { $ne: [] },
+          deleted_at: null
         }
       },
       {
@@ -57,22 +70,31 @@ export const getProductsWithPriceRange = async () => {
 export const getProductById = async (productId) => {
   try {
     const product = await Product.findById(productId)
-    .populate("categories", "name description")  
-    .exec();  
-  
-  for (let variant of product.variants) {
-    const variantImages = await VariantImage.find({ variant_id: variant._id }); 
-    variant.variantImages = variantImages;
-  }
+      .populate("categories", "name description")
+      .exec();
 
-        if (!product) {
-      throw new Error("Product not found"); 
+    if (!product) {
+      throw new Error("Product not found");
     }
+
+    // Lọc biến thể có deleted_at là null
+    product.variants = product.variants.filter((variant) => variant.deleted_at === null);
+
+    // Lấy tất cả ảnh của các biến thể cùng một lúc
+    const variantIds = product.variants.map(variant => variant._id);  // Lấy danh sách ID của các biến thể
+    const variantImages = await VariantImage.find({ variant_id: { $in: variantIds }, deleted_at: null });
+
+    // Gán ảnh vào từng biến thể
+    product.variants.forEach((variant) => {
+      variant.variantImages = variantImages.filter(image => image.variant_id.toString() === variant._id.toString());
+    });
+
     return product;
   } catch (error) {
     throw error;
   }
 };
+
 
 // Thêm sản phẩm
 export const addProduct = async (productData) => {
@@ -88,19 +110,15 @@ export const addProduct = async (productData) => {
 // Cập nhật sản phẩm
 export const updateProduct = async (productId, updateData) => {
   try {
+    if(updateData.image == null) {
+      const product = await Product.findById(productId);
+      updateData.image = product.image;
+    }
     return await Product.findByIdAndUpdate(productId, updateData, { new: true });
   } catch (error) {
     throw new Error('Failed to update product');
   }
 };
-
-
-// Xóa sản phẩm
-export const deleteProduct = async (productId) => {
-  return await Product.findByIdAndDelete(productId);
-};
-
-
 
 export const createVariant = async (productId, variantData, files) => {
   // Lấy thư mục gốc của dự án
@@ -176,5 +194,72 @@ export const createVariant = async (productId, variantData, files) => {
     throw new Error("Failed to create variant: " + error.message);
   }
 };
+
+
+
+export const getFilteredProductsService = async (filters, pagination) => {
+  try {
+    const { searchTerm, rating, categories, min_price, max_price } = filters;
+    const { page, limit } = pagination;
+
+    const query = {};
+
+    // Lọc theo từ khóa tìm kiếm (searchTerm)
+    if (searchTerm) {
+      query.title = { $regex: searchTerm, $options: 'i' }; 
+    }
+
+    // Lọc theo danh mục (categories)
+    if (categories) {
+      query.categories = new mongoose.Types.ObjectId(categories); 
+    }
+
+    // Lọc theo giá
+    if (min_price && max_price) {
+      query.default_price = { $gte: Number(min_price), $lte: Number(max_price) };
+    } else if (min_price) {
+      query.default_price = { $gte: Number(min_price) };
+    } else if (max_price) {
+      query.default_price = { $lte: Number(max_price) };
+    }
+
+    // Tính tổng số sản phẩm (total count)
+    const totalCount = await Product.countDocuments(query);
+
+    // Tính toán số trang (total pages)
+    const totalPages = Math.ceil(totalCount / limit);
+
+    // Lấy các sản phẩm với phân trang
+    const products = await Product.find({...query, deleted_at: null})
+      .populate("variants")
+      .skip((page - 1) * limit)
+      .limit(limit)
+      .lean();
+
+    // Tính điểm trung bình của sản phẩm từ các bình luận
+    for (let product of products) {
+      const ratings = await Comment.aggregate([
+        { $match: { productId: product._id } },
+        { $group: { _id: null, averageRating: { $avg: "$rating" } } }
+      ]);
+
+      product.averageRating = ratings.length > 0 ? ratings[0].averageRating : 0;
+    }
+
+    // Lọc theo đánh giá
+    const filteredProducts = products.filter(product => product.averageRating >= rating);
+
+    return {
+      products: filteredProducts,
+      totalCount,
+      totalPages
+    };
+  } catch (error) {
+    throw new Error("Error fetching products: " + error.message);
+  }
+};
+
+
+
 
 

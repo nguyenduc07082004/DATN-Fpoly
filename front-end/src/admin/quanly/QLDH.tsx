@@ -4,8 +4,6 @@ import {
   OrderContextType,
 } from "../../api/contexts/OrdersContext";
 import {
-  Modal,
-  Box,
   Typography,
   Table,
   TableBody,
@@ -14,216 +12,201 @@ import {
   TableHead,
   TableRow,
   Paper,
+  Button,
+  TablePagination, // Thêm TablePagination
 } from "@mui/material";
-import { baseURL } from "../../api";
+import {
+  getStatusColor,
+  getButtonClass,
+  getPaymentStatusColor,
+  getStatusText,
+} from "../../utils/colorUtils";
+import Swal from "sweetalert2";
+import { Link } from "react-router-dom";
 
 const QLDH = () => {
-  const { state, fetchOrder, updateOrderStatus , updatePaymentStatus } = useContext(
-    OrderContext
-  ) as OrderContextType;
-  const [selectedOrder, setSelectedOrder] = useState<any>(null);
-  const [isModalOpen, setModalOpen] = useState(false);
+  const { state, fetchOrder, updateOrderStatus, updatePaymentStatus } =
+    useContext(OrderContext) as OrderContextType;
+
+  // Thêm state cho phân trang
+  const [page, setPage] = useState(1); // Trang hiện tại
+  const [rowsPerPage, setRowsPerPage] = useState(10); // Số lượng đơn hàng mỗi trang
 
   useEffect(() => {
-    fetchOrder();
-  }, []);
+    // Gọi fetchOrder khi page hoặc rowsPerPage thay đổi
+    fetchOrder(page, rowsPerPage);
+  }, [page, rowsPerPage]);
 
   const handleStatusChange = async (orderId: string, newStatus: string) => {
     try {
       await updateOrderStatus(orderId, newStatus);
-      fetchOrder();
+      fetchOrder(page, rowsPerPage); // Cập nhật lại đơn hàng sau khi thay đổi trạng thái
     } catch (error) {
       console.error("Cập nhật trạng thái đơn hàng thất bại: ", error);
     }
   };
 
-  const openModal = (order: any) => {
-    setSelectedOrder(order);
-    setModalOpen(true);
-  };
-
-  const closeModal = () => {
-    setSelectedOrder(null);
-    setModalOpen(false);
+  const handlePaymentStatusChange = async (
+    orderId: string,
+    newStatus: string
+  ) => {
+    try {
+      await updatePaymentStatus(orderId, newStatus);
+      fetchOrder(page, rowsPerPage); // Cập nhật lại danh sách đơn hàng sau khi thay đổi trạng thái thanh toán
+    } catch (error) {
+      console.error("Cập nhật trạng thái thanh toán thất bại: ", error);
+    }
   };
 
   if (!state || !Array.isArray(state.products)) {
     return <div>Không có đơn hàng nào để hiển thị</div>;
   }
 
-  const statusOptions = ["Pending", "In Delivery", "Delivered", "Cancelled"];
-  const handlePaymentStatusChange = async (orderId:string, newStatus:string) => {
-    await updatePaymentStatus(orderId, newStatus);
+  // Kiểu StatusKey được khai báo để đảm bảo order.status có kiểu hợp lệ
+  type StatusKey =
+    | "Pending"
+    | "Confirmed"
+    | "In Delivery"
+    | "Delivered"
+    | "Cancelled";
+
+  // Đảm bảo statusOptions được định nghĩa đúng kiểu
+  const statusOptions: Record<StatusKey, string[]> = {
+    Pending: ["Confirmed", "Cancelled"],
+    Confirmed: ["In Delivery", "Cancelled"],
+    "In Delivery": ["Delivered"],
+    Delivered: [],
+    Cancelled: [],
+  };
+
+  // Hàm xử lý thay đổi trang
+  const handleChangePage = (event: unknown, newPage: number) => {
+    setPage(newPage + 1); // Pagination trong MUI bắt đầu từ 0
+  };
+
+  // Hàm xử lý thay đổi số lượng hàng mỗi trang
+  const handleChangeRowsPerPage = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(1); // Reset về trang đầu khi thay đổi số hàng mỗi trang
   };
 
   return (
     <div className="order-management">
-      <h2 className="m-3">Quản lý đơn hàng</h2>
-      <table className="table table-bordered">
-        <thead className="text-center">
-          <tr>
-            <th>#</th>
-            <th>Mã đơn hàng</th>
-            <th>Người mua hàng</th>
-            <th>Địa chỉ giao hàng</th>
-            <th>Số điện thoại</th>
-            <th>Trạng thái</th>
-            <th>Thanh toán</th>
-            <th>Ngày đặt</th>
-            <th>Chức năng</th>
-          </tr>
-        </thead>
-        <tbody className="text-center">
-          {state.products &&
-            state.products.map((order, orderIndex) => (
-              <tr key={order._id}>
-                <td>{orderIndex + 1}</td>
-                <td>{order._id}</td>
-                <td>{order.receiver_name}</td>
-                <td>{order.receiver_address}</td>
-                <td>{order.receiver_phone}</td>
-                <td>
-                  <select
-                    value={order.status}
-                    onChange={(e) =>
-                      handleStatusChange(order._id, e.target.value)
-                    }
-                    disabled={
-                      order.status === "Delivered" ||
-                      order.status === "Cancelled"
-                    }
-                  >
-                    {statusOptions.map((status) => (
-                      <option
-                        key={status}
-                        value={status}
-                        disabled={
-                          (order.status === "Pending" &&
-                            status !== "In Delivery" &&
-                            status !== "Cancelled") ||
-                          (order.status === "In Delivery" &&
-                            status === "Pending") ||
-                          order.status === "Delivered" ||
-                          order.status === "Cancelled"
-                        }
-                      >
-                        {status}
-                      </option>
-                    ))}
-                  </select>
-                </td>
-                <td>
-                  <select
-                    disabled = {order.status === "Cancelled"}
-                    value={order.payment_status}
-                    onChange={(e) =>
-                      handlePaymentStatusChange(order._id, e.target.value)
-                    }
-                  >
-                    <option value="unpaid">Chưa thanh toán</option>
-                    <option value="paid">Thanh toán</option>
-                  </select>
-                </td>
-                <td>{order.created_at.slice(0, 10)}</td>
-                <td>
-                  <button
-                    className="btn btn-sm btn-info"
-                    onClick={() => openModal(order)}
-                  >
-                    Xem
-                  </button>
-                </td>
-              </tr>
+      <Typography variant="h4" className="m-3">
+        Quản lý đơn hàng
+      </Typography>
+      <TableContainer component={Paper}>
+        <Table>
+          <TableHead>
+            <TableRow>
+              <TableCell>#</TableCell>
+              <TableCell>Mã đơn hàng</TableCell>
+              <TableCell>Người mua hàng</TableCell>
+              <TableCell>Địa chỉ giao hàng</TableCell>
+              <TableCell>Số điện thoại</TableCell>
+              <TableCell>Trạng thái</TableCell>
+              <TableCell>Thanh toán</TableCell>
+              <TableCell>Ngày đặt</TableCell>
+              <TableCell>Chức năng</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {state.products.map((order, index) => (
+              <TableRow key={order._id}>
+                <TableCell>{(page - 1) * rowsPerPage + index + 1}</TableCell>
+                <TableCell>{order._id}</TableCell>
+                <TableCell>{order.receiver_name}</TableCell>
+                <TableCell>{order.receiver_address}</TableCell>
+                <TableCell>{order.receiver_phone}</TableCell>
+                <TableCell>
+                  <Typography variant="body2" color="textSecondary">
+                    <strong>Trạng thái hiện tại:</strong>{" "}
+                    <span style={{ color: getStatusColor(order.status) }}>
+                      {getStatusText(order.status)}
+                    </span>
+                  </Typography>
+                  <div style={{ marginTop: "10px" }}>
+                    {order.status in statusOptions &&
+                      statusOptions[order.status as StatusKey].map(
+                        (status: string) => (
+                          <button
+                            key={status}
+                            className={getButtonClass(status)}
+                            onClick={() => {
+                              Swal.fire({
+                                title: `Chuyển trạng thái sang ${getStatusText(
+                                  status
+                                )}?`,
+                                text: "Bạn có chắc chắn muốn thay đổi trạng thái không?",
+                                confirmButtonText: "Có, thay đổi!",
+                                cancelButtonText: "Hủy",
+                                showCancelButton: true,
+                                preConfirm: () => {
+                                  handleStatusChange(order._id, status);
+                                },
+                              }).then((result) => {
+                                if (result.isConfirmed) {
+                                  Swal.fire(
+                                    "Thành công!",
+                                    `Trạng thái đã được chuyển sang ${getStatusText(
+                                      status
+                                    )}.`,
+                                    "success"
+                                  );
+                                } else {
+                                  console.log("Hủy thay đổi trạng thái");
+                                }
+                              });
+                            }}
+                          >
+                            {getStatusText(status)}
+                          </button>
+                        )
+                      )}
+                  </div>
+                </TableCell>
+                <TableCell>
+                  <Typography variant="body2" color="textSecondary">
+                    <span
+                      style={{
+                        display:
+                         "inline-block",
+                        color: getPaymentStatusColor(order.payment_status),
+                      }}
+                      className="btn btn-sm"
+                    >
+                      {order.payment_status === "paid"
+                        ? "Đã thanh toán"
+                        : "Chưa thanh toán"}
+                    </span>
+                  </Typography>
+                </TableCell>
+
+                <TableCell>{order.created_at.slice(0, 10)}</TableCell>
+                <TableCell>
+                  <Link to={`/admin/qldh/${order._id}`}>
+                    <Button variant="contained" color="info" size="small">
+                      Xem
+                    </Button>
+                  </Link>
+                </TableCell>
+              </TableRow>
             ))}
-        </tbody>
-      </table>
-
-      <Modal open={isModalOpen} onClose={closeModal}>
-        <Box
-          sx={{
-            position: "absolute",
-            top: "50%",
-            left: "50%",
-            transform: "translate(-50%, -50%)",
-            width: "80%",
-            bgcolor: "background.paper",
-            border: "2px solid #000",
-            boxShadow: 24,
-            p: 4,
-            borderRadius: 2,
-          }}
-        >
-          <Typography variant="h6" mb={2}>
-            Chi tiết đơn hàng
-          </Typography>
-          {selectedOrder ? (
-            <>
-              <Typography>
-                <strong>Người mua:</strong> {selectedOrder.receiver_name}
-              </Typography>
-              <Typography>
-                <strong>Địa chỉ giao hàng:</strong>{" "}
-                {selectedOrder.receiver_address}
-              </Typography>
-              <Typography>
-                <strong>Số điện thoại:</strong> {selectedOrder.receiver_phone}
-              </Typography>
-              <Typography>
-                <strong>Ngày đặt hàng:</strong> {selectedOrder.created_at}
-              </Typography>
-
-              <TableContainer component={Paper} sx={{ mt: 2 }}>
-                <Table>
-                  <TableHead>
-                    <TableRow>
-                      <TableCell>#</TableCell>
-                      <TableCell>Sản phẩm</TableCell>
-                      <TableCell>Số lượng</TableCell>
-                      <TableCell>Màu sắc</TableCell>
-                      <TableCell>Dung lượng</TableCell>
-                      <TableCell>Ảnh</TableCell>
-                      <TableCell>Giá</TableCell>
-                      <TableCell>Thành tiền</TableCell>
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    {selectedOrder.items.map((item: any, index: number) => (
-                      <TableRow key={item._id}>
-                        <TableCell>{index + 1}</TableCell>
-                        <TableCell>{item.product?.title}</TableCell>
-                        <TableCell>{item.quantity}</TableCell>
-                        <TableCell>{item.color}</TableCell>
-                        <TableCell>{item.storage}</TableCell>
-                        <TableCell>
-                          {item.product?.image ? (
-                            <img
-                              src={`${baseURL}/images/${item.product.image}`}
-                              alt={item.product?.title || "Sản phẩm"}
-                              style={{
-                                width: "50px",
-                                height: "50px",
-                                objectFit: "cover",
-                              }}
-                            />
-                          ) : (
-                            <span>Không có ảnh</span>
-                          )}
-                        </TableCell>
-                        <TableCell>{item.price.toLocaleString()} VNĐ</TableCell>
-                        <TableCell>
-                          {(item.price * item.quantity).toLocaleString()} VNĐ
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </TableContainer>
-            </>
-          ) : (
-            <Typography>Không có thông tin chi tiết đơn hàng.</Typography>
-          )}
-        </Box>
-      </Modal>
+          </TableBody>
+        </Table>
+      </TableContainer>
+      <TablePagination
+        rowsPerPageOptions={[10, 25, 50]}
+        component="div"
+        count={state.totalOrders}
+        rowsPerPage={rowsPerPage}
+        page={page - 1}
+        onPageChange={handleChangePage}
+        onRowsPerPageChange={handleChangeRowsPerPage}
+        labelRowsPerPage="Số lượng mỗi trang"
+      />
     </div>
   );
 };
