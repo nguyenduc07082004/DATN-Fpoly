@@ -565,7 +565,7 @@ const TrangChu = () => {
       <section className="p-4">
         <div className="shadow-sm card">
           <div className="card-body">
-            <h2 className="card-title">Cảnh báo tồn kho</h2>
+            <h2 className="card-title">Cảnh báo hết hàng</h2>
             <ul className="list-group list-group-flush">
               {loading ? (
                 // Hiển thị loading khi dữ liệu chưa được tải

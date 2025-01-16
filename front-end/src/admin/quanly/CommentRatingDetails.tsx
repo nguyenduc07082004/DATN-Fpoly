@@ -94,6 +94,12 @@ const CommentRatingDetails = () => {
         <Typography variant="body2" color="textSecondary">
           Người đánh giá: {commentDetails.userId?.first_name} {commentDetails.userId?.last_name}
         </Typography>
+        <Typography variant="body2" color="textSecondary">
+          Sản phẩm được đánh giá: {commentDetails.productId?.title} 
+        </Typography>
+        <Typography variant="body2" color="textSecondary">
+          <img src={commentDetails.productId?.image} alt="" />
+        </Typography>
       </Box>
 
       <Box sx={{ marginBottom: 3 }}>

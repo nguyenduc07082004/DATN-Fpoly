@@ -347,7 +347,6 @@ const VariantsForm = () => {
               <th>Bộ nhớ</th>
               <th>Giá</th>
               <th>Số lượng</th>
-              <th>Hành động</th>
             </tr>
           </thead>
           <tbody>
@@ -359,12 +358,6 @@ const VariantsForm = () => {
                 <td>{variant.price}</td>
                 <td>{variant.quantity}</td>
                 <td>
-                  <button
-                    className="btn btn-danger btn-sm"
-                    onClick={() => setVariants(variants.filter((_, i) => i !== index))}
-                  >
-                    Xóa
-                  </button>
                 </td>
               </tr>
             ))}

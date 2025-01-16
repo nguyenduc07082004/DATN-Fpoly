@@ -306,12 +306,12 @@ const Vnpay = () => {
           >
             Thanh toán
           </button>
-          <button
+          {/* <button
             className="py-2 px-4 btn btn-danger"
             onClick={handleDeadPayment}
           >
             Hủy Thanh toán
-          </button>
+          </button> */}
         </div>
       </div>
     </div>
