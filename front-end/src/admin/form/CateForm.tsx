@@ -122,7 +122,7 @@ const CateForm = () => {
       <h2 className="m-3">{id ? "Cập nhật danh mục" : "Thêm mới danh mục"}</h2>
       <form onSubmit={onSubmit}>
         <div className="m-5 row">
-          <div className="col-md-6 mb-3">
+          <div className="mb-3 col-md-6">
             <label htmlFor="name">Tên danh mục</label>
             <input
               className="form-control"
@@ -137,7 +137,7 @@ const CateForm = () => {
         </div>
 
         <div className="m-5 row">
-          <div className="col-md-6 mb-3">
+          <div className="mb-3 col-md-6">
             <label htmlFor="slug">Slug</label>
             <input
               className="form-control"
@@ -153,7 +153,7 @@ const CateForm = () => {
         </div>
 
         <div className="m-5 row">
-          <div className="col-md-6 mb-3">
+          <div className="mb-3 col-md-6">
             <label htmlFor="image">Hình ảnh</label>
             <input
               className="form-control"
@@ -170,7 +170,7 @@ const CateForm = () => {
         </div>
 
         <div className="m-5 row">
-          <div className="col-md-12 mb-3">
+          <div className="mb-3 col-md-12">
             <button
               className="btn btn-danger btn-block"
               style={{ width: "100%", height: "50px" }}

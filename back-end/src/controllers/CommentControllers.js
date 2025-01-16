@@ -105,7 +105,7 @@ export const getCommentById = async (req, res) => {
   try {
     const comment = await Comment.findById(commentId)
       .populate("userId", "first_name last_name email")
-      .populate("productId", "name price");
+      .populate("productId", "title image");
 
     if (!comment) {
       return res.status(404).json({
@@ -146,7 +146,7 @@ export const getCommentsWithReplies = async (req, res) => {
   try {
     const comments = await Comment.find({ productId })
       .populate("userId", "first_name last_name email")
-      .populate("productId", "name price")
+      .populate("productId", "title image")
       .sort({ createdAt: -1 })
       .lean();
 

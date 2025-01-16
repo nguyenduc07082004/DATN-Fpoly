@@ -24,7 +24,7 @@ const QLDM = () => {
       <p className="m-3">
         <b className="h2">Quản lý danh mục</b>
       </p>
-      <div className="d-flex py-4">
+      <div className="py-4 d-flex">
         <div className="mx-4">
           <button className="rounded">
             <Link
@@ -51,10 +51,10 @@ const QLDM = () => {
         <thead className="text-center">
           <tr className="d-flex">
             <th className="col-1">STT</th>
-            <th className="col-2">Hình ảnh</th> {/* Cột mới cho hình ảnh */}
+            <th className="col-2">Hình ảnh</th> 
             <th className="col-2">Tên danh mục</th>
-            <th className="col-3">Slug</th>
-            <th className="col-2">Trạng thái</th>
+            <th className="col-2">Slug</th>
+            <th className="col-3">Trạng thái</th>
             <th className="col-2">Chức năng</th>
           </tr>
         </thead>
@@ -77,10 +77,10 @@ const QLDM = () => {
               </td>
 
               <td className="col-2">{i.name}</td>
-              <td className="col-3 text-truncate" style={{ maxWidth: "800px" }}>
+              <td className="text-truncate col-2" style={{ maxWidth: "800px" }}>
                 {i.slug}
               </td>
-              <td className="col-2">
+              <td className="col-3">
                 {i.status === "active" ? (
                   <span style={{ color: "green" }}>✔️</span>
                 ) : (
@@ -88,7 +88,7 @@ const QLDM = () => {
                 )}
               </td>
               <td className="col-2">
-                <button className="action-edit rounded">
+                <button className="rounded action-edit">
                   <Link
                     className="text-decoration-none text-white"
                     to={`/admin/qldm/edit/${i._id}`}
@@ -97,7 +97,7 @@ const QLDM = () => {
                   </Link>
                 </button>
                 <button
-                  className="action-del rounded"
+                  className="rounded action-del"
                   onClick={() => onDel(String(i._id))}
                 >
                   Xóa
@@ -107,11 +107,11 @@ const QLDM = () => {
           ))}
         </tbody>
       </table>
-      <div className="d-flex justify-content-center align-items-center my-4">
+      <div className="my-4 d-flex justify-content-center align-items-center">
         <button
           disabled={currentPage === 1}
           onClick={handlePrevPage}
-          className="btn btn-primary mx-2"
+          className="mx-2 btn btn-primary"
         >
           Trang trước
         </button>
@@ -121,7 +121,7 @@ const QLDM = () => {
         <button
           disabled={currentPage === totalPages}
           onClick={handleNextPage}
-          className="btn btn-primary mx-2"
+          className="mx-2 btn btn-primary"
         >
           Trang sau
         </button>
